@@ -1,0 +1,27 @@
+version: "3"
+services:
+  node-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node-app
+    ports:
+      - "3000:3000" # Port internal Node.js
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/nginx/nginx.conf
+    depends_on:
+      - node-app
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
