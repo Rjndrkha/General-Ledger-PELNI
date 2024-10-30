@@ -10,27 +10,58 @@ const app = express();
 // app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
+const PORT = 3000;
 
 const post = {};
 
 app.get("/api/ping", (req, res) => {
-  res.send("Pong");
+  res.json("Pong");
 });
 
 app.post("/api/GeneralLedger", async (req, res) => {
   try {
-    // Mengambil parameter dari body POST request
-    const { startDate, endDate } = req.body;
+    const {
+      startDate,
+      endDate,
+      withAdj,
+      withCompany,
+      company1,
+      company2,
+      withCOA,
+      coa1,
+      coa2,
+    } = req.body;
 
-    // Pastikan parameter diterima dengan benar
     if (!startDate || !endDate) {
       return res
         .status(400)
         .json({ error: "startDate dan endDate harus diberikan" });
     }
 
+    if (!withAdj) {
+      return res.status(400).json({ error: "withAdj harus diberikan" });
+    }
+
+    if (withCompany == "true" && (!company1 || !company2)) {
+      return res.status(400).json({ error: "Company harus diberikan" });
+    }
+
+    if (withCOA == "true" && (!coa1 || !coa2)) {
+      return res.status(400).json({ error: "COA harus diberikan" });
+    }
+
     // Panggil fungsi oracleGeneralLedger dengan parameter
-    const data = await oracleGeneralLedger(startDate, endDate);
+    const data = await oracleGeneralLedger(
+      startDate,
+      endDate,
+      withAdj,
+      withCompany,
+      company1,
+      company2,
+      withCOA,
+      coa1,
+      coa2
+    );
 
     // Kirim hasil query sebagai response
     res.json(data);
@@ -40,11 +71,16 @@ app.post("/api/GeneralLedger", async (req, res) => {
   }
 });
 
-app.get("/api/getDataSPJ/:nama", async (req, res) => {
+app.post("/api/getDataSPJ", async (req, res) => {
   try {
-    const descriptionParam = `%${req.params.nama.toUpperCase()}%`;
+    const { nama } = req.body;
+    const upperNama = `%${nama.toUpperCase()}%`;
 
-    const data = await OracleCheckSPJ(descriptionParam);
+    if (!nama) {
+      return res.status(400).json({ error: "Nama harus diberikan" });
+    }
+
+    const data = await OracleCheckSPJ(upperNama);
     res.json(data);
   } catch (error) {
     console.error("Error connecting to Oracle:", error);
@@ -52,8 +88,8 @@ app.get("/api/getDataSPJ/:nama", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 4000");
+app.listen(PORT, () => {
+  console.log("Server is running on Port", PORT);
 });
 
 app.get("/todos", (req, res) => {

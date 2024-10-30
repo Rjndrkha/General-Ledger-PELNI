@@ -2,10 +2,35 @@ require("dotenv").config();
 
 const oracledb = require("oracledb");
 oracledb.initOracleClient({
-  libDir: "/opt/oracle/instantclient",
+  libDir: process.env.ORACLE_CLIENT,
 });
 
-async function oracleGeneralLedger(startDate, endDate) {
+async function oracleGeneralLedger(
+  startDate,
+  endDate,
+  withAdj,
+  withCompany,
+  company1,
+  company2,
+  // withDivision,
+  // division1,
+  // division2,
+  withCOA,
+  coa1,
+  coa2,
+  withBank,
+  bank1,
+  bank2,
+  withProduct,
+  product1,
+  product2,
+  withTools,
+  tools1,
+  tools2,
+  withProject,
+  project1,
+  project2
+) {
   let connection;
   let result;
 
@@ -79,7 +104,10 @@ FROM
 WHERE
 	gjh.ledger_id = 2023 
 	AND trunc( gjh.default_effective_date ) BETWEEN '${startDate}' AND  '${endDate}' 	
---and substr(upper(gjh.period_name),1,3) not in ('ADJ','AUD')
+	AND (
+    ('${withAdj}' = 'false')
+    OR ('${withAdj}' = 'true' AND substr(upper(gjh.period_name),1,3) NOT IN ('ADJ', 'AUD'))
+	)
 	AND gjh.actual_flag = 'A' 
 	
 	AND gjh.status = 'P' 
@@ -96,10 +124,17 @@ WHERE
 	AND NVL( gjl.accounted_dr, 0 ) - NVL( gjl.accounted_cr, 0 ) <> 0 
 	AND gjh.je_category = gjc.je_category_name 
 	
-  AND gcc.segment1 BETWEEN '1040' AND '1040'
+	AND 
+	(('${withCompany}' = 'false')
+    OR ('${withCompany}' = 'true' AND gcc.segment1 BETWEEN '${company1}' AND '${company2}'))
+    
+  AND 
+    (('${withCOA}' = 'false')
+      OR ('${withCOA}' = 'true' AND gcc.segment3 BETWEEN '${coa1}' AND '${coa2}'))
+
 -- 	AND gcc.segment2 IN ('1015' , '1024' )--  	
 -- 	AND gcc.segment3 in ('11060202','11060203','41010301', '52900199')
--- 	AND gcc.segment3 BETWEEN '50000000' AND '59999999'
+
 -- 	AND gcc.segment4 BETWEEN '00000' AND 'zzzzz' 
 -- 	AND gcc.segment5 BETWEEN '00000' AND 'zzzzz' 
  	--AND gcc.segment6 BETWEEN '1000' AND '1027' 
@@ -107,6 +142,7 @@ WHERE
 -- 	AND gcc.segment8 BETWEEN '0000' AND 'zzzz' 
 -- 	AND gcc.segment9 BETWEEN '000' AND 'zzz' 
 --AND ROWNUM <=10
+
 	
 ORDER BY
 	account,
@@ -116,12 +152,15 @@ ORDER BY
 	document_number ASC
       `);
 
-    const json = result.rows.map((row) => {
-      return row.reduce((acc, cur, i) => {
-        acc[result.metaData[i].name] = cur;
-        return acc;
-      }, {});
-    });
+    const json = {
+      totalData: result.rows.length,
+      data: result.rows.map((row) => {
+        return row.reduce((acc, cur, i) => {
+          acc[result.metaData[i].name] = cur;
+          return acc;
+        }, {});
+      }),
+    };
     return json;
   } catch (err) {
     console.error("Error saat koneksi:", err);

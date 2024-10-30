@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const oracledb = require("oracledb");
 oracledb.initOracleClient({
-  libDir: "/opt/oracle/instantclient",
+  libDir: process.env.ORACLE_CLIENT,
 });
 
 async function OracleCheckSPJ(nama) {
@@ -111,12 +111,15 @@ async function OracleCheckSPJ(nama) {
 			,aih.invoice_num
     `);
 
-    const json = result.rows.map((row) => {
-      return row.reduce((acc, cur, i) => {
-        acc[result.metaData[i].name] = cur;
-        return acc;
-      }, {});
-    });
+    const json = {
+      totalData: result.rows.length,
+      data: result.rows.map((row) => {
+        return row.reduce((acc, cur, i) => {
+          acc[result.metaData[i].name] = cur;
+          return acc;
+        }, {});
+      }),
+    };
     return json;
   } catch (err) {
     console.error("Error saat koneksi:", err);
