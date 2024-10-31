@@ -50,7 +50,6 @@ app.post("/GeneralLedger", async (req, res) => {
       return res.status(400).json({ error: "COA harus diberikan" });
     }
 
-    // Panggil fungsi oracleGeneralLedger dengan parameter
     const data = await oracleGeneralLedger(
       startDate,
       endDate,
@@ -63,7 +62,6 @@ app.post("/GeneralLedger", async (req, res) => {
       coa2
     );
 
-    // Kirim hasil query sebagai response
     res.json(data);
   } catch (error) {
     console.error("Error connecting to Oracle:", error);
@@ -78,6 +76,10 @@ app.post("/getDataSPJ", async (req, res) => {
 
     if (!nama) {
       return res.status(400).json({ error: "Nama harus diberikan" });
+    }
+
+    if (!/^[a-zA-Z]+$/.test(nama)) {
+      return res.status(400).json({ error: "Parameter Harus Alfabet" });
     }
 
     const data = await OracleCheckSPJ(upperNama);
