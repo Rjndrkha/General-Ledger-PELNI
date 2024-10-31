@@ -10,15 +10,15 @@ const app = express();
 // app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
-const PORT = 3000;
+const PORT = 4000;
 
 const post = {};
 
-app.get("/api/ping", (req, res) => {
+app.get("/ping", (req, res) => {
   res.json("Pong");
 });
 
-app.post("/api/GeneralLedger", async (req, res) => {
+app.post("/GeneralLedger", async (req, res) => {
   try {
     const {
       startDate,
@@ -71,7 +71,7 @@ app.post("/api/GeneralLedger", async (req, res) => {
   }
 });
 
-app.post("/api/getDataSPJ", async (req, res) => {
+app.post("/getDataSPJ", async (req, res) => {
   try {
     const { nama } = req.body;
     const upperNama = `%${nama.toUpperCase()}%`;
