@@ -15,7 +15,7 @@ const getItem = (
   return {
     key: key as string,
     icon,
-    children: children && getMenuItems(children),
+    children: children ? getMenuItems(children) : [],
     label,
     type,
   };
