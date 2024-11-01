@@ -1,45 +1,38 @@
-import React, { useEffect } from "react";
-import EbsClient from "../../service/ebs/ApiTodos";
+import React from "react";
+import TablePerjalananDinas from "../../component/table/table";
+import TextInput from "../../component/input/textInput";
+import ButtonDefault from "../../component/button/button";
 
 function IndexCheckSPJ() {
-  const [data, setData] = React.useState<any>([]);
-
-  useEffect(() => {
-    getDataSPJ("SPJ Perjadin");
-  }, []);
-
-  async function getDataSPJ(nama: string) {
-    try {
-      const { response, error, errorMessage } = await EbsClient.GetAllSPJ();
-
-      if (error) {
-        return setData([]);
-      }
-
-      if (!error) {
-        if (response) {
-          console.log(response);
-
-          setData(response);
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching spj:", error);
-    }
-  }
+  const [nama, setNama] = React.useState<string>("");
+  const [isSubmit, setSubmit] = React.useState<boolean>(false);
 
   return (
     <>
-      {data.map((data: any) => (
-        <div key={data.id}>
-          <li>
-            <span className="text-red-500">ID:</span> {data.NOMER_TAGIHAN}
-            <h1 className="text-red-500 text-justify">{data.DESCRIPTION}</h1>
-          </li>
+      <div className="w-auto h-full flex flex-col gap-3 max-w-[50rem] m-5">
+        <h1>Cek Status SPJ Perjalanan Dinas</h1>
+        <div className="flex flex-col w-auto gap-2">
+          <label htmlFor="title" className="mb-1 text-base font-semibold">
+            Nama
+          </label>
+          <TextInput
+            placeholder="Nama"
+            value={nama}
+            onChange={(value) => setNama(value)}
+            required
+            isSubmit={isSubmit}
+          />
+          <ButtonDefault
+            text={"Cari"}
+            onClick={async () => {
+              setSubmit(true);
+            }}
+            htmlType={"submit"}
+            width="50%"
+          />
         </div>
-      ))}
-      <p></p>
-      IndexCheckSPJ
+        {isSubmit && nama && <TablePerjalananDinas nama={nama} />}
+      </div>
     </>
   );
 }
