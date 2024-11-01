@@ -6,6 +6,15 @@ import ButtonDefault from "../../component/button/button";
 function IndexCheckSPJ() {
   const [nama, setNama] = React.useState<string>("");
   const [isSubmit, setSubmit] = React.useState<boolean>(false);
+  const [validate, setValidate] = React.useState<boolean>(false);
+
+  const handleSearch = () => {
+    if (nama) {
+      setValidate(true);
+    } else {
+      setSubmit(true);
+    }
+  };
 
   return (
     <>
@@ -24,14 +33,13 @@ function IndexCheckSPJ() {
           />
           <ButtonDefault
             text={"Cari"}
-            onClick={async () => {
-              setSubmit(true);
-            }}
+            onClick={handleSearch}
             htmlType={"submit"}
             width="50%"
           />
         </div>
-        {isSubmit && nama && <TablePerjalananDinas nama={nama} />}
+
+        {validate && <TablePerjalananDinas nama={nama} />}
       </div>
     </>
   );
