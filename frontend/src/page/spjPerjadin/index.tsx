@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TablePerjalananDinas from "../../component/table/table";
 import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
@@ -7,6 +7,10 @@ function IndexCheckSPJ() {
   const [nama, setNama] = React.useState<string>("");
   const [isSubmit, setSubmit] = React.useState<boolean>(false);
   const [validate, setValidate] = React.useState<boolean>(false);
+
+  useEffect(() => {
+    setValidate(false);
+  }, [nama]);
 
   const handleSearch = () => {
     if (nama) {
