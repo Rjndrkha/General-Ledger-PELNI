@@ -18,9 +18,9 @@ function IndexCheckSPJ() {
 
   return (
     <>
-      <div className="w-auto h-full flex flex-col gap-3 max-w-[50rem] m-5">
+      <div className="w-auto h-full flex flex-col gap-3 m-5">
         <h1>Cek Status SPJ Perjalanan Dinas</h1>
-        <div className="flex flex-col w-auto gap-2">
+        <div className="flex flex-col w-auto gap-2 max-w-[50rem]">
           <label htmlFor="title" className="mb-1 text-base font-semibold">
             Nama
           </label>
