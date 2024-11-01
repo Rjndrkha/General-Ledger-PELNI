@@ -57,7 +57,7 @@ export class Service {
         const { response }: any = error;
         return {
           error: true,
-          errorMessage: response?.data.message || "",
+          errorMessage: response?.data.error || "",
           response: "",
         };
       }
