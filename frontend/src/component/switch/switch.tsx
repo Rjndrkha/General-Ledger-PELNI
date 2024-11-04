@@ -12,12 +12,14 @@ const SwitchComponent: React.FC<SwitchComponentProps> = ({
   onChange,
 }) => (
   <>
-    <Switch
-      checkedChildren={<CheckOutlined />}
-      unCheckedChildren={<CloseOutlined />}
-      defaultChecked={checked}
-      onChange={onChange}
-    />
+    <div className="w-fit">
+      <Switch
+        checkedChildren={<CheckOutlined />}
+        unCheckedChildren={<CloseOutlined />}
+        defaultChecked={checked}
+        onChange={onChange}
+      />
+    </div>
   </>
 );
 
