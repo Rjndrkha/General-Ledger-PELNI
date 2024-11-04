@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import LayoutUser from "../component/layout/layout";
 import Home from "../page";
-import IndexPageOne from "../page/page1";
 import IndexCheckSPJ from "../page/spjPerjadin";
+import IndexGeneralLedger from "../page/generalLedger";
 
 const router = createBrowserRouter([
   {
@@ -18,8 +18,8 @@ const router = createBrowserRouter([
         element: <IndexCheckSPJ />,
       },
       {
-        path: "/page1",
-        element: <IndexPageOne />,
+        path: "/general-ledger/penarikan-data-1",
+        element: <IndexGeneralLedger />,
       },
     ],
   },

@@ -20,19 +20,19 @@ export const menuItems: IRoute[] = [
     link: "/perjalanan-dinas",
   },
   {
-    label: "Content Management",
+    label: "General Ledger",
     link: "#",
     children: [
       {
-        label: "All Content",
+        label: "Penarikan Data 1",
         key: "3",
-        link: "/content",
+        link: "/general-ledger/penarikan-data-1",
       },
-      {
-        label: "Manage Content",
-        key: "4",
-        link: "/content/add",
-      },
+      // {
+      //   label: "Manage Content",
+      //   key: "4",
+      //   link: "/content/add",
+      // },
     ],
   },
 ];
