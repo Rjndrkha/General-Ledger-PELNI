@@ -3,7 +3,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import type { GetRef, TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Space, Table, message } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import ButtonDefault from "../button/button";
+import ButtonDefault from "../../component/button/button";
 import { IPerjadin } from "../../interface/IPerjadin";
 import EbsClient from "../../service/ebs/OracleClient";
 import Highlighter from "react-highlight-words";

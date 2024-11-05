@@ -3,9 +3,10 @@ import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
 import DatePickerInput from "../../component/input/dateInput";
 import SwitchComponent from "../../component/switch/switch";
+import EbsClient from "../../service/ebs/OracleClient";
 
 interface IGeneralLedger {
-  date: [];
+  date: Date[];
   withAdj: boolean;
   withCompany: boolean;
   company1: string;
@@ -27,22 +28,33 @@ function IndexGeneralLedger() {
     coa2: "",
   });
 
-  // useEffect(() => {
-  //   console.log(date);
-  // }, [date]);
+  const handleSubmit = async () => {
+    console.log(generalLedger);
+    const { error, errorMessage, response } = await EbsClient.GetGeneralLedger({
+      startDate: generalLedger.date[0],
+      endDate: generalLedger.date[1],
+      ...generalLedger,
+    });
 
-  // const handleCompanyChange = (index: any, value: any) => {
-  //   const updatedCompany = [...company];
-  //   updatedCompany[index] = value;
-  //   setCompany(updatedCompany);
-  // };
+    if (error) {
+      // message.error(errorMessage);
+      // setLoading(false);
+      console.log(errorMessage);
+    }
 
-  // const handleCoaChange = (index: any, value: any) => {
-  //   const updatedCoa = [...coa];
-  //   updatedCoa[index] = value;
-  //   setCoa(updatedCoa);
-  // };
+    if (response) {
+      // setPromotion(response.data);
+      // setLoading(false);
+      console.log(response);
+    }
+  };
 
+  const handleSwitch = (key: keyof IGeneralLedger) => {
+    setGeneralLedger((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+    }));
+  };
   return (
     <>
       <div className="w-auto h-full flex flex-col gap-3 m-5">
@@ -63,7 +75,10 @@ function IndexGeneralLedger() {
             <label htmlFor="title" className="text-base font-semibold">
               Dengan Adjustmen?
             </label>
-            <SwitchComponent checked={generalLedger.withAdj} />
+            <SwitchComponent
+              checked={generalLedger.withAdj}
+              onChange={() => handleSwitch("withAdj")}
+            />
           </div>
 
           <div className="flex flex-col gap-3">
@@ -71,19 +86,26 @@ function IndexGeneralLedger() {
               <label htmlFor="title" className="text-base font-semibold">
                 Dengan Company?
               </label>
-              <SwitchComponent checked={generalLedger.withCompany} />
+              <SwitchComponent
+                checked={generalLedger.withCompany}
+                onChange={() => handleSwitch("withCompany")}
+              />
             </div>
             <div className="flex flex-row items-center gap-4">
               <TextInput
                 placeholder="ID Company 1"
                 value={generalLedger.company1}
-                // onChange={(e) => setGeneralLedger({ ...generalLedger, company1: e.target.value })}
+                onChange={(e) =>
+                  setGeneralLedger({ ...generalLedger, company1: e })
+                }
               />
               <p className="text-sm font-bold">Between</p>
               <TextInput
                 placeholder="ID Company 2"
                 value={generalLedger.company2}
-                // onChange={(e) => handleCompanyChange(1, e.target.value)}
+                onChange={(e) =>
+                  setGeneralLedger({ ...generalLedger, company2: e })
+                }
               />
             </div>
           </div>
@@ -93,22 +115,31 @@ function IndexGeneralLedger() {
               <label htmlFor="title" className="text-base font-semibold">
                 Dengan Account?
               </label>
-              <SwitchComponent checked={generalLedger.withCOA} />
+              <SwitchComponent
+                checked={generalLedger.withCOA}
+                onChange={() => handleSwitch("withCOA")}
+              />
             </div>
             <div className="flex flex-row items-center gap-4">
               <TextInput
                 placeholder="ID Account 1"
                 value={generalLedger.coa1}
+                onChange={(e) =>
+                  setGeneralLedger({ ...generalLedger, coa1: e })
+                }
               />
               <p className="text-sm font-bold">Between</p>
               <TextInput
                 placeholder="ID Account 2"
                 value={generalLedger.coa2}
+                onChange={(e) =>
+                  setGeneralLedger({ ...generalLedger, coa2: e })
+                }
               />
             </div>
           </div>
 
-          <ButtonDefault text="Cari" width="50%" />
+          <ButtonDefault text="Cari" width="50%" onClick={handleSubmit} />
         </div>
       </div>
     </>

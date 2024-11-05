@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import TablePerjalananDinas from "../../component/table/table";
+import TablePerjalananDinas from "./table";
 import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
 
