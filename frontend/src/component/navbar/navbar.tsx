@@ -39,7 +39,7 @@ function Navbar({
                 onClick={(e) => e.preventDefault()}
                 className="text-start"
               >
-                <p className="text-base font-semibold">Hello Welcome !</p>
+                <p className="text-base font-semibold">Hello, welcome!</p>
                 <p className="text-xs"> </p>
               </button>
             </Dropdown>

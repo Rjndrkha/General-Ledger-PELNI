@@ -24,23 +24,25 @@ function IndexCheckSPJ() {
     <>
       <div className="w-auto h-full flex flex-col gap-3 m-5">
         <h1>Cek Status SPJ Perjalanan Dinas</h1>
-        <div className="flex flex-col w-auto gap-2 max-w-[50rem]">
+        <div className="flex flex-col gap-2 max-w-[50rem]">
           <label htmlFor="title" className="mb-1 text-base font-semibold">
             Nama
           </label>
-          <TextInput
-            placeholder="Nama"
-            value={nama}
-            onChange={(value) => setNama(value)}
-            required
-            isSubmit={isSubmit}
-          />
-          <ButtonDefault
-            text={"Cari"}
-            onClick={handleSearch}
-            htmlType={"submit"}
-            width="50%"
-          />
+          <div className="flex items-center gap-2">
+            <TextInput
+              placeholder="Masukan Nama"
+              value={nama}
+              onChange={(value) => setNama(value)}
+              required
+              isSubmit={isSubmit}
+            />
+            <ButtonDefault
+              text={"Cari"}
+              onClick={handleSearch}
+              htmlType={"submit"}
+              width="15%"
+            />
+          </div>
         </div>
 
         {validate && <TablePerjalananDinas nama={nama} />}

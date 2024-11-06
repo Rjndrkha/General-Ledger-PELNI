@@ -4,6 +4,9 @@ import ButtonDefault from "../../component/button/button";
 import DatePickerInput from "../../component/input/dateInput";
 import SwitchComponent from "../../component/switch/switch";
 import EbsClient from "../../service/ebs/OracleClient";
+import ShowCoa from "../../component/showpicture/showpicture_coa"; // Mengimpor komponen ShowCoa
+import ShowComp from "../../component/showpicture/showpicture_comp"; // Mengimpor komponen ShowComp
+import * as XLSX from "xlsx"; // Import xlsx
 
 interface IGeneralLedger {
   date: Date[];
@@ -14,6 +17,41 @@ interface IGeneralLedger {
   withCOA: boolean;
   coa1: string;
   coa2: string;
+}
+
+interface LedgerItem {
+  TRANSACTION_DATE_FROM: string;
+  TRANSACTION_DATE_TO: string;
+  TANGGAL_PENARIKAN: string;
+  ACCOUNT: string;
+  ACCOUNT_DESCRIPTION: string;
+  SEGMENT1: string;
+  SEGMENT1_DESCRIPTION: string;
+  SEGMENT2: string;
+  SEGMENT2_DESCRIPTION: string;
+  SEGMENT3: string;
+  SEGMENT3_DESCRIPTION: string;
+  SEGMENT4: string;
+  SEGMENT4_DESCRIPTION: string;
+  SEGMENT5: string;
+  SEGMENT5_DESCRIPTION: string;
+  SEGMENT6: string;
+  SEGMENT6_DESCRIPTION: string;
+  SEGMENT7: string;
+  SEGMENT7_DESCRIPTION: string;
+  SEGMENT8: string;
+  SEGMENT8_DESCRIPTION: string;
+  SEGMENT9: string;
+  SEGMENT9_DESCRIPTION: string;
+  GL_DATE: string;
+  SOURCE: string;
+  CATEGORY: string;
+  DOCUMENT_NUMBER: string;
+  CURRENCY: string;
+  LINE_DESCRIPTION: string;
+  NILAI_DEBIT: number;
+  NILAI_CREDIT: number;
+  BALANCE: number;
 }
 
 function IndexGeneralLedger() {
@@ -28,6 +66,10 @@ function IndexGeneralLedger() {
     coa2: "",
   });
 
+  const [data, setData] = useState<LedgerItem[]>([]);
+
+  const [isExport, setIsExport] = useState<boolean>(false);
+
   const handleSubmit = async () => {
     console.log(generalLedger);
     const { error, errorMessage, response } = await EbsClient.GetGeneralLedger({
@@ -37,15 +79,13 @@ function IndexGeneralLedger() {
     });
 
     if (error) {
-      // message.error(errorMessage);
-      // setLoading(false);
       console.log(errorMessage);
     }
 
     if (response) {
-      // setPromotion(response.data);
-      // setLoading(false);
-      console.log(response);
+      console.log(response)
+      setData(response.data!);
+      setIsExport(true);
     }
   };
 
@@ -55,6 +95,16 @@ function IndexGeneralLedger() {
       [key]: !prevState[key],
     }));
   };
+
+  const downloadExcel = () => {
+    console.log("download");
+    setIsExport(false);
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Ledger Data");
+    XLSX.writeFile(workbook, "ledger_data.xlsx");
+  };
+
   return (
     <>
       <div className="w-auto h-full flex flex-col gap-3 m-5">
@@ -91,7 +141,11 @@ function IndexGeneralLedger() {
                 onChange={() => handleSwitch("withCompany")}
               />
             </div>
-            <div className="flex flex-row items-center gap-4">
+            {/* Menambahkan ShowComp di antara label dan field input */}
+            <ShowComp />
+            <div className="flex flex-row items-center gap-2">
+              {" "}
+              {/* Ubah gap di sini */}
               <TextInput
                 placeholder="ID Company 1"
                 value={generalLedger.company1}
@@ -120,7 +174,11 @@ function IndexGeneralLedger() {
                 onChange={() => handleSwitch("withCOA")}
               />
             </div>
-            <div className="flex flex-row items-center gap-4">
+            {/* Menambahkan ShowCoa di antara label dan field input */}
+            <ShowCoa />
+            <div className="flex flex-row items-center gap-2">
+              {" "}
+              {/* Ubah gap di sini */}
               <TextInput
                 placeholder="ID Account 1"
                 value={generalLedger.coa1}
@@ -139,7 +197,18 @@ function IndexGeneralLedger() {
             </div>
           </div>
 
-          <ButtonDefault text="Cari" width="50%" onClick={handleSubmit} />
+          <ButtonDefault
+            className={!isExport ? "" : "hidden"}
+            text="Cari"
+            width="50%"
+            onClick={handleSubmit}
+          />
+          <ButtonDefault
+            className={isExport ? "" : "hidden"}
+            text="Download"
+            width="50%"
+            onClick={downloadExcel}
+          />
         </div>
       </div>
     </>

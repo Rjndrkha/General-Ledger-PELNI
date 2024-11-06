@@ -80,8 +80,8 @@ const TextInput: React.FC<TextInputProps> = ({
         status={error ? "error" : ""}
         style={
           readOnly
-            ? { width: "100%", height: "auto", backgroundColor: "#F1F1F1" }
-            : { width: "100%", height: "auto" }
+            ? { width: "50%", height: "auto", backgroundColor: "#F1F1F1" }
+            : { width: "50%", height: "auto" }
         }
         onFocus={() => setError(false)}
       />

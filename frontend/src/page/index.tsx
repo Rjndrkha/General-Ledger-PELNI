@@ -1,6 +1,8 @@
+// /src/pages/Home.tsx
 import React, { useEffect, useState } from "react";
 import { Todo, useTodoStore } from "../store/todo/store";
 import SwitchComponent from "../component/switch/switch";
+import ShowComp from "../component/showpicture/showpicture_comp"; // Import ShowComp
 
 function Home() {
   const { todos, getTodos, errorMessage } = useTodoStore();
@@ -37,6 +39,8 @@ function Home() {
             checked={todo.completed}
             onChange={() => handleUnchecked(todo)}
           />
+          {/* Tambahkan ShowComp di sini */}
+          <ShowComp />
         </div>
       ))}
     </div>
