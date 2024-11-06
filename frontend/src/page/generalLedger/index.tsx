@@ -67,11 +67,11 @@ function IndexGeneralLedger() {
   });
 
   const [data, setData] = useState<LedgerItem[]>([]);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const [isExport, setIsExport] = useState<boolean>(false);
 
   const handleSubmit = async () => {
-    console.log(generalLedger);
+    setLoading(true);
     const { error, errorMessage, response } = await EbsClient.GetGeneralLedger({
       startDate: generalLedger.date[0],
       endDate: generalLedger.date[1],
@@ -79,11 +79,12 @@ function IndexGeneralLedger() {
     });
 
     if (error) {
-      console.log(errorMessage);
+      setLoading(false);
+      alert(errorMessage);
     }
 
     if (response) {
-      console.log(response)
+      setLoading(false);
       setData(response.data!);
       setIsExport(true);
     }
@@ -97,7 +98,6 @@ function IndexGeneralLedger() {
   };
 
   const downloadExcel = () => {
-    console.log("download");
     setIsExport(false);
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
@@ -141,7 +141,6 @@ function IndexGeneralLedger() {
                 onChange={() => handleSwitch("withCompany")}
               />
             </div>
-            {/* Menambahkan ShowComp di antara label dan field input */}
             <ShowComp />
             <div className="flex flex-row items-center gap-2">
               {" "}
@@ -174,7 +173,6 @@ function IndexGeneralLedger() {
                 onChange={() => handleSwitch("withCOA")}
               />
             </div>
-            {/* Menambahkan ShowCoa di antara label dan field input */}
             <ShowCoa />
             <div className="flex flex-row items-center gap-2">
               {" "}
@@ -202,6 +200,7 @@ function IndexGeneralLedger() {
             text="Cari"
             width="50%"
             onClick={handleSubmit}
+            loading={loading}
           />
           <ButtonDefault
             className={isExport ? "" : "hidden"}

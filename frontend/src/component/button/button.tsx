@@ -10,6 +10,7 @@ interface ButtonDefaultProps {
   color?: string;
   isClick?: boolean;
   width?: string;
+  loading?: boolean;
 }
 
 const ButtonDefault: React.FC<ButtonDefaultProps> = ({
@@ -20,6 +21,7 @@ const ButtonDefault: React.FC<ButtonDefaultProps> = ({
   className,
   color,
   width,
+  loading,
 }) => {
   return (
     <>
@@ -33,6 +35,7 @@ const ButtonDefault: React.FC<ButtonDefaultProps> = ({
         className={className}
         disabled={disabled}
         onClick={onClick}
+        loading={loading}
       >
         {text}
       </Button>
