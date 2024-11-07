@@ -21,6 +21,7 @@ const router = createBrowserRouter([
         path: "/penarikan-general-ledger",
         element: <IndexGeneralLedger />,
       },
+
     ],
   },
 
