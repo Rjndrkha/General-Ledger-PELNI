@@ -108,7 +108,7 @@ function IndexGeneralLedger() {
   return (
     <>
       <div className="w-auto h-full flex flex-col gap-3 m-5">
-        <h1>Penarikan Data General Ledger 1</h1>
+        <h1>Penarikan Data General Ledger</h1>
         <div className="flex flex-col w-auto gap-4 max-w-[30rem]">
           <div className="flex flex-col">
             <label htmlFor="title" className="mb-1 text-base font-semibold">
