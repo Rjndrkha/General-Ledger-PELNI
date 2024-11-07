@@ -38,59 +38,62 @@ const TextInput: React.FC<TextInputProps> = ({
     }
   }, [value, isSubmit]);
 
-  if (type === "password") {
-    return (
-      <>
-        <Input.Password
-          placeholder="input password"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          readOnly={readOnly}
-          required={required}
-          autoFocus={autoFocus}
-          autoCapitalize={autoCapitalize}
-          disabled={disabled}
-          status={error ? "error" : ""}
-          style={
-            readOnly
-              ? { width: "100%", height: "auto", backgroundColor: "#F1F1F1" }
-              : { width: "100%", height: "auto" }
-          }
-        />
-        {error && (
-          <p className="text-xs text-red-500 italic font-semibold">
-            Please Fill This Field!
-          </p>
-        )}
-      </>
-    );
-  }
+  const inputStyle = {
+    width: readOnly ? "100%" : "50%",
+    height: "auto",
+    backgroundColor: readOnly ? "#F1F1F1" : "transparent",
+  };
+
+  const errorStyle = {
+    marginTop: "8px", // Add some spacing between the input and the error message
+    color: "#ff4d4f", // Red color for error message
+    fontSize: "12px", // Smaller font size
+    fontStyle: "italic", // Italicized font
+    fontWeight: "600", // Semi-bold font weight
+  };
 
   return (
-    <>
-      <Input
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        readOnly={readOnly}
-        required={required}
-        autoFocus={autoFocus}
-        autoCapitalize={autoCapitalize}
-        disabled={disabled}
-        status={error ? "error" : ""}
-        style={
-          readOnly
-            ? { width: "50%", height: "auto", backgroundColor: "#F1F1F1" }
-            : { width: "50%", height: "auto" }
-        }
-        onFocus={() => setError(false)}
-      />
+    <div style={{ width: "100%" }}>
+      {type === "password" ? (
+        <>
+          <Input.Password
+            placeholder={placeholder || "input password"}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            readOnly={readOnly}
+            required={required}
+            autoFocus={autoFocus}
+            autoCapitalize={autoCapitalize}
+            disabled={disabled}
+            status={error ? "error" : ""}
+            style={inputStyle}
+          />
+        </>
+      ) : (
+        <>
+          <Input
+            placeholder={placeholder}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            readOnly={readOnly}
+            required={required}
+            autoFocus={autoFocus}
+            autoCapitalize={autoCapitalize}
+            disabled={disabled}
+            status={error ? "error" : ""}
+            style={inputStyle}
+            onFocus={() => setError(false)}
+          />
+        </>
+      )}
+
+      {/* The error message appears below the input field */}
       {error && (
-        <p className="text-xs text-red-500 italic font-semibold">
+        <p style={errorStyle}>
           Please Fill This Field!
         </p>
       )}
-    </>
+    </div>
   );
 };
 

@@ -8,16 +8,12 @@ type MenuItem = Required<MenuProps>["items"][number];
 const getItem = (
   label: React.ReactNode,
   key: React.Key,
-  icon?: React.ReactNode,
-  children?: IRoute[],
-  type?: "group"
+  icon?: React.ReactNode
 ): MenuItem => {
   return {
     key: key as string,
     icon,
-    children: children ? getMenuItems(children) : [],
     label,
-    type,
   };
 };
 
@@ -25,12 +21,11 @@ const getMenuItems = (routes: IRoute[] | undefined): MenuItem[] => {
   if (!routes) return [];
 
   return routes.map((item) => {
-    const { label, icon, link, key, children } = item;
+    const { label, icon, link, key } = item;
     return getItem(
       <Link to={link}>{label}</Link>,
       key ? key : "1",
-      icon ? icon : undefined,
-      children
+      icon ? icon : undefined
     );
   });
 };
@@ -77,15 +72,12 @@ const SideMenu: React.FC = () => {
   return (
     <>
       {/* <img src={ASSETS.LOGOMF} alt="logo" className="hidden md:block" /> */}
-      {openKeys.length > 0 && (
-        <Menu
-          style={{ backgroundColor: "none" }}
-          mode="inline"
-          items={items}
-          selectedKeys={selectedKeys}
-          defaultOpenKeys={openKeys}
-        />
-      )}
+      <Menu
+        style={{ backgroundColor: "none" }}
+        mode="inline"
+        items={items}
+        selectedKeys={selectedKeys}
+      />
     </>
   );
 };

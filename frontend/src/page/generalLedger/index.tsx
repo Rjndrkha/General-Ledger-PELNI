@@ -4,9 +4,9 @@ import ButtonDefault from "../../component/button/button";
 import DatePickerInput from "../../component/input/dateInput";
 import SwitchComponent from "../../component/switch/switch";
 import EbsClient from "../../service/ebs/OracleClient";
-import ShowCoa from "../../component/showpicture/showpicture_coa"; // Mengimpor komponen ShowCoa
-import ShowComp from "../../component/showpicture/showpicture_comp"; // Mengimpor komponen ShowComp
-import * as XLSX from "xlsx"; // Import xlsx
+import ShowCoa from "../../component/showpicture/showpicture_coa"; 
+import ShowComp from "../../component/showpicture/showpicture_comp";
+import * as XLSX from "xlsx";
 
 interface IGeneralLedger {
   date: Date[];
@@ -98,21 +98,51 @@ function IndexGeneralLedger() {
   };
 
   const downloadExcel = () => {
+    console.log("download");
     setIsExport(false);
+  
+    const startDate = generalLedger.date[0] instanceof Date ? generalLedger.date[0] : new Date(generalLedger.date[0]);
+    const endDate = generalLedger.date[1] instanceof Date ? generalLedger.date[1] : new Date(generalLedger.date[1]);
+  
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      console.error("Invalid date(s) provided.");
+      return;
+    }
+    
+    const formattedStartDateGB = startDate.toLocaleDateString("en-GB", {
+      year: 'numeric',
+      month: 'long',
+      day: '2-digit'
+    });
+    const formattedEndDateGB = endDate.toLocaleDateString("en-GB", {
+      year: 'numeric',
+      month: 'long',
+      day: '2-digit'
+    });   // Output misal: "30 September 2024"
+    
+    console.log(formattedStartDateGB);
+    console.log(formattedEndDateGB);
+
+    const segment1Value = data.length > 0 ? data[0].SEGMENT1 : null;
+    const segment1_descriptionValue = data.length > 0 ? data[0].SEGMENT1_DESCRIPTION : null; // jika no data = null
+ 
+    const filename = `DATA GL ${segment1Value} ${segment1_descriptionValue} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
+  
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Ledger Data");
-    XLSX.writeFile(workbook, "ledger_data.xlsx");
+  
+    XLSX.writeFile(workbook, filename);
   };
-
+  
   return (
     <>
       <div className="w-auto h-full flex flex-col gap-3 m-5">
-        <h1>Penarikan Data General Ledger 1</h1>
+        <h1>Penarikan Data General Ledger</h1>
         <div className="flex flex-col w-auto gap-4 max-w-[30rem]">
           <div className="flex flex-col">
             <label htmlFor="title" className="mb-1 text-base font-semibold">
-              Masukkan Range Waktu
+              Masukkan Range Waktu<span className="text-red-500">*</span>
             </label>
             <DatePickerInput
               value={generalLedger.date}
@@ -123,7 +153,7 @@ function IndexGeneralLedger() {
           </div>
           <div className="flex flex-row items-center gap-3">
             <label htmlFor="title" className="text-base font-semibold">
-              Dengan Adjustmen?
+              Dengan Adjustmen?<span className="text-red-500">*</span>
             </label>
             <SwitchComponent
               checked={generalLedger.withAdj}

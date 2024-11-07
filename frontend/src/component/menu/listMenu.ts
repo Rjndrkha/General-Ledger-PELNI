@@ -15,24 +15,13 @@ export const menuItems: IRoute[] = [
     link: "/",
   },
   {
-    label: "Check Perjalanan Dinas",
+    label: "Penarikan General Ledger",
     key: "2",
-    link: "/perjalanan-dinas",
+    link: "/penarikan-general-ledger",
   },
   {
-    label: "General Ledger",
-    link: "#",
-    children: [
-      {
-        label: "Penarikan Data 1",
-        key: "3",
-        link: "/general-ledger/penarikan-data-1",
-      },
-      // {
-      //   label: "Manage Content",
-      //   key: "4",
-      //   link: "/content/add",
-      // },
-    ],
+    label: "Cek Perjalanan Dinas",
+    key: "3",
+    link: "/cek-perjalanan-dinas",
   },
 ];

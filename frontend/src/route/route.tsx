@@ -14,11 +14,11 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/perjalanan-dinas",
+        path: "/cek-perjalanan-dinas",
         element: <IndexCheckSPJ />,
       },
       {
-        path: "/general-ledger/penarikan-data-1",
+        path: "/penarikan-general-ledger",
         element: <IndexGeneralLedger />,
       },
     ],
