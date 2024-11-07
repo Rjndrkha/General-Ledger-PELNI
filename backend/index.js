@@ -5,6 +5,8 @@ const { default: axios } = require("axios");
 const { oracleGeneralLedger } = require("./function/GeneralLedger");
 const { OracleCheckSPJ } = require("./function/SPJ");
 const { AuthLogin } = require("./function/auth");
+const jwt = require("jsonwebtoken");
+const { authenticateToken } = require("./middleware/middleware");
 
 const app = express();
 // Middleware untuk parsing data form application/x-www-form-urlencoded
@@ -23,7 +25,7 @@ app.get("/ping", (req, res) => {
   res.json("Pong");
 });
 
-app.post("/GeneralLedger", async (req, res) => {
+app.post("/GeneralLedger", authenticateToken, async (req, res) => {
   try {
     const {
       startDate,
@@ -74,7 +76,7 @@ app.post("/GeneralLedger", async (req, res) => {
   }
 });
 
-app.post("/getDataSPJ", async (req, res) => {
+app.post("/getDataSPJ", authenticateToken, async (req, res) => {
   try {
     const { nama } = req.body;
     const upperNama = `%${nama.toUpperCase()}%`;
