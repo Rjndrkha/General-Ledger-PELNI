@@ -12,7 +12,7 @@ const ShowComp: React.FC = () => {
           cursor: 'pointer',
           color: 'gray',
           textDecoration: 'underline', 
-          fontSize: '16px', 
+          fontSize: '13px', 
         }}
         onClick={() => setVisible(true)}
       >

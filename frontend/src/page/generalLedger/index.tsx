@@ -118,15 +118,17 @@ function IndexGeneralLedger() {
       year: 'numeric',
       month: 'long',
       day: '2-digit'
-    });   // Output misal: "30 September 2024"
+    });
     
     console.log(formattedStartDateGB);
     console.log(formattedEndDateGB);
 
-    const segment1Value = data.length > 0 ? data[0].SEGMENT1 : null;
-    const segment1_descriptionValue = data.length > 0 ? data[0].SEGMENT1_DESCRIPTION : null; // jika no data = null
+    const segment1Value = data.length > 0 ? data[0].SEGMENT1 : "";
+    const segment1DescriptionValue = data.length > 0 ? data[0].SEGMENT1_DESCRIPTION : "";
+    const accountValue = data.length > 0 ? data[0].ACCOUNT : ""; 
+    const accountDescriptionValue = data.length > 0 ? data[0].ACCOUNT_DESCRIPTION : ""; 
  
-    const filename = `DATA GL ${segment1Value} ${segment1_descriptionValue} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
+    const filename = `DATA GL ${segment1Value} ${segment1DescriptionValue} ${accountValue} ${accountDescriptionValue} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
   
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
@@ -161,68 +163,63 @@ function IndexGeneralLedger() {
             />
           </div>
 
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-row items-center gap-3">
-              <label htmlFor="title" className="text-base font-semibold">
-                Dengan Company?
-              </label>
+          <div className="flex flex-row items-center gap-3">
+            <label htmlFor="title" className="text-base font-semibold">
+              Dengan Company?
+            </label>
+            <div className="flex items-center gap-3">
               <SwitchComponent
                 checked={generalLedger.withCompany}
                 onChange={() => handleSwitch("withCompany")}
               />
-            </div>
-            <ShowComp />
-            <div className="flex flex-row items-center gap-2">
-              {" "}
-              {/* Ubah gap di sini */}
-              <TextInput
-                placeholder="ID Company 1"
-                value={generalLedger.company1}
-                onChange={(e) =>
-                  setGeneralLedger({ ...generalLedger, company1: e })
-                }
-              />
-              <p className="text-sm font-bold">Between</p>
-              <TextInput
-                placeholder="ID Company 2"
-                value={generalLedger.company2}
-                onChange={(e) =>
-                  setGeneralLedger({ ...generalLedger, company2: e })
-                }
-              />
+              <ShowComp />
             </div>
           </div>
+          
+          <div className="flex flex-row items-center gap-2">
+            <TextInput
+              placeholder="ID Company 1"
+              value={generalLedger.company1}
+              onChange={(e) =>
+                setGeneralLedger({ ...generalLedger, company1: e })
+              }
+            />
+            <p className="text-sm font-bold">Between</p>
+            <TextInput
+              placeholder="ID Company 2"
+              value={generalLedger.company2}
+              onChange={(e) =>
+                setGeneralLedger({ ...generalLedger, company2: e })
+              }
+            />
+          </div>
 
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-row items-center gap-3">
-              <label htmlFor="title" className="text-base font-semibold">
-                Dengan Account?
-              </label>
-              <SwitchComponent
-                checked={generalLedger.withCOA}
-                onChange={() => handleSwitch("withCOA")}
-              />
-            </div>
+          <div className="flex flex-row items-center gap-3">
+            <label htmlFor="title" className="text-base font-semibold">
+              Dengan Account?
+            </label>
+            <SwitchComponent
+              checked={generalLedger.withCOA}
+              onChange={() => handleSwitch("withCOA")}
+            />
             <ShowCoa />
-            <div className="flex flex-row items-center gap-2">
-              {" "}
-              {/* Ubah gap di sini */}
-              <TextInput
-                placeholder="ID Account 1"
-                value={generalLedger.coa1}
-                onChange={(e) =>
-                  setGeneralLedger({ ...generalLedger, coa1: e })
-                }
-              />
-              <p className="text-sm font-bold">Between</p>
-              <TextInput
-                placeholder="ID Account 2"
-                value={generalLedger.coa2}
-                onChange={(e) =>
-                  setGeneralLedger({ ...generalLedger, coa2: e })
-                }
-              />
-            </div>
+          </div>
+          <div className="flex flex-row items-center gap-2">
+            <TextInput
+              placeholder="ID Account 1"
+              value={generalLedger.coa1}
+              onChange={(e) =>
+                setGeneralLedger({ ...generalLedger, coa1: e })
+              }
+            />
+            <p className="text-sm font-bold">Between</p>
+            <TextInput
+              placeholder="ID Account 2"
+              value={generalLedger.coa2}
+              onChange={(e) =>
+                setGeneralLedger({ ...generalLedger, coa2: e })
+              }
+            />
           </div>
 
           <ButtonDefault
