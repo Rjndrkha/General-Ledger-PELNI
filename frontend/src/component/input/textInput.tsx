@@ -42,7 +42,7 @@ const TextInput: React.FC<TextInputProps> = ({
     return (
       <>
         <Input.Password
-          placeholder="input password"
+          placeholder="Input password"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           readOnly={readOnly}

@@ -10,18 +10,23 @@ export interface IRoute {
 
 export const menuItems: IRoute[] = [
   {
-    label: "Home",
+    label: "Login",
     key: "1",
+    link: "/login",  // This route will point to the login page
+  },
+  {
+    label: "Home",
+    key: "2",
     link: "/",
   },
   {
     label: "Penarikan General Ledger",
-    key: "2",
+    key: "3",
     link: "/penarikan-general-ledger",
   },
   {
     label: "Cek Perjalanan Dinas",
-    key: "3",
+    key: "4",
     link: "/cek-perjalanan-dinas",
   },
 ];
