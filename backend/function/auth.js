@@ -8,11 +8,15 @@ const AuthLogin = async (username, password) => {
     formData.append("username", username);
     formData.append("password", password);
 
-    const response = await axios.post(process.env.PORTAL_LOGIN_URL, formData, {
-      headers: {
-        ...formData.getHeaders(),
-      },
-    });
+    const response = await axios.post(
+      process.env.PORTAL_URL + process.env.PORTAL_LOGIN_URL,
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+        },
+      }
+    );
 
     if (response) {
       const token = jwt.sign(response.data.data, process.env.JWT_SECRET, {
