@@ -19,8 +19,12 @@ const AuthLogin = async (username, password) => {
     );
 
     if (response) {
+      if (response.data.data.error_code !== "E0401") {
+        return { success: false, error: "Data Not Found!" };
+      }
+
       const token = jwt.sign(response.data.data, process.env.JWT_SECRET, {
-        expiresIn: "1h",
+        expiresIn: "5h",
       });
 
       return {
