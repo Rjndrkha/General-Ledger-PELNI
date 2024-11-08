@@ -195,7 +195,7 @@ function IndexGeneralLedger() {
           <div className="flex flex-row items-center gap-2">
             <TextInput
               placeholder="ID Company 1"
-              value={generalLedger.company1}
+              value={generalLedger.company1}  
               onChange={(e) =>
                 setGeneralLedger({ ...generalLedger, company1: e })
               }
