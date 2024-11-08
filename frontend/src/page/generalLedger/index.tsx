@@ -69,8 +69,24 @@ function IndexGeneralLedger() {
   const [data, setData] = useState<LedgerItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isExport, setIsExport] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleSubmit = async () => {
+    const validationErrors: { [key: string]: string } = {};
+
+    if (generalLedger.date.length === 0) {
+      validationErrors.date = "This field is required";
+    }
+    if (!generalLedger.withAdj) {
+      validationErrors.withAdj = "This switch is required";
+    }
+
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+
     setLoading(true);
     const { error, errorMessage, response } = await EbsClient.GetGeneralLedger({
       startDate: generalLedger.date[0],
@@ -98,9 +114,6 @@ function IndexGeneralLedger() {
   };
 
   const downloadExcel = () => {
-    console.log("download");
-    setIsExport(false);
-  
     const startDate = generalLedger.date[0] instanceof Date ? generalLedger.date[0] : new Date(generalLedger.date[0]);
     const endDate = generalLedger.date[1] instanceof Date ? generalLedger.date[1] : new Date(generalLedger.date[1]);
   
@@ -119,9 +132,6 @@ function IndexGeneralLedger() {
       month: 'long',
       day: '2-digit'
     });
-    
-    console.log(formattedStartDateGB);
-    console.log(formattedEndDateGB);
 
     const segment1Value = data.length > 0 ? data[0].SEGMENT1 : "";
     const segment1DescriptionValue = data.length > 0 ? data[0].SEGMENT1_DESCRIPTION : "";
@@ -152,26 +162,32 @@ function IndexGeneralLedger() {
                 setGeneralLedger({ ...generalLedger, date: value })
               }
             />
+            {errors.date && (
+              <p className="text-red-500 text-[13px]">{errors.date}</p>
+            )}
           </div>
           <div className="flex flex-row items-center gap-3">
             <label htmlFor="title" className="text-base font-semibold">
-              Dengan Adjustmen?<span className="text-red-500">*</span>
+              Dengan Adjustment?<span className="text-red-500">*</span>
             </label>
             <SwitchComponent
               checked={generalLedger.withAdj}
               onChange={() => handleSwitch("withAdj")}
             />
+            {errors.withAdj && (
+              <p className="text-red-500 text-[13px]">{errors.withAdj}</p>
+            )}
           </div>
 
           <div className="flex flex-row items-center gap-3">
             <label htmlFor="title" className="text-base font-semibold">
               Dengan Company?
             </label>
-            <div className="flex items-center gap-3">
-              <SwitchComponent
-                checked={generalLedger.withCompany}
-                onChange={() => handleSwitch("withCompany")}
-              />
+            <SwitchComponent
+              checked={generalLedger.withCompany}
+              onChange={() => handleSwitch("withCompany")}
+            />
+            <div className="text-center">
               <ShowComp />
             </div>
           </div>
@@ -202,7 +218,9 @@ function IndexGeneralLedger() {
               checked={generalLedger.withCOA}
               onChange={() => handleSwitch("withCOA")}
             />
-            <ShowCoa />
+            <div className="text-center">
+              <ShowCoa />
+            </div>
           </div>
           <div className="flex flex-row items-center gap-2">
             <TextInput
