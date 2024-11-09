@@ -1,125 +1,50 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const { default: axios } = require("axios");
-const { oracleGeneralLedger } = require("./function/GeneralLedger");
-const { OracleCheckSPJ } = require("./function/SPJ");
-const { AuthLogin } = require("./function/auth");
-const jwt = require("jsonwebtoken");
+const {
+  authentificationController,
+} = require("./controllers/authentificationController");
+const {
+  generalLedgerControllers,
+} = require("./controllers/generalLedgerController");
+const {
+  errorHandler,
+  asyncHandler,
+  errorRouteHandler,
+} = require("./middleware/errorHandler");
+const {
+  perjalananDinasControllers,
+} = require("./controllers/perjalananDinasController");
 const { authenticateToken } = require("./middleware/middleware");
+require("dotenv").config();
 
 const app = express();
 // Middleware untuk parsing data form application/x-www-form-urlencoded
 // app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
-const PORT = 4000;
+app.use(errorRouteHandler);
+app.use(errorHandler);
 
-const post = {};
-
-app.listen(PORT, () => {
-  console.log("Server is running on Port", PORT);
+app.listen(process.env.PORT, () => {
+  console.log("Server is running on Port", process.env.PORT);
 });
 
+//Routes
 app.get("/ping", (req, res) => {
-  res.json("Pong");
+  res.json("Up and Running");
 });
 
-app.post("/GeneralLedger", authenticateToken, async (req, res) => {
-  try {
-    const {
-      startDate,
-      endDate,
-      withAdj,
-      withCompany,
-      company1,
-      company2,
-      withCOA,
-      coa1,
-      coa2,
-    } = req.body;
+app.post(
+  "/GeneralLedger",
+  authenticateToken,
+  asyncHandler(generalLedgerControllers)
+);
 
-    if (!startDate || !endDate) {
-      return res
-        .status(400)
-        .json({ error: "startDate dan endDate harus diberikan" });
-    }
+app.post(
+  "/getDataSPJ",
+  authenticateToken,
+  asyncHandler(perjalananDinasControllers)
+);
 
-    if (!withAdj) {
-      return res.status(400).json({ error: "withAdj harus diberikan" });
-    }
-
-    if (withCompany == "true" && (!company1 || !company2)) {
-      return res.status(400).json({ error: "Company harus diberikan" });
-    }
-
-    if (withCOA == "true" && (!coa1 || !coa2)) {
-      return res.status(400).json({ error: "COA harus diberikan" });
-    }
-
-    const data = await oracleGeneralLedger(
-      startDate,
-      endDate,
-      withAdj,
-      withCompany,
-      company1,
-      company2,
-      withCOA,
-      coa1,
-      coa2
-    );
-
-    res.json(data);
-  } catch (error) {
-    console.error("Error connecting to Oracle:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-app.post("/getDataSPJ", authenticateToken, async (req, res) => {
-  try {
-    const { nama } = req.body;
-    const upperNama = `%${nama.toUpperCase()}%`;
-
-    if (!nama) {
-      return res.status(400).json({ error: "Nama harus diberikan" });
-    }
-
-    if (!/^[a-zA-Z]+$/.test(nama)) {
-      return res.status(400).json({ error: "Parameter Harus Alfabet" });
-    }
-
-    const data = await OracleCheckSPJ(upperNama);
-    res.json(data);
-  } catch (error) {
-    console.error("Error connecting to Oracle:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-app.get("/todos", (req, res) => {
-  const data = axios
-    .get("https://jsonplaceholder.typicode.com/todos")
-    .then((response) => {
-      res.json(response.data);
-    });
-});
-
-app.post("/auth/login", async (req, res) => {
-  try {
-    const { username, password } = req.body;
-
-    if (!username) {
-      return res.status(400).json({ error: "username harus diberikan" });
-    }
-
-    if (!password) {
-      return res.status(400).json({ error: "password harus diberikan" });
-    }
-
-    const data = await AuthLogin(username, password);
-    res.json(data);
-  } catch (error) {
-    return error;
-  }
-});
+app.post("/auth/login", asyncHandler(authentificationController));

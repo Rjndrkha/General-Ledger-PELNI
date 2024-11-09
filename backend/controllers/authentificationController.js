@@ -19,8 +19,8 @@ const AuthLogin = async (username, password) => {
     );
 
     if (response) {
-      if (response.data.data.error_code !== "E0401") {
-        return { success: false, error: "Data Not Found!" };
+      if (response.data.status) {
+        return { success: false, error: response.data.error };
       }
 
       const token = jwt.sign(response.data.data, process.env.JWT_SECRET, {
@@ -39,4 +39,19 @@ const AuthLogin = async (username, password) => {
   }
 };
 
-module.exports = { AuthLogin };
+const authentificationController = async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username) {
+    return res.status(400).json({ error: "username harus diberikan" });
+  }
+
+  if (!password) {
+    return res.status(400).json({ error: "password harus diberikan" });
+  }
+
+  const json = await AuthLogin(username, password);
+  res.json(json);
+};
+
+module.exports = { authentificationController };
