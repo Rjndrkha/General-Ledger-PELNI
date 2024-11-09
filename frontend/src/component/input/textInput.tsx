@@ -42,7 +42,7 @@ const TextInput: React.FC<TextInputProps> = ({
     return (
       <>
         <Input.Password
-          placeholder="input password"
+          placeholder="Input password"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           readOnly={readOnly}
@@ -80,8 +80,8 @@ const TextInput: React.FC<TextInputProps> = ({
         status={error ? "error" : ""}
         style={
           readOnly
-            ? { width: "50%", height: "auto", backgroundColor: "#F1F1F1" }
-            : { width: "50%", height: "auto" }
+            ? { width: "100%", height: "auto", backgroundColor: "#F1F1F1" }
+            : { width: "100%", height: "auto" }
         }
         onFocus={() => setError(false)}
       />

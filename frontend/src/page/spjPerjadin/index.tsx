@@ -35,6 +35,7 @@ function IndexCheckSPJ() {
               onChange={(value) => setNama(value)}
               required
               isSubmit={isSubmit}
+              
             />
             <ButtonDefault
               text={"Cari"}

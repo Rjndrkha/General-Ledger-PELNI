@@ -10,7 +10,7 @@ function Home() {
         height: "50vh",
       }}
     >
-      <h1>Welcome to General Ledger 👋🏼</h1>
+      <h1>Welcome to General Ledger Portal👋🏼</h1>
     </div>
   );
 }

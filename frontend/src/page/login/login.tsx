@@ -1,117 +1,99 @@
-import React from "react";
-import { Button, Checkbox, Form, Grid, Input, theme, Typography } from "antd";
-import { LockOutlined, MailOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import TextInput from "../../component/input/textInput";
+import ButtonDefault from "../../component/button/button";
+import { IAuth } from "../../interface/IAuth";
+import { useAuthentificationStore } from "../../store/useAuthentificationStore";
+import EbsClient from "../../service/ebs/OracleClient";
 
-const { useToken } = theme;
-const { useBreakpoint } = Grid;
-const { Text, Title } = Typography;
+function Login() {
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-export default function App() {
-  const { token } = useToken();
-  const screens = useBreakpoint();
+  const { authentification: auth, login: actionLogin } = useAuthentificationStore();
+  const [authentification, setAuthentification] = useState<IAuth>({
+    username: auth.username,
+    password: auth.password,
+  });
 
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
-  };
+  const login = async (e: any) => {
+    e.preventDefault();
+    setIsSubmit(true);
 
-  const styles = {
-    container: {
-      margin: "0 auto",
-      padding: screens.md ? `${token.paddingXL}px` : `${token.sizeXXL}px ${token.padding}px`,
-      width: "380px",
-    },
-    footer: {
-      marginTop: token.marginLG,
-      textAlign: "center",
-      width: "100%",
-    },
-    header: {
-      marginBottom: token.marginXL,
-    },
-    section: {
-      alignItems: "center",
-      backgroundColor: token.colorBgContainer,
-      display: "flex",
-      height: screens.sm ? "100vh" : "auto",
-      padding: screens.md ? `${token.sizeXXL}px 0px` : "0px",
-    },
-    text: {
-      color: token.colorTextSecondary,
-    },
-    title: {
-      fontSize: screens.md ? token.fontSizeHeading2 : token.fontSizeHeading3,
-    },
+    const { response, error } = await EbsClient.GetLogin({
+      username: authentification.username,
+      password: authentification.password,
+    });
+
+    if (response && !error) {
+      actionLogin(authentification);
+      navigate("/");
+    } else {
+      console.error("Login failed:", error);
+    }
   };
 
   return (
-    <section style={styles.section}>
-      <div style={styles.container}>
-        <div style={styles.header}>
-          <svg
-            width="25"
-            height="24"
-            viewBox="0 0 25 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect x="0.464294" width="24" height="24" rx="4.8" fill="#1890FF" />
-            <path
-              d="M14.8643 3.6001H20.8643V9.6001H14.8643V3.6001Z"
-              fill="white"
-            />
-            <path
-              d="M10.0643 9.6001H14.8643V14.4001H10.0643V9.6001Z"
-              fill="white"
-            />
-            <path
-              d="M4.06427 13.2001H11.2643V20.4001H4.06427V13.2001Z"
-              fill="white"
-            />
-          </svg>
+    <div className="w-auto h-screen bg-gradient-to-br from-yellow-200 to-orange-300 overflow-hidden ">
+      <div className="flex flex-col items-center justify-center md:h-full">
+        <div className="flex flex-row md:gap-10 items-center">
+          <div className="hidden md:block w-full max-w-2xl">
+            <div className="flex flex-col items-center justify-center">
+              <h1 className="font-semibold text-3xl mt-5 ">
+                General Ledger Portal
+              </h1>
+              <p className="text-lg ">
+                Data Extraction System IT Division PELNI
+              </p>
+            </div>
+          </div>
 
-          <Title style={styles.title}>Sign in</Title>
-          <Text style={styles.text}>
-            Welcome back to AntBlocks UI! Please enter your details below to
-            sign in.
-          </Text>
+          <form onSubmit={login}>
+            <div className="flex flex-col gap-3 items-center justify-start md:justify-center p-5 rounded-3xl md:rounded-xl bg-white w-screen md:w-96 h-screen md:h-[20rem]">
+              <h1 className="font-semibold">Login</h1>
+
+              <div className="w-full">
+                <p className="text-sm font-semibold">Username</p>
+                <TextInput
+                  value={authentification.username}
+                  onChange={(e) =>
+                    setAuthentification({
+                      ...authentification,
+                      username: e.toString(),
+                    })
+                  }
+                  placeholder={"Username"}
+                  isSubmit={isSubmit}
+                  required
+                />
+              </div>
+              <div className="w-full">
+                <p className="text-sm font-semibold">Password</p>
+                <TextInput
+                  type={"password"}
+                  value={authentification.password}
+                  onChange={(e) =>
+                    setAuthentification({
+                      ...authentification,
+                      password: e.toString(),
+                    })
+                  }
+                  isSubmit={isSubmit}
+                  required
+                />
+              </div>
+
+              <ButtonDefault
+                text={"Masuk"}
+                onClick={() => setIsSubmit(true)}
+                htmlType={"submit"}
+              />
+            </div>
+          </form>
         </div>
-        <Form
-          name="normal_login"
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={onFinish}
-          layout="vertical"
-          requiredMark="optional"
-        >
-          <Form.Item
-            name="email"
-            rules={[{ type: "email", required: true, message: "Please input your Email!" }]}
-          >
-            <Input prefix={<MailOutlined />} placeholder="Email" />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: "Please input your Password!" }]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              type="password"
-              placeholder="Password"
-            />
-          </Form.Item>
-          <Form.Item>
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Remember me</Checkbox>
-            </Form.Item>
-          </Form.Item>
-          <Form.Item style={{ marginBottom: "0px" }}>
-            <Button block={true} type="primary" htmlType="submit">
-              Log in
-            </Button>
-          </Form.Item>
-        </Form>
       </div>
-    </section>
+    </div>
   );
 }
+
+export default Login;
