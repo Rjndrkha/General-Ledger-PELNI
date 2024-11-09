@@ -23,7 +23,7 @@ const app = express();
 // app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
-app.use(errorRouteHandler);
+// app.use(errorRouteHandler);
 app.use(errorHandler);
 
 app.listen(process.env.PORT, () => {
