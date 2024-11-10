@@ -24,22 +24,21 @@ const ButtonDefault: React.FC<ButtonDefaultProps> = ({
   loading,
 }) => {
   return (
-    <>
-      <Button
-        htmlType={htmlType}
-        style={{
-          backgroundColor: disabled ? "#F1F1F1" : color ? color : "#FF7A45",
-          color: "#FFFFFF",
-          width: width,
-        }}
-        className={className}
-        disabled={disabled}
-        onClick={onClick}
-        loading={loading}
-      >
-        {text}
-      </Button>
-    </>
+    <Button
+      htmlType={htmlType}
+      style={{
+        width: width,
+      }}
+      className={`${className} ${
+        disabled ? "bg-gray-300" : color ? "" : "bg-blue-500"
+      } text-white`}
+      disabled={disabled}
+      onClick={onClick}
+      loading={loading}
+    >
+      {text}
+    </Button>
   );
 };
+
 export default ButtonDefault;

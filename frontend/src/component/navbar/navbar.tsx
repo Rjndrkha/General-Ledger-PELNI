@@ -14,13 +14,11 @@ function Navbar({
   const navigate = useNavigate();
   const { logout } = useAuthentificationStore();
 
-  // Define handleLogout inside Navbar
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
-  // Move the items array inside the Navbar function to access handleLogout
   const items: MenuProps["items"] = [
     {
       key: "1",
@@ -29,7 +27,7 @@ function Navbar({
           <ButtonDefault
             text={"Logout"}
             width="100%"
-            onClick={handleLogout} // Trigger logout and redirect
+            onClick={handleLogout}
           />
         </div>
       ),
@@ -55,7 +53,7 @@ function Navbar({
                 onClick={(e) => e.preventDefault()}
                 className="text-start"
               >
-                <p className="text-base font-semibold">Hello [name]!</p>
+                <p className="text-base font-semibold">Hello [username]!</p>
                 <p className="text-xs"> </p>
               </button>
             </Dropdown>
@@ -64,7 +62,7 @@ function Navbar({
       </div>
 
       <LoadingBar
-        color="#f4b63c"
+        color="#3b82f6"
         height={7}
         shadow={true}
         progress={progress}

@@ -34,7 +34,7 @@ function Login() {
   };
 
   return (
-    <div className="w-auto h-screen bg-gradient-to-br from-yellow-200 to-orange-300 overflow-hidden ">
+    <div className="w-auto h-screen bg-gradient-to-br from-cyan-200 to-blue-300 overflow-hidden ">
       <div className="flex flex-col items-center justify-center md:h-full">
         <div className="flex flex-row md:gap-10 items-center">
           <div className="hidden md:block w-full max-w-2xl">

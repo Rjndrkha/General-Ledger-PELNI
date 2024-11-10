@@ -65,7 +65,7 @@ export default LayoutUser;
 function SidebarLink() {
   return (
     <div className="bg-red-950 left-0 h-full w-full">
-      <h1 className="text-lg text-orange-500">Sidebar</h1>
+      <h1 className="text-lg text-blue-500">Sidebar</h1>
       <a href="/page1" className="text-white">
         Page 1
       </a>
