@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
@@ -10,6 +10,14 @@ import Cookies from "js-cookie";
 function Login() {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  // Cek ada token di cookie
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      navigate("/"); // Redirect ke home jika ada token
+    }
+  }, [navigate]);
 
   const { authentification: auth, login: actionLogin } = useAuthentificationStore();
   const [authentification, setAuthentification] = useState<IAuth>({
@@ -27,28 +35,32 @@ function Login() {
     });
 
     if (response && !error) {
-      console.log(response)
-      Cookies.set("token", (response.token), {
+      Cookies.set("nama", response.nama);
+      Cookies.set("token", response.token, {
         expires: 5 / 24, //5 jam
       });
-
-      // actionLogin(authentification);
-      // navigate("/");
+      navigate("/"); 
     } else {
       console.error("Login failed:", error);
     }
   };
 
+  const logout = () => {
+    Cookies.remove("token"); 
+    navigate("/login");
+  };
+  
+
   return (
-    <div className="w-auto h-screen bg-gradient-to-br from-cyan-200 to-blue-300 overflow-hidden ">
+    <div className="w-auto h-screen bg-gradient-to-br from-cyan-200 to-blue-300 overflow-hidden">
       <div className="flex flex-col items-center justify-center md:h-full">
         <div className="flex flex-row md:gap-10 items-center">
           <div className="hidden md:block w-full max-w-2xl">
             <div className="flex flex-col items-center justify-center">
-              <h1 className="font-semibold text-3xl mt-5 ">
+              <h1 className="font-semibold text-3xl mt-5">
                 General Ledger Portal
               </h1>
-              <p className="text-lg ">
+              <p className="text-lg">
                 Data Extraction System IT Division PELNI
               </p>
             </div>

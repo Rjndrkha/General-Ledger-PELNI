@@ -4,6 +4,7 @@ import Home from "../page";
 import IndexCheckSPJ from "../page/spjPerjadin";
 import IndexGeneralLedger from "../page/generalLedger";
 import Login from "../page/login/login";
+import PrivateRoute from "./privateroute";
 
 const router = createBrowserRouter([
   {
@@ -16,23 +17,30 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <Home />,
+        element: (
+          <PrivateRoute>
+            <Home />
+          </PrivateRoute>
+        ),
       },
       {
         path: "cek-perjalanan-dinas",
-        element: <IndexCheckSPJ />,
+        element: (
+          <PrivateRoute>
+            <IndexCheckSPJ />
+          </PrivateRoute>
+        ),
       },
       {
         path: "penarikan-general-ledger",
-        element: <IndexGeneralLedger />,
+        element: (
+          <PrivateRoute>
+            <IndexGeneralLedger />
+          </PrivateRoute>
+        ),
       },
     ],
   },
-
-  //   {
-  //     path: "*", // Add a wildcard route for error handling if needed
-  //     element: <ErrorPage />,
-  //   },
 ]);
 
 export default router;
