@@ -5,6 +5,7 @@ import ButtonDefault from "../../component/button/button";
 import { IAuth } from "../../interface/IAuth";
 import { useAuthentificationStore } from "../../store/useAuthentificationStore";
 import EbsClient from "../../service/ebs/OracleClient";
+import Cookies from "js-cookie";
 
 function Login() {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -26,8 +27,13 @@ function Login() {
     });
 
     if (response && !error) {
-      actionLogin(authentification);
-      navigate("/");
+      console.log(response)
+      Cookies.set("token", (response.token), {
+        expires: 5 / 24, //5 jam
+      });
+
+      // actionLogin(authentification);
+      // navigate("/");
     } else {
       console.error("Login failed:", error);
     }

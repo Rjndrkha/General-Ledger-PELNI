@@ -7,6 +7,7 @@ import EbsClient from "../../service/ebs/OracleClient";
 import ShowCoa from "../../component/showpicture/showpicture_coa"; 
 import ShowComp from "../../component/showpicture/showpicture_comp";
 import * as XLSX from "xlsx";
+import Cookies from "js-cookie";
 
 interface IGeneralLedger {
   date: Date[];
@@ -70,9 +71,12 @@ function IndexGeneralLedger() {
   const [loading, setLoading] = useState<boolean>(false);
   const [isExport, setIsExport] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
+  
   const handleSubmit = async () => {
+    const token = Cookies.get("token") || ""
     const validationErrors: { [key: string]: string } = {};
+
+    console.log(token);
 
     if (generalLedger.date.length === 0) {
       validationErrors.date = "This field is required";
@@ -92,7 +96,7 @@ function IndexGeneralLedger() {
       startDate: generalLedger.date[0],
       endDate: generalLedger.date[1],
       ...generalLedger,
-    });
+    }, token as string);
 
     if (error) {
       setLoading(false);

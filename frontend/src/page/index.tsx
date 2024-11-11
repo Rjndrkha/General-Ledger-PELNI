@@ -1,6 +1,15 @@
-import React from "react";
+import Cookies from "js-cookie";
+import React, { useEffect } from "react";
 
 function Home() {
+
+  useEffect(() => {
+    const token = Cookies.get("token");
+    console.log(token);
+  }, []);
+
+  
+
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <div className="text-center mt-[-15%]">

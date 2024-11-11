@@ -7,6 +7,7 @@ import ButtonDefault from "../../component/button/button";
 import { IPerjadin } from "../../interface/IPerjadin";
 import EbsClient from "../../service/ebs/OracleClient";
 import Highlighter from "react-highlight-words";
+import Cookies from "js-cookie";
 
 type InputRef = GetRef<typeof Input>;
 type DataIndex = keyof IPerjadin;
@@ -22,9 +23,11 @@ const TablePerjalananDinas: React.FC<{ nama: string }> = ({ nama }) => {
   const getListPromotion = async () => {
     setLoading(true);
 
+    const token = Cookies.get("token") || "";
+
     const { error, errorMessage, response } = await EbsClient.GetAllSPJ({
       nama: nama,
-    });
+    }, token);
 
     if (error) {
       message.error(errorMessage);
