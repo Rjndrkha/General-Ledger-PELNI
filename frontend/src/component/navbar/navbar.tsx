@@ -16,21 +16,19 @@ function Navbar({
   const navigate = useNavigate();
   const { logout } = useAuthentificationStore();
 
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
   const handleLogout = () => {
     Cookies.remove("token");
     Cookies.remove("nama");
 
     navigate("/login");
   };
-
-  useEffect(() => {
-    const nama = Cookies.get("nama");
-
-    if (nama) {
-      Cookies.set("nama", nama, { expires: 5 / 24 });
-    }
-  }, []);
-
 
   const items: MenuProps["items"] = [
     {
@@ -66,7 +64,9 @@ function Navbar({
                 onClick={(e) => e.preventDefault()}
                 className="text-start"
               >
-                <p className="text-base font-semibold">Hello, {Cookies.get("nama")}!</p>
+                <p className="text-base font-semibold">
+                  Hello, {Cookies.get("nama")}!
+                </p>
                 <p className="text-xs"> </p>
               </button>
             </Dropdown>
