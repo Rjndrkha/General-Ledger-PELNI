@@ -5,6 +5,7 @@ import ButtonDefault from "../button/button";
 import { useAuthentificationStore } from "../../store/useAuthentificationStore";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import React, { useEffect } from "react";
 
 function Navbar({
   onClickHamburger,
@@ -21,6 +22,15 @@ function Navbar({
 
     navigate("/login");
   };
+
+  useEffect(() => {
+    const nama = Cookies.get("nama");
+
+    if (nama) {
+      Cookies.set("nama", nama, { expires: 5 / 24 });
+    }
+  }, []);
+
 
   const items: MenuProps["items"] = [
     {
