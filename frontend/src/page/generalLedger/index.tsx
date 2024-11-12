@@ -4,7 +4,7 @@ import ButtonDefault from "../../component/button/button";
 import DatePickerInput from "../../component/input/dateInput";
 import SwitchComponent from "../../component/switch/switch";
 import EbsClient from "../../service/ebs/OracleClient";
-import ShowCoa from "../../component/showpicture/showpicture_coa"; 
+import ShowCoa from "../../component/showpicture/showpicture_coa";
 import ShowComp from "../../component/showpicture/showpicture_comp";
 import * as XLSX from "xlsx";
 import Cookies from "js-cookie";
@@ -73,10 +73,8 @@ function IndexGeneralLedger() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   
   const handleSubmit = async () => {
-    const token = Cookies.get("token") || ""
+    const token = Cookies.get("token") || "";
     const validationErrors: { [key: string]: string } = {};
-
-    console.log(token);
 
     if (generalLedger.date.length === 0) {
       validationErrors.date = "This field is required";
@@ -111,9 +109,18 @@ function IndexGeneralLedger() {
   };
 
   const handleSwitch = (key: keyof IGeneralLedger) => {
+    setIsExport(false);
     setGeneralLedger((prevState) => ({
       ...prevState,
       [key]: !prevState[key],
+    }));
+  };
+
+  const handleInputChange = (key: keyof IGeneralLedger, value: any) => {
+    setIsExport(false);
+    setGeneralLedger((prevState) => ({
+      ...prevState,
+      [key]: value,
     }));
   };
 
@@ -162,9 +169,7 @@ function IndexGeneralLedger() {
             </label>
             <DatePickerInput
               value={generalLedger.date}
-              onChange={(value) =>
-                setGeneralLedger({ ...generalLedger, date: value })
-              }
+              onChange={(value) => handleInputChange("date", value)}
             />
             {errors.date && (
               <p className="text-red-500 text-[13px]">{errors.date}</p>
@@ -200,17 +205,13 @@ function IndexGeneralLedger() {
             <TextInput
               placeholder="ID Company 1"
               value={generalLedger.company1}  
-              onChange={(e) =>
-                setGeneralLedger({ ...generalLedger, company1: e })
-              }
+              onChange={(e) => handleInputChange("company1", e)}
             />
             <p className="text-sm font-bold">Between</p>
             <TextInput
               placeholder="ID Company 2"
               value={generalLedger.company2}
-              onChange={(e) =>
-                setGeneralLedger({ ...generalLedger, company2: e })
-              }
+              onChange={(e) => handleInputChange("company2", e)}
             />
           </div>
 
@@ -230,32 +231,21 @@ function IndexGeneralLedger() {
             <TextInput
               placeholder="ID Account 1"
               value={generalLedger.coa1}
-              onChange={(e) =>
-                setGeneralLedger({ ...generalLedger, coa1: e })
-              }
+              onChange={(e) => handleInputChange("coa1", e)}
             />
             <p className="text-sm font-bold">Between</p>
             <TextInput
               placeholder="ID Account 2"
               value={generalLedger.coa2}
-              onChange={(e) =>
-                setGeneralLedger({ ...generalLedger, coa2: e })
-              }
+              onChange={(e) => handleInputChange("coa2", e)}
             />
           </div>
 
           <ButtonDefault
-            className={!isExport ? "" : "hidden"}
-            text="Cari"
+            text={isExport ? "Download" : "Cari"}
             width="50%"
-            onClick={handleSubmit}
+            onClick={isExport ? downloadExcel : handleSubmit}
             loading={loading}
-          />
-          <ButtonDefault
-            className={isExport ? "" : "hidden"}
-            text="Download"
-            width="50%"
-            onClick={downloadExcel}
           />
         </div>
       </div>
