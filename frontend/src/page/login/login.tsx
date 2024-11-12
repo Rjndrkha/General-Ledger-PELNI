@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { message } from "antd";
 import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
 import { IAuth } from "../../interface/IAuth";
+import { useAuthentificationStore } from "../../store/useAuthentificationStore";
 import Cookies from "js-cookie";
 import PortalClient from "../../service/portal/PortalClient";
 
@@ -14,6 +15,15 @@ function Login() {
     password: "",
   });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  const { authentification: auth, login: actionLogin } = useAuthentificationStore();
 
   const login = async (e: any) => {
     e.preventDefault();
@@ -27,11 +37,12 @@ function Login() {
     if (response && response.token) {
       Cookies.set("nama", response.nama);
       Cookies.set("token", response.token, {
-        expires: 5 / 24,
+        expires: 5 / 24, //5 jam
       });
       navigate("/");
     } else {
-      message.error("Login failed");
+      message.error("Login gagal, periksa kembali username dan password!");
+      setIsSubmit(false);
     }
   };
 

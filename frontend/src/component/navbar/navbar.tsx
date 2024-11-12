@@ -5,6 +5,7 @@ import ButtonDefault from "../button/button";
 import { useAuthentificationStore } from "../../store/useAuthentificationStore";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import React, { useEffect } from "react";
 
 function Navbar({
   onClickHamburger,
@@ -34,7 +35,11 @@ function Navbar({
       key: "1",
       label: (
         <div className="h-fit flex">
-          <ButtonDefault text={"Logout"} width="100%" onClick={handleLogout} />
+          <ButtonDefault
+            text={"Logout"}
+            width="100%"
+            onClick={handleLogout}
+          />
         </div>
       ),
     },
