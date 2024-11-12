@@ -1,4 +1,3 @@
-//src/componet/showpicture/showpicture_coa.tsx
 import React, { useState } from 'react';
 import { Image } from 'antd';
 

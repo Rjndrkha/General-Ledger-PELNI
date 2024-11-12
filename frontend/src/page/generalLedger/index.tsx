@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { IGeneralLedger } from "../../interface/IGeneralLedger";
+import { LedgerItem } from "../../interface/LedgerItem";
 import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
 import DatePickerInput from "../../component/input/dateInput";
@@ -8,52 +10,7 @@ import ShowCoa from "../../component/showpicture/showpicture_coa";
 import ShowComp from "../../component/showpicture/showpicture_comp";
 import * as XLSX from "xlsx";
 import Cookies from "js-cookie";
-
-interface IGeneralLedger {
-  date: Date[];
-  withAdj: boolean;
-  withCompany: boolean;
-  company1: string;
-  company2: string;
-  withCOA: boolean;
-  coa1: string;
-  coa2: string;
-}
-
-interface LedgerItem {
-  TRANSACTION_DATE_FROM: string;
-  TRANSACTION_DATE_TO: string;
-  TANGGAL_PENARIKAN: string;
-  ACCOUNT: string;
-  ACCOUNT_DESCRIPTION: string;
-  SEGMENT1: string;
-  SEGMENT1_DESCRIPTION: string;
-  SEGMENT2: string;
-  SEGMENT2_DESCRIPTION: string;
-  SEGMENT3: string;
-  SEGMENT3_DESCRIPTION: string;
-  SEGMENT4: string;
-  SEGMENT4_DESCRIPTION: string;
-  SEGMENT5: string;
-  SEGMENT5_DESCRIPTION: string;
-  SEGMENT6: string;
-  SEGMENT6_DESCRIPTION: string;
-  SEGMENT7: string;
-  SEGMENT7_DESCRIPTION: string;
-  SEGMENT8: string;
-  SEGMENT8_DESCRIPTION: string;
-  SEGMENT9: string;
-  SEGMENT9_DESCRIPTION: string;
-  GL_DATE: string;
-  SOURCE: string;
-  CATEGORY: string;
-  DOCUMENT_NUMBER: string;
-  CURRENCY: string;
-  LINE_DESCRIPTION: string;
-  NILAI_DEBIT: number;
-  NILAI_CREDIT: number;
-  BALANCE: number;
-}
+import { message } from "antd";
 
 function IndexGeneralLedger() {
   const [generalLedger, setGeneralLedger] = useState<IGeneralLedger>({
@@ -90,7 +47,7 @@ function IndexGeneralLedger() {
     }
 
     setLoading(true);
-    const { error, errorMessage, response } = await EbsClient.GetGeneralLedger({
+    const { error, errorMessage, response } = await EbsClient.PostGeneralLedger({
       startDate: generalLedger.date[0],
       endDate: generalLedger.date[1],
       ...generalLedger,
@@ -98,7 +55,7 @@ function IndexGeneralLedger() {
 
     if (error) {
       setLoading(false);
-      alert(errorMessage);
+      message.error("Error");
     }
 
     if (response) {

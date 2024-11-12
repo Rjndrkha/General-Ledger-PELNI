@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { message } from "antd";
 import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
 import { IAuth } from "../../interface/IAuth";
 import { useAuthentificationStore } from "../../store/useAuthentificationStore";
 import EbsClient from "../../service/ebs/OracleClient";
 import Cookies from "js-cookie";
+import PortalClient from "../../service/portal/PortalClient";
 
 function Login() {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -29,7 +31,7 @@ function Login() {
     e.preventDefault();
     setIsSubmit(true);
 
-    const { response, error } = await EbsClient.GetLogin({
+    const { response, error } = await PortalClient.GetLogin({
       username: authentification.username,
       password: authentification.password,
     });
@@ -41,7 +43,8 @@ function Login() {
       });
       navigate("/"); 
     } else {
-      console.error("Login failed:", error);
+      // console.error("Login failed:", error);
+      message.error("Login failed");
     }
   };
 

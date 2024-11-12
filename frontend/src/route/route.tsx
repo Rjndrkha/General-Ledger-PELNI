@@ -5,6 +5,7 @@ import IndexCheckSPJ from "../page/spjPerjadin";
 import IndexGeneralLedger from "../page/generalLedger";
 import Login from "../page/login/login";
 import PrivateRoute from "./privateroute";
+import IndexNotFound from "../page/NotFound";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,12 @@ const router = createBrowserRouter([
       },
     ],
   },
+
+  {
+    path: "*",
+    element: <IndexNotFound />,
+  }
 ]);
 
 export default router;
+

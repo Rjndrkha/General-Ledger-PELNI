@@ -5,7 +5,6 @@ function Home() {
 
   useEffect(() => {
     const token = Cookies.get("token");
-    console.log(token);
   }, []);
 
   

@@ -25,12 +25,12 @@ const TablePerjalananDinas: React.FC<{ nama: string }> = ({ nama }) => {
 
     const token = Cookies.get("token") || "";
 
-    const { error, errorMessage, response } = await EbsClient.GetAllSPJ({
+    const { error, errorMessage, response } = await EbsClient.PostAllSPJ({
       nama: nama,
     }, token);
 
     if (error) {
-      message.error(errorMessage);
+      message.error("Error");
       setLoading(false);
     }
 

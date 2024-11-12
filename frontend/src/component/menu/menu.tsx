@@ -65,10 +65,6 @@ const SideMenu: React.FC = () => {
 
   const items: MenuItem[] = getMenuItems(menuItems);
 
-  useEffect(() => {
-    console.log(openKeys);
-  }, [openKeys]);
-
   return (
     <>
       {/* <img src={ASSETS.LOGOMF} alt="logo" className="hidden md:block" /> */}
