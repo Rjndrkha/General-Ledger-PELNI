@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { message } from "antd";
 import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
 import { IAuth } from "../../interface/IAuth";
 import { useAuthentificationStore } from "../../store/useAuthentificationStore";
-import EbsClient from "../../service/ebs/OracleClient";
 import Cookies from "js-cookie";
 import PortalClient from "../../service/portal/PortalClient";
 
@@ -13,15 +12,8 @@ function Login() {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  // Cek ada token di cookie
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (token) {
-      navigate("/"); // Redirect ke home jika ada token
-    }
-  }, [navigate]);
-
-  const { authentification: auth, login: actionLogin } = useAuthentificationStore();
+  const { authentification: auth, login: actionLogin } =
+    useAuthentificationStore();
   const [authentification, setAuthentification] = useState<IAuth>({
     username: auth.username,
     password: auth.password,
@@ -39,20 +31,13 @@ function Login() {
     if (response && !error) {
       Cookies.set("nama", response.nama);
       Cookies.set("token", response.token, {
-        expires: 5 / 24, //5 jam
+        expires: 5 / 24,
       });
-      navigate("/"); 
+      navigate("/");
     } else {
-      // console.error("Login failed:", error);
       message.error("Login failed");
     }
   };
-
-  const logout = () => {
-    Cookies.remove("token"); 
-    navigate("/login");
-  };
-  
 
   return (
     <div className="w-auto h-screen bg-gradient-to-br from-cyan-200 to-blue-300 overflow-hidden">

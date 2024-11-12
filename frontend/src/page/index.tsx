@@ -1,18 +1,10 @@
-import Cookies from "js-cookie";
-import React, { useEffect } from "react";
-
 function Home() {
-
-  useEffect(() => {
-    const token = Cookies.get("token");
-  }, []);
-
-  
-
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <div className="text-center mt-[-15%]">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Welcome to General Ledger Portal</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">
+          Welcome to General Ledger Portal
+        </h1>
         <p className="text-xl text-gray-600 mb-8">
           Simplifying tracking and reporting.
         </p>
@@ -25,5 +17,3 @@ function Home() {
 }
 
 export default Home;
-
-

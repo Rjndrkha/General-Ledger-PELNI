@@ -4,41 +4,38 @@ import Home from "../page";
 import IndexCheckSPJ from "../page/spjPerjadin";
 import IndexGeneralLedger from "../page/generalLedger";
 import Login from "../page/login/login";
-import PrivateRoute from "./privateroute";
 import IndexNotFound from "../page/NotFound";
+import { PrivateRoute } from "./privateroute";
 
 const router = createBrowserRouter([
   {
     path: "/login",
-    element: <Login />
+    element: (
+      <PrivateRoute>
+        <Login />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/",
-    element: <LayoutUser />,
+    element: (
+      <PrivateRoute>
+        <LayoutUser />
+      </PrivateRoute>
+    ),
+
     children: [
       {
         path: "",
-        element: (
-          <PrivateRoute>
-            <Home />
-          </PrivateRoute>
-        ),
+        element: <Home />,
       },
       {
         path: "cek-perjalanan-dinas",
-        element: (
-          <PrivateRoute>
-            <IndexCheckSPJ />
-          </PrivateRoute>
-        ),
+        element: <IndexCheckSPJ />,
       },
       {
         path: "penarikan-general-ledger",
-        element: (
-          <PrivateRoute>
-            <IndexGeneralLedger />
-          </PrivateRoute>
-        ),
+        element: <IndexGeneralLedger />,
       },
     ],
   },
@@ -46,8 +43,7 @@ const router = createBrowserRouter([
   {
     path: "*",
     element: <IndexNotFound />,
-  }
+  },
 ]);
 
 export default router;
-
