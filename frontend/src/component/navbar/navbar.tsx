@@ -15,6 +15,13 @@ function Navbar({
   const navigate = useNavigate();
   const { logout } = useAuthentificationStore();
 
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
   const handleLogout = () => {
     Cookies.remove("token");
     Cookies.remove("nama");

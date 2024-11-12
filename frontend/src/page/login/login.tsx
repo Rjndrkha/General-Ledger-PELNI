@@ -4,20 +4,16 @@ import { message } from "antd";
 import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
 import { IAuth } from "../../interface/IAuth";
-import { useAuthentificationStore } from "../../store/useAuthentificationStore";
 import Cookies from "js-cookie";
 import PortalClient from "../../service/portal/PortalClient";
 
 function Login() {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const navigate = useNavigate();
-
-  const { authentification: auth, login: actionLogin } =
-    useAuthentificationStore();
   const [authentification, setAuthentification] = useState<IAuth>({
-    username: auth.username,
-    password: auth.password,
+    username: "",
+    password: "",
   });
+  const navigate = useNavigate();
 
   const login = async (e: any) => {
     e.preventDefault();
@@ -28,7 +24,7 @@ function Login() {
       password: authentification.password,
     });
 
-    if (response && !error) {
+    if (response && response.token) {
       Cookies.set("nama", response.nama);
       Cookies.set("token", response.token, {
         expires: 5 / 24,
