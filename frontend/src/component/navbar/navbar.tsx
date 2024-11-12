@@ -16,13 +16,6 @@ function Navbar({
   const navigate = useNavigate();
   const { logout } = useAuthentificationStore();
 
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (!token) {
-      navigate("/login");
-    }
-  }, [navigate]);
-
   const handleLogout = () => {
     Cookies.remove("token");
     Cookies.remove("nama");
@@ -35,11 +28,7 @@ function Navbar({
       key: "1",
       label: (
         <div className="h-fit flex">
-          <ButtonDefault
-            text={"Logout"}
-            width="100%"
-            onClick={handleLogout}
-          />
+          <ButtonDefault text={"Logout"} width="100%" onClick={handleLogout} />
         </div>
       ),
     },

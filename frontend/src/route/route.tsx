@@ -15,6 +15,7 @@ const router = createBrowserRouter([
         <Login />
       </PrivateRoute>
     ),
+    index: true,
   },
   {
     path: "/",
