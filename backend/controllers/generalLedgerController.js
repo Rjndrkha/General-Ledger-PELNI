@@ -96,8 +96,8 @@ const generalLedgerControllers = async (req, res) => {
     gjh.ledger_id = 2023
     AND trunc( gjh.default_effective_date ) BETWEEN '${startDate}' AND  '${endDate}'
     AND (
-      ('${withAdj}' = 'false')
-      OR ('${withAdj}' = 'true' AND substr(upper(gjh.period_name),1,3) NOT IN ('ADJ', 'AUD'))
+      ('${withAdj}' = 'true')
+      OR ('${withAdj}' = 'false' AND substr(upper(gjh.period_name),1,3) NOT IN ('ADJ', 'AUD'))
     )
     AND gjh.actual_flag = 'A'
 
