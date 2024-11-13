@@ -111,12 +111,12 @@ function IndexGeneralLedger() {
       generalLedger.date[1] instanceof Date
         ? generalLedger.date[1]
         : new Date(generalLedger.date[1]);
-
+  
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
       message.error("Invalid date(s) provided.");
       return;
     }
-
+  
     const formattedStartDateGB = startDate.toLocaleDateString("en-GB", {
       year: "numeric",
       month: "long",
@@ -127,18 +127,67 @@ function IndexGeneralLedger() {
       month: "long",
       day: "2-digit",
     });
-
-    const segment1Value = data.length > 0 ? data[0].SEGMENT1 : "";
+  
     const segment1DescriptionValue = data.length > 0 ? data[0].SEGMENT1_DESCRIPTION : "";
-    const accountValue = data.length > 0 ? data[0].ACCOUNT : "";
-    const accountDescriptionValue = data.length > 0 ? data[0].ACCOUNT_DESCRIPTION : "";
-
-    const filename = `DATA GL ${segment1Value} ${segment1DescriptionValue} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
-
+  
+    let filename = `DATA GL ${segment1DescriptionValue} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
+  
+    if (generalLedger.withCompany && generalLedger.company1 && generalLedger.company2) {
+      if (generalLedger.company1 === generalLedger.company2) {
+        filename = `DATA GL ${segment1DescriptionValue} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
+      } else {
+        filename = `DATA GL ${generalLedger.company1}-${generalLedger.company2} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
+      }
+    }
+  
+    if (generalLedger.withCOA && generalLedger.coa1 && generalLedger.coa2) {
+      if (generalLedger.coa1 === generalLedger.coa2) {
+        filename = `DATA GL ${generalLedger.coa1} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
+      } else {
+        filename = `DATA GL ${generalLedger.coa1}-${generalLedger.coa2} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
+      }
+    }
+  
+    if (
+      generalLedger.withCompany &&
+      generalLedger.withCOA &&
+      generalLedger.company1 !== generalLedger.company2 &&
+      generalLedger.coa1 !== generalLedger.coa2
+    ) {
+      filename = `DATA GL ${generalLedger.company1}-${generalLedger.company2} & ${generalLedger.coa1}-${generalLedger.coa2} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
+    }
+  
+    if (
+      generalLedger.withCompany &&
+      generalLedger.company1 === generalLedger.company2 &&
+      generalLedger.withCOA &&
+      generalLedger.coa1 === generalLedger.coa2
+    ) {
+      filename = `DATA GL ${generalLedger.company1} & ${generalLedger.coa1} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
+    }
+  
+    if (
+      generalLedger.withCompany &&
+      generalLedger.company1 === generalLedger.company2 &&
+      generalLedger.withCOA &&
+      generalLedger.coa1 !== generalLedger.coa2
+    ) {
+      filename = `DATA GL ${generalLedger.company1} & ${generalLedger.coa1}-${generalLedger.coa2} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
+    }
+  
+    if (
+      generalLedger.withCompany &&
+      generalLedger.company1 !== generalLedger.company2 &&
+      generalLedger.withCOA &&
+      generalLedger.coa1 === generalLedger.coa2
+    ) {
+      filename = `DATA GL ${generalLedger.company1}-${generalLedger.company2} & ${generalLedger.coa1} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
+    }
+  
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Ledger Data");
-
+  
     XLSX.writeFile(workbook, filename);
   };
 
@@ -223,7 +272,8 @@ function IndexGeneralLedger() {
               <ShowCoa />
             </div>
           </div>
-          <div className="flex flex-row items-center gap-2">
+          <div className="flex flex-row items-center gap-2" >
+
             <div className="flex flex-col">
               <TextInput
                 placeholder="ID Account 1"

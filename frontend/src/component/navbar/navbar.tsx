@@ -48,11 +48,8 @@ function Navbar({
 
         <div className="ml-[2.5rem] md:ml-0 w-full h-full flex items-center justify-start md:justify-center relative">
           <div className="hidden md:block absolute right-5">
-            <Dropdown 
-              menu={{ items }}
-              overlayStyle={{ width: "100px" }}
-              >
-                <button 
+            <Dropdown menu={{ items }}>
+              <button
                 onClick={(e) => e.preventDefault()}
                 className="text-start"
               >
