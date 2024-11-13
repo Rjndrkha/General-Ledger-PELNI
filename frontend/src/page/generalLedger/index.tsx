@@ -28,7 +28,7 @@ function IndexGeneralLedger() {
   const [loading, setLoading] = useState<boolean>(false);
   const [isExport, setIsExport] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  
+
   const handleSubmit = async () => {
     const token = Cookies.get("token") || "";
     const validationErrors: { [key: string]: string } = {};
@@ -40,6 +40,24 @@ function IndexGeneralLedger() {
       validationErrors.withAdj = "This switch is required";
     }
 
+    if (generalLedger.withCompany) {
+      if (!generalLedger.company1) {
+        validationErrors.company1 = "Please Fill This Field!";
+      }
+      if (!generalLedger.company2) {
+        validationErrors.company2 = "Please Fill This Field!";
+      }
+    }
+
+    if (generalLedger.withCOA) {
+      if (!generalLedger.coa1) {
+        validationErrors.coa1 = "Please Fill This Field!";
+      }
+      if (!generalLedger.coa2) {
+        validationErrors.coa2 = "Please Fill This Field!";
+      }
+    }
+
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
@@ -47,11 +65,14 @@ function IndexGeneralLedger() {
     }
 
     setLoading(true);
-    const { error, errorMessage, response } = await EbsClient.PostGeneralLedger({
-      startDate: generalLedger.date[0],
-      endDate: generalLedger.date[1],
-      ...generalLedger,
-    }, token as string);
+    const { error, errorMessage, response } = await EbsClient.PostGeneralLedger(
+      {
+        startDate: generalLedger.date[0],
+        endDate: generalLedger.date[1],
+        ...generalLedger,
+      },
+      token as string
+    );
 
     if (error) {
       setLoading(false);
@@ -82,39 +103,45 @@ function IndexGeneralLedger() {
   };
 
   const downloadExcel = () => {
-    const startDate = generalLedger.date[0] instanceof Date ? generalLedger.date[0] : new Date(generalLedger.date[0]);
-    const endDate = generalLedger.date[1] instanceof Date ? generalLedger.date[1] : new Date(generalLedger.date[1]);
-  
+    const startDate =
+      generalLedger.date[0] instanceof Date
+        ? generalLedger.date[0]
+        : new Date(generalLedger.date[0]);
+    const endDate =
+      generalLedger.date[1] instanceof Date
+        ? generalLedger.date[1]
+        : new Date(generalLedger.date[1]);
+
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      console.error("Invalid date(s) provided.");
+      message.error("Invalid date(s) provided.");
       return;
     }
-    
+
     const formattedStartDateGB = startDate.toLocaleDateString("en-GB", {
-      year: 'numeric',
-      month: 'long',
-      day: '2-digit'
+      year: "numeric",
+      month: "long",
+      day: "2-digit",
     });
     const formattedEndDateGB = endDate.toLocaleDateString("en-GB", {
-      year: 'numeric',
-      month: 'long',
-      day: '2-digit'
+      year: "numeric",
+      month: "long",
+      day: "2-digit",
     });
 
     const segment1Value = data.length > 0 ? data[0].SEGMENT1 : "";
     const segment1DescriptionValue = data.length > 0 ? data[0].SEGMENT1_DESCRIPTION : "";
-    const accountValue = data.length > 0 ? data[0].ACCOUNT : ""; 
-    const accountDescriptionValue = data.length > 0 ? data[0].ACCOUNT_DESCRIPTION : ""; 
- 
-    const filename = `DATA GL ${segment1Value} ${segment1DescriptionValue} ${accountValue} ${accountDescriptionValue} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
-  
+    const accountValue = data.length > 0 ? data[0].ACCOUNT : "";
+    const accountDescriptionValue = data.length > 0 ? data[0].ACCOUNT_DESCRIPTION : "";
+
+    const filename = `DATA GL ${segment1Value} ${segment1DescriptionValue} PERIODE ${formattedStartDateGB} - ${formattedEndDateGB}.xlsx`;
+
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Ledger Data");
-  
+
     XLSX.writeFile(workbook, filename);
   };
-  
+
   return (
     <>
       <div className="w-auto h-full flex flex-col gap-3 m-5">
@@ -157,19 +184,31 @@ function IndexGeneralLedger() {
               <ShowComp />
             </div>
           </div>
-          
+
           <div className="flex flex-row items-center gap-2">
-            <TextInput
-              placeholder="ID Company 1"
-              value={generalLedger.company1}  
-              onChange={(e) => handleInputChange("company1", e)}
-            />
+            <div className="flex flex-col">
+              <TextInput
+                placeholder="ID Company 1"
+                value={generalLedger.company1}
+                onChange={(e) => handleInputChange("company1", e)}
+                disabled={!generalLedger.withCompany}
+              />
+              {errors.company1 && (
+                <p className="text-red-500 text-[13px]">{errors.company1}</p>
+              )}
+            </div>
             <p className="text-sm font-bold">Between</p>
-            <TextInput
-              placeholder="ID Company 2"
-              value={generalLedger.company2}
-              onChange={(e) => handleInputChange("company2", e)}
-            />
+            <div className="flex flex-col">
+              <TextInput
+                placeholder="ID Company 2"
+                value={generalLedger.company2}
+                onChange={(e) => handleInputChange("company2", e)}
+                disabled={!generalLedger.withCompany}
+              />
+              {errors.company2 && (
+                <p className="text-red-500 text-[13px]">{errors.company2}</p>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-row items-center gap-3">
@@ -185,17 +224,31 @@ function IndexGeneralLedger() {
             </div>
           </div>
           <div className="flex flex-row items-center gap-2">
-            <TextInput
-              placeholder="ID Account 1"
-              value={generalLedger.coa1}
-              onChange={(e) => handleInputChange("coa1", e)}
-            />
+            <div className="flex flex-col">
+              <TextInput
+                placeholder="ID Account 1"
+                value={generalLedger.coa1}
+                onChange={(e) => handleInputChange("coa1", e)}
+                disabled={!generalLedger.withCOA}
+              />
+              {errors.coa1 && (
+                <p className="text-red-500 text-[13px]">{errors.coa1}</p>
+              )}
+            </div>
+
             <p className="text-sm font-bold">Between</p>
-            <TextInput
-              placeholder="ID Account 2"
-              value={generalLedger.coa2}
-              onChange={(e) => handleInputChange("coa2", e)}
-            />
+
+            <div className="flex flex-col">
+              <TextInput
+                placeholder="ID Account 2"
+                value={generalLedger.coa2}
+                onChange={(e) => handleInputChange("coa2", e)}
+                disabled={!generalLedger.withCOA}
+              />
+              {errors.coa2 && (
+                <p className="text-red-500 text-[13px]">{errors.coa2}</p>
+              )}
+            </div>
           </div>
 
           <ButtonDefault

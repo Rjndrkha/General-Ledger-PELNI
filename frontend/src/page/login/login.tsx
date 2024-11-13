@@ -10,6 +10,7 @@ import PortalClient from "../../service/portal/PortalClient";
 
 function Login() {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [authentification, setAuthentification] = useState<IAuth>({
     username: "",
     password: "",
@@ -28,6 +29,7 @@ function Login() {
   const login = async (e: any) => {
     e.preventDefault();
     setIsSubmit(true);
+    setLoading(true);
 
     const { response, error } = await PortalClient.GetLogin({
       username: authentification.username,
@@ -44,6 +46,8 @@ function Login() {
       message.error("Login gagal, periksa kembali username dan password!");
       setIsSubmit(false);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -100,6 +104,7 @@ function Login() {
                 text={"Masuk"}
                 onClick={() => setIsSubmit(true)}
                 htmlType={"submit"}
+                loading={loading}
               />
             </div>
           </form>
