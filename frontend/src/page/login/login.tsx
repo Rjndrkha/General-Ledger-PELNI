@@ -57,10 +57,10 @@ function Login() {
           <div className="hidden md:block w-full max-w-2xl">
             <div className="flex flex-col items-center justify-center">
               <h1 className="font-semibold text-3xl mt-5">
-                General Ledger Portal
+                Portal Penarikan Data
               </h1>
               <p className="text-lg">
-                Data Extraction System IT Division PELNI
+                Data Extraction System Enterprise IT Division PELNI
               </p>
             </div>
           </div>

@@ -236,6 +236,18 @@ const TablePerjalananDinas: React.FC<{ nama: string }> = ({ nama }) => {
       // },
       ...getColumnSearchProps("DESCRIPTION"),
     },
+    {
+      title: "PAYMENT STATUS",
+      key: "PAYMENT_STATUS",
+      render: (_, record) => {
+        if (record.PAYMENT_STATUS_FLAG === "Y") return "Paid";
+        
+        if (record.INV_STATUS === "Validated" && (!record.PAYMENT_STATUS_FLAG || record.PAYMENT_STATUS_FLAG === "N")) {
+          return "Waiting Payment";
+        }
+        return "Waiting Validated";
+      },
+    },
     // {
     //   align: "center",
     //   title: "Action",
