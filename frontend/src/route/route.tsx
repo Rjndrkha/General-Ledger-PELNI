@@ -5,7 +5,7 @@ import IndexCheckSPJ from "../page/spjPerjadin";
 import IndexGeneralLedger from "../page/generalLedger";
 import Login from "../page/login/login";
 import IndexNotFound from "../page/NotFound";
-import { PrivateRoute } from "./privateroute";
+import { PrivateGLRoute, PrivateRoute } from "./privateroute";
 
 const router = createBrowserRouter([
   {
@@ -36,7 +36,11 @@ const router = createBrowserRouter([
       },
       {
         path: "penarikan-general-ledger",
-        element: <IndexGeneralLedger />,
+        element: (
+          <PrivateGLRoute>
+            <IndexGeneralLedger />,
+          </PrivateGLRoute>
+        ),
       },
     ],
   },

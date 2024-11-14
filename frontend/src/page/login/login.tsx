@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { message } from "antd";
 import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
 import { IAuth } from "../../interface/IAuth";
-import { useAuthentificationStore } from "../../store/useAuthentificationStore";
 import Cookies from "js-cookie";
 import PortalClient from "../../service/portal/PortalClient";
 
@@ -17,15 +16,6 @@ function Login() {
   });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (token) {
-      navigate("/");
-    }
-  }, [navigate]);
-
-  const { authentification: auth, login: actionLogin } = useAuthentificationStore();
-
   const login = async (e: any) => {
     e.preventDefault();
     setIsSubmit(true);
@@ -37,13 +27,23 @@ function Login() {
     });
 
     if (response && response.token) {
-      Cookies.set("nama", response.nama);
-      Cookies.set("token", response.token, {
-        expires: 5 / 24, //5 jam
+      Cookies.set("nama", response.nama, {
+        expires: 1,
       });
+      Cookies.set("token", response.token, {
+        expires: 1,
+      });
+      Cookies.set("nrp", response.nrp, {
+        expires: 1,
+      });
+
+      message.success("Login Berhasil!");
       navigate("/");
-    } else {
-      message.error("Login gagal, periksa kembali username dan password!");
+      setIsSubmit(false);
+    }
+
+    if (!response.success) {
+      message.error(response?.error);
       setIsSubmit(false);
     }
 
@@ -57,17 +57,17 @@ function Login() {
           <div className="hidden md:block w-full max-w-2xl">
             <div className="flex flex-col items-center justify-center">
               <h1 className="font-semibold text-3xl mt-5">
-                Portal Penarikan Data
+                Portal Enterprise IT Division PELNI
               </h1>
               <p className="text-lg">
-                Data Extraction System Enterprise IT Division PELNI
+                Pusat Penarikan Data Enterprise IT Division PELNI
               </p>
             </div>
           </div>
 
           <form onSubmit={login}>
             <div className="flex flex-col gap-3 items-center justify-start md:justify-center p-5 rounded-3xl md:rounded-xl bg-white w-screen md:w-96 h-screen md:h-[20rem]">
-              <h1 className="font-semibold">Login</h1>
+              <h1 className="font-semibold text-xl">Login Using Portal LDAP</h1>
 
               <div className="w-full">
                 <p className="text-sm font-semibold">Username</p>
