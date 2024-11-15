@@ -38,7 +38,7 @@ const router = createBrowserRouter([
         path: "penarikan-general-ledger",
         element: (
           <PrivateGLRoute>
-            <IndexGeneralLedger />,
+            <IndexGeneralLedger />
           </PrivateGLRoute>
         ),
       },
