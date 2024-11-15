@@ -41,7 +41,7 @@ function LayoutUser() {
       <div className="mt-16 w-full min-h-[100vh] flex justify-center">
         <main className="w-full max-w-[85rem] flex flex-col md:flex-row relative border">
           <section
-            className={`z-10 bg-white  h-full w-full md:w-[10rem] lg:w-[15rem] absolute left-0 ${
+            className={`z-10 h-full w-full md:w-[10rem] lg:w-[15rem] absolute left-0 ${
               isSidebarOpen ? "translate-x-0 w-[80%]" : "-translate-x-full"
             } md:translate-x-0 transition-transform duration-300 ease-in-out`}
           >
@@ -50,7 +50,7 @@ function LayoutUser() {
             </div>
           </section>
 
-          <section className=" w-full md:ml-[10rem] lg:ml-[16rem] relative">
+          <section className=" w-full md:ml-[10rem] lg:ml-[16rem] relative ">
             <Outlet />
           </section>
         </main>
