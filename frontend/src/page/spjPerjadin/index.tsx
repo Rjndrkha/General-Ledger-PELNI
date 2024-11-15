@@ -9,26 +9,34 @@ function IndexCheckSPJ() {
   const [isSubmit, setSubmit] = React.useState<boolean>(false);
   const [validate, setValidate] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);  
+  const [error, setError] = React.useState<string>("");
 
   useEffect(() => {
     setValidate(false);
+    setError("");
   }, [nama]);
 
   const handleSearch = () => {
-    if (nama) {
+    const nameRegex = /^[^\s]+$/; 
+
+    if (!nama) {
+      setSubmit(true);
+      setError("Please fill this field!");
+    } else if (!nameRegex.test(nama)) {
+      message.error("Input nama hanya boleh satu kata");
+    } else {
+      setError("");
       setValidate(true);
       setSubmit(false);
       setLoading(true);
-     
+
       const loadingTime = 2000;
       setTimeout(() => {
         setLoading(false);  
       }, loadingTime);
-    } else {
-      setSubmit(true);
     }
   };
-  
+
   return (
     <div className="w-auto h-full flex flex-col gap-3 m-5">
       <h1>Cek Status SPJ Perjalanan Dinas</h1>
@@ -53,11 +61,6 @@ function IndexCheckSPJ() {
               loading={loading}
             />
           </div>
-          {isSubmit && !nama && (
-            <p style={{ color: "red", fontSize: "13px" }}>
-              Please Fill This Field!
-            </p>
-          )}
         </div>
       </form>
 
