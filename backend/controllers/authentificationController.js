@@ -24,7 +24,7 @@ const AuthLogin = async (username, password) => {
       }
 
       const token = jwt.sign(response.data.data, process.env.JWT_SECRET, {
-        expiresIn: "5h",
+        expiresIn: "1d",
       });
 
       return {
