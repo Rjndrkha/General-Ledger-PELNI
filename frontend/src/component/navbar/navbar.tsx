@@ -13,6 +13,8 @@ function Navbar({
 }: any) {
   const navigate = useNavigate();
 
+  const nama = atob(Cookies.get("nama")|| "")
+
   const handleLogout = () => {
     message.success("Logout Berhasil!");
     Cookies.remove("token");
@@ -53,7 +55,7 @@ function Navbar({
           <div className="hidden md:block absolute right-5">
             <Dropdown menu={{ items }}>
               <p className="text-base font-semibold">
-                Hello, {Cookies.get("nama")}!
+                Hello, {nama}!
               </p>
             </Dropdown>
           </div>

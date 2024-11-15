@@ -26,7 +26,8 @@ export const PrivateGLRoute: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const navigate = useNavigate();
-  const nrp = Cookies.get("nrp");
+  const nrp = atob(Cookies.get("nrp")|| "")
+  // const nrp = Cookies.get("nrp");
   const allowedUsers = "16391,012345,15713,8738,8656";
   const split = allowedUsers.split(",");
 

@@ -27,13 +27,13 @@ function Login() {
     });
 
     if (response && response.token) {
-      Cookies.set("nama", response.nama, {
+      Cookies.set("nama", btoa(response.nama), {
         expires: 1,
       });
       Cookies.set("token", response.token, {
         expires: 1,
       });
-      Cookies.set("nrp", response.nrp, {
+      Cookies.set("nrp", btoa(response.nrp), {
         expires: 1,
       });
 
