@@ -12,7 +12,7 @@ function IndexCheckSPJ() {
 
   useEffect(() => {
     setValidate(false);
-  }, [nama]);
+  }, [nama,validate]);
 
   const handleSearch = () => {
     setLoading(true);
@@ -24,6 +24,7 @@ function IndexCheckSPJ() {
     }
 
     if (nama) {
+      setLoading(false)
       return setValidate(true);
     }
 

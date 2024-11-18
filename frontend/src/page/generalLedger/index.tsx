@@ -41,24 +41,6 @@ function IndexGeneralLedger() {
       validationErrors.withAdj = "This switch is required";
     }
 
-    // if (generalLedger.withCompany) {
-    //   if (!generalLedger.company1) {
-    //     validationErrors.company1 = "Please Fill This Field!";
-    //   }
-    //   if (!generalLedger.company2) {
-    //     validationErrors.company2 = "Please Fill This Field!";
-    //   }
-    // }
-
-    // if (generalLedger.withCOA) {
-    //   if (!generalLedger.coa1) {
-    //     validationErrors.coa1 = "Please Fill This Field!";
-    //   }
-    //   if (!generalLedger.coa2) {
-    //     validationErrors.coa2 = "Please Fill This Field!";
-    //   }
-    // }
-
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
@@ -75,15 +57,18 @@ function IndexGeneralLedger() {
       token as string
     );
 
-    if (error) {
-      setLoading(false);
-      message.error("Error");
-    }
+    setLoading(false);
 
-    if (response) {
-      setLoading(false);
-      setData(response.data!);
-      setIsExport(true);
+    if (error) {
+      message.error("Error");
+    } else if (response) {
+      if (!response.data || response.data.length === 0) {
+        message.error("Data tidak tersedia!");
+        setIsExport(false); 
+      } else {
+        setData(response.data!);
+        setIsExport(true); 
+      }
     }
   };
 
@@ -216,9 +201,6 @@ function IndexGeneralLedger() {
                 }}
                 disabled={!generalLedger.withCompany}
               />
-              {/* {errors.coa2 && (
-                <p className="text-red-500 text-[13px]">{errors.company1}</p>
-              )} */}
             </div>
             <p className="text-sm font-bold">Between</p>
             <div className="flex flex-col">
@@ -232,9 +214,6 @@ function IndexGeneralLedger() {
                 }}
                 disabled={!generalLedger.withCompany}
               />
-              {/* {errors.coa2 && (
-                <p className="text-red-500 text-[13px]">{errors.company2}</p>
-              )} */}
             </div>
           </div>
 
@@ -262,9 +241,6 @@ function IndexGeneralLedger() {
                 }}
                 disabled={!generalLedger.withCOA}
               />
-              {/* {errors.coa2 && (
-                <p className="text-red-500 text-[13px]">{errors.coa1}</p>
-              )} */}
             </div>
 
             <p className="text-sm font-bold">Between</p>
@@ -280,9 +256,6 @@ function IndexGeneralLedger() {
                 }}
                 disabled={!generalLedger.withCOA}
               />
-              {/* {errors.coa2 && (
-                <p className="text-red-500 text-[13px]">{errors.coa2}</p>
-              )} */}
             </div>
           </div>
 
