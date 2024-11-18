@@ -210,7 +210,7 @@ function IndexGeneralLedger() {
                 placeholder="ID Company 1"
                 value={generalLedger.company1}
                 onChange={(value: string) => {
-                  if (/^\d*$/.test(value)) {
+                  if (/^\d*$/.test(value) && value.length <= 4) {
                     handleInputChange("company1", value);
                   }
                 }}
@@ -226,7 +226,7 @@ function IndexGeneralLedger() {
                 placeholder="ID Company 2"
                 value={generalLedger.company2}
                 onChange={(value: string) => {
-                  if (/^\d*$/.test(value)) {
+                  if (/^\d*$/.test(value) && value.length <= 4) {
                     handleInputChange("company2", value);
                   }
                 }}
@@ -256,7 +256,7 @@ function IndexGeneralLedger() {
                 placeholder="ID Account 1"
                 value={generalLedger.coa1}
                 onChange={(value: string) => {
-                  if (/^\d*$/.test(value)) {
+                  if (/^\d*$/.test(value) && value.length <= 4) {
                     handleInputChange("coa1", value);
                   }
                 }}
@@ -274,7 +274,7 @@ function IndexGeneralLedger() {
                 placeholder="ID Account 2"
                 value={generalLedger.coa2}
                 onChange={(value: string) => {
-                  if (/^\d*$/.test(value)) {
+                  if (/^\d*$/.test(value) && value.length <= 4) {
                     handleInputChange("coa2", value);
                   }
                 }}
