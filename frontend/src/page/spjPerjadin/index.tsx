@@ -15,7 +15,6 @@ function IndexCheckSPJ() {
   }, [nama]);
 
   const handleSearch = () => {
-    setLoading(true);
     setSubmit(true);
 
     if (!nama || nama.includes(" ")) {
@@ -26,8 +25,6 @@ function IndexCheckSPJ() {
     if (nama) {
       return setValidate(true);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -63,7 +60,13 @@ function IndexCheckSPJ() {
         </div>
       </form>
 
-      {validate && <TablePerjalananDinas nama={nama} />}
+      {validate && (
+        <TablePerjalananDinas
+          nama={nama}
+          loading={loading}
+          setLoading={setLoading}
+        />
+      )}
     </div>
   );
 }

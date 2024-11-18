@@ -12,9 +12,12 @@ import Cookies from "js-cookie";
 type InputRef = GetRef<typeof Input>;
 type DataIndex = keyof IPerjadin;
 
-const TablePerjalananDinas: React.FC<{ nama: string }> = ({ nama }) => {
+const TablePerjalananDinas: React.FC<{
+  nama: string;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
+}> = ({ nama, loading, setLoading }) => {
   const [promotion, setPromotion] = useState<IPerjadin[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     getListPromotion();
@@ -25,9 +28,12 @@ const TablePerjalananDinas: React.FC<{ nama: string }> = ({ nama }) => {
 
     const token = Cookies.get("token") || "";
 
-    const { error, errorMessage, response } = await EbsClient.PostAllSPJ({
-      nama: nama,
-    }, token);
+    const { error, errorMessage, response } = await EbsClient.PostAllSPJ(
+      {
+        nama: nama,
+      },
+      token
+    );
 
     if (error) {
       message.error("Error");
@@ -241,8 +247,11 @@ const TablePerjalananDinas: React.FC<{ nama: string }> = ({ nama }) => {
       key: "PAYMENT_STATUS",
       render: (_, record) => {
         if (record.PAYMENT_STATUS_FLAG === "Y") return "Paid";
-        
-        if (record.INV_STATUS === "Validated" && (!record.PAYMENT_STATUS_FLAG || record.PAYMENT_STATUS_FLAG === "N")) {
+
+        if (
+          record.INV_STATUS === "Validated" &&
+          (!record.PAYMENT_STATUS_FLAG || record.PAYMENT_STATUS_FLAG === "N")
+        ) {
           return "Waiting Payment";
         }
         return "Waiting Validated";
