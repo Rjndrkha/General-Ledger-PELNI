@@ -41,24 +41,6 @@ function IndexGeneralLedger() {
       validationErrors.withAdj = "This switch is required";
     }
 
-    if (generalLedger.withCompany) {
-      if (!generalLedger.company1) {
-        validationErrors.company1 = "Please Fill This Field!";
-      }
-      if (!generalLedger.company2) {
-        validationErrors.company2 = "Please Fill This Field!";
-      }
-    }
-
-    if (generalLedger.withCOA) {
-      if (!generalLedger.coa1) {
-        validationErrors.coa1 = "Please Fill This Field!";
-      }
-      if (!generalLedger.coa2) {
-        validationErrors.coa2 = "Please Fill This Field!";
-      }
-    }
-
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
@@ -75,15 +57,18 @@ function IndexGeneralLedger() {
       token as string
     );
 
-    if (error) {
-      setLoading(false);
-      message.error("Error");
-    }
+    setLoading(false);
 
-    if (response) {
-      setLoading(false);
-      setData(response.data!);
-      setIsExport(true);
+    if (error) {
+      message.error("Error");
+    } else if (response) {
+      if (!response.data || response.data.length === 0) {
+        message.error("Data tidak tersedia!");
+        setIsExport(false); 
+      } else {
+        setData(response.data!);
+        setIsExport(true); 
+      }
     }
   };
 
@@ -161,105 +146,6 @@ function IndexGeneralLedger() {
     XLSX.writeFile(workbook, filename);
   };
 
-  // const downloadExcel = () => {
-  //   const startDate =
-  //     generalLedger.date[0] instanceof Date
-  //       ? generalLedger.date[0]
-  //       : new Date(generalLedger.date[0]);
-  //   const endDate =
-  //     generalLedger.date[1] instanceof Date
-  //       ? generalLedger.date[1]
-  //       : new Date(generalLedger.date[1]);
-
-  //   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-  //     message.error("Invalid date(s) provided.");
-  //     return;
-  //   }
-
-  //   const formattedStartDateGB = startDate.toLocaleDateString("en-GB", {
-  //     year: "numeric",
-  //     month: "long",
-  //     day: "2-digit",
-  //   });
-  //   const formattedEndDateGB = endDate.toLocaleDateString("en-GB", {
-  //     year: "numeric",
-  //     month: "long",
-  //     day: "2-digit",
-  //   });
-
-  //   const segment1DescriptionValue =
-  //     data.length > 0 ? data[0].SEGMENT1_DESCRIPTION : "";
-
-  //   let datePeriod =
-  //     startDate.getTime() === endDate.getTime()
-  //       ? formattedStartDateGB
-  //       : `${formattedStartDateGB} - ${formattedEndDateGB}`;
-
-  //   let filename = `DATA GL Gab All Cabang PERIODE ${datePeriod}.xlsx`;
-
-  //   if (
-  //     generalLedger.withCompany &&
-  //     generalLedger.company1 &&
-  //     generalLedger.company2
-  //   ) {
-  //     if (generalLedger.company1 === generalLedger.company2) {
-  //       filename = `DATA GL ${segment1DescriptionValue} PERIODE ${datePeriod}.xlsx`;
-  //     } else {
-  //       filename = `DATA GL ${generalLedger.company1}-${generalLedger.company2} PERIODE ${datePeriod}.xlsx`;
-  //     }
-  //   }
-
-  //   if (generalLedger.withCOA && generalLedger.coa1 && generalLedger.coa2) {
-  //     if (generalLedger.coa1 === generalLedger.coa2) {
-  //       filename = `DATA GL ${generalLedger.coa1} PERIODE ${datePeriod}.xlsx`;
-  //     } else {
-  //       filename = `DATA GL ${generalLedger.coa1}-${generalLedger.coa2} PERIODE ${datePeriod}.xlsx`;
-  //     }
-  //   }
-
-  //   if (
-  //     generalLedger.withCompany &&
-  //     generalLedger.withCOA &&
-  //     generalLedger.company1 !== generalLedger.company2 &&
-  //     generalLedger.coa1 !== generalLedger.coa2
-  //   ) {
-  //     filename = `DATA GL ${generalLedger.company1}-${generalLedger.company2} & ${generalLedger.coa1}-${generalLedger.coa2} PERIODE ${datePeriod}.xlsx`;
-  //   }
-
-  //   if (
-  //     generalLedger.withCompany &&
-  //     generalLedger.company1 === generalLedger.company2 &&
-  //     generalLedger.withCOA &&
-  //     generalLedger.coa1 === generalLedger.coa2
-  //   ) {
-  //     filename = `DATA GL ${generalLedger.company1} & ${generalLedger.coa1} PERIODE ${datePeriod}.xlsx`;
-  //   }
-
-  //   if (
-  //     generalLedger.withCompany &&
-  //     generalLedger.company1 === generalLedger.company2 &&
-  //     generalLedger.withCOA &&
-  //     generalLedger.coa1 !== generalLedger.coa2
-  //   ) {
-  //     filename = `DATA GL ${generalLedger.company1} & ${generalLedger.coa1}-${generalLedger.coa2} PERIODE ${datePeriod}.xlsx`;
-  //   }
-
-  //   if (
-  //     generalLedger.withCompany &&
-  //     generalLedger.company1 !== generalLedger.company2 &&
-  //     generalLedger.withCOA &&
-  //     generalLedger.coa1 === generalLedger.coa2
-  //   ) {
-  //     filename = `DATA GL ${generalLedger.company1}-${generalLedger.company2} & ${generalLedger.coa1} PERIODE ${datePeriod}.xlsx`;
-  //   }
-
-  //   const worksheet = XLSX.utils.json_to_sheet(data);
-  //   const workbook = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Ledger Data");
-
-  //   XLSX.writeFile(workbook, filename);
-  // };
-
   return (
     <>
       <div className="w-auto h-full flex flex-col gap-3 m-5">
@@ -308,24 +194,26 @@ function IndexGeneralLedger() {
               <TextInput
                 placeholder="ID Company 1"
                 value={generalLedger.company1}
-                onChange={(e) => handleInputChange("company1", e)}
+                onChange={(value: string) => {
+                  if (/^\d*$/.test(value) && value.length <= 4) {
+                    handleInputChange("company1", value);
+                  }
+                }}
                 disabled={!generalLedger.withCompany}
               />
-              {errors.company1 && (
-                <p className="text-red-500 text-[13px]">{errors.company1}</p>
-              )}
             </div>
             <p className="text-sm font-bold">Between</p>
             <div className="flex flex-col">
               <TextInput
                 placeholder="ID Company 2"
                 value={generalLedger.company2}
-                onChange={(e) => handleInputChange("company2", e)}
+                onChange={(value: string) => {
+                  if (/^\d*$/.test(value) && value.length <= 4) {
+                    handleInputChange("company2", value);
+                  }
+                }}
                 disabled={!generalLedger.withCompany}
               />
-              {errors.company2 && (
-                <p className="text-red-500 text-[13px]">{errors.company2}</p>
-              )}
             </div>
           </div>
 
@@ -346,12 +234,13 @@ function IndexGeneralLedger() {
               <TextInput
                 placeholder="ID Account 1"
                 value={generalLedger.coa1}
-                onChange={(e) => handleInputChange("coa1", e)}
+                onChange={(value: string) => {
+                  if (/^\d*$/.test(value) && value.length <= 4) {
+                    handleInputChange("coa1", value);
+                  }
+                }}
                 disabled={!generalLedger.withCOA}
               />
-              {errors.coa1 && (
-                <p className="text-red-500 text-[13px]">{errors.coa1}</p>
-              )}
             </div>
 
             <p className="text-sm font-bold">Between</p>
@@ -360,12 +249,13 @@ function IndexGeneralLedger() {
               <TextInput
                 placeholder="ID Account 2"
                 value={generalLedger.coa2}
-                onChange={(e) => handleInputChange("coa2", e)}
+                onChange={(value: string) => {
+                  if (/^\d*$/.test(value) && value.length <= 4) {
+                    handleInputChange("coa2", value);
+                  }
+                }}
                 disabled={!generalLedger.withCOA}
               />
-              {errors.coa2 && (
-                <p className="text-red-500 text-[13px]">{errors.coa2}</p>
-              )}
             </div>
           </div>
 
