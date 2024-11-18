@@ -35,8 +35,6 @@ const generalLedgerControllers = async (req, res) => {
     if (isNaN(company1) || isNaN(company2)) {
       return res.status(400).json({ error: "Company harus berupa angka" });
     }
-  } else {
-    return res.status(400).json({ error: "Undefined Flag!" });
   }
 
   if (withCOA === "true") {
@@ -46,8 +44,6 @@ const generalLedgerControllers = async (req, res) => {
     if (isNaN(coa1) || isNaN(coa2)) {
       return res.status(400).json({ error: "Account harus berupa angka" });
     }
-  } else {
-    return res.status(400).json({ error: "Undefined Flag!" });
   }
 
   connection = await OracleConnection();
