@@ -12,19 +12,21 @@ function IndexCheckSPJ() {
 
   useEffect(() => {
     setValidate(false);
-  }, [nama,validate]);
+  }, [nama, validate]);
 
   const handleSearch = () => {
     setSubmit(true);
+    setLoading(true); 
 
     if (!nama || nama.includes(" ")) {
       setValidate(false);
+      setLoading(false);
       return message.error("Nama hanya boleh satu kata");
     }
 
     if (nama) {
-      setLoading(false)
-      return setValidate(true);
+      setValidate(true);
+      setLoading(true); 
     }
   };
 
@@ -55,7 +57,7 @@ function IndexCheckSPJ() {
               onClick={handleSearch}
               htmlType="submit"
               width="30%"
-              loading={loading}
+              loading={loading} 
             />
           </div>
         </div>
@@ -65,7 +67,7 @@ function IndexCheckSPJ() {
         <TablePerjalananDinas
           nama={nama}
           loading={loading}
-          setLoading={setLoading}
+          setLoading={setLoading} 
         />
       )}
     </div>

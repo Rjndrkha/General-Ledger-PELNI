@@ -24,28 +24,27 @@ const TablePerjalananDinas: React.FC<{
   }, []);
 
   const getListPromotion = async () => {
-    setLoading(true);
-
+    setLoading(true); //set loading ke true saat mulai fetch data
     const token = Cookies.get("token") || "";
-
+  
     const { error, errorMessage, response } = await EbsClient.PostAllSPJ(
       {
         nama: nama,
       },
       token
     );
-
+  
     if (error) {
       message.error("Error");
-      setLoading(false);
+      setLoading(false); // set loading ke false jika ada error
     }
-
+  
     if (response) {
       setPromotion(response.data);
-      setLoading(false);
+      setLoading(false); // set loading ke false setelah mendapatkan data
     }
   };
-
+  
   const addActionButton = (data: IPerjadin[]) => {
     return data.map((item) => {
       return {
