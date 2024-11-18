@@ -11,6 +11,7 @@ import ShowComp from "../../component/showpicture/showpicture_comp";
 import * as XLSX from "xlsx";
 import Cookies from "js-cookie";
 import { message } from "antd";
+import { DateFormatter, DateParser } from "../../utils/dateConverter";
 
 function IndexGeneralLedger() {
   const [generalLedger, setGeneralLedger] = useState<IGeneralLedger>({
@@ -103,89 +104,54 @@ function IndexGeneralLedger() {
   };
 
   const downloadExcel = () => {
-    const startDate =
-      generalLedger.date[0] instanceof Date
-        ? generalLedger.date[0]
-        : new Date(generalLedger.date[0]);
-    const endDate =
-      generalLedger.date[1] instanceof Date
-        ? generalLedger.date[1]
-        : new Date(generalLedger.date[1]);
+    const startDate = DateParser(generalLedger.date[0]);
+    const endDate = DateParser(generalLedger.date[1]);
 
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
       message.error("Invalid date(s) provided.");
       return;
     }
 
-    const formattedStartDateGB = startDate.toLocaleDateString("en-GB", {
-      year: "numeric",
-      month: "long",
-      day: "2-digit",
-    });
-    const formattedEndDateGB = endDate.toLocaleDateString("en-GB", {
-      year: "numeric",
-      month: "long",
-      day: "2-digit",
-    });
+    const formattedStartDateGB = DateFormatter(startDate);
+    const formattedEndDateGB = DateFormatter(endDate);
 
-    const segment1DescriptionValue = data.length > 0 ? data[0].SEGMENT1_DESCRIPTION : "";
+    const segment1DescriptionValue =
+      data.length > 0 ? data[0].SEGMENT1_DESCRIPTION : "";
 
-    let datePeriod = (startDate.getTime() === endDate.getTime()) 
-      ? formattedStartDateGB 
-      : `${formattedStartDateGB} - ${formattedEndDateGB}`;
+    const datePeriod =
+      startDate.getTime() === endDate.getTime()
+        ? formattedStartDateGB
+        : `${formattedStartDateGB} - ${formattedEndDateGB}`;
 
     let filename = `DATA GL Gab All Cabang PERIODE ${datePeriod}.xlsx`;
 
-    if (generalLedger.withCompany && generalLedger.company1 && generalLedger.company2) {
-      if (generalLedger.company1 === generalLedger.company2) {
-        filename = `DATA GL ${segment1DescriptionValue} PERIODE ${datePeriod}.xlsx`;
-      } else {
-        filename = `DATA GL ${generalLedger.company1}-${generalLedger.company2} PERIODE ${datePeriod}.xlsx`;
+    const { withCompany, company1, company2, withCOA, coa1, coa2 } =
+      generalLedger;
+
+    if (withCompany && company1 && company2) {
+      filename =
+        company1 === company2
+          ? `DATA GL ${segment1DescriptionValue} PERIODE ${datePeriod}.xlsx`
+          : `DATA GL ${company1}-${company2} PERIODE ${datePeriod}.xlsx`;
+    }
+
+    if (withCOA && coa1 && coa2) {
+      filename =
+        coa1 === coa2
+          ? `DATA GL ${coa1} PERIODE ${datePeriod}.xlsx`
+          : `DATA GL ${coa1}-${coa2} PERIODE ${datePeriod}.xlsx`;
+    }
+
+    if (withCompany && withCOA) {
+      if (company1 !== company2 && coa1 !== coa2) {
+        filename = `DATA GL ${company1}-${company2} & ${coa1}-${coa2} PERIODE ${datePeriod}.xlsx`;
+      } else if (company1 === company2 && coa1 === coa2) {
+        filename = `DATA GL ${company1} & ${coa1} PERIODE ${datePeriod}.xlsx`;
+      } else if (company1 === company2 && coa1 !== coa2) {
+        filename = `DATA GL ${company1} & ${coa1}-${coa2} PERIODE ${datePeriod}.xlsx`;
+      } else if (company1 !== company2 && coa1 === coa2) {
+        filename = `DATA GL ${company1}-${company2} & ${coa1} PERIODE ${datePeriod}.xlsx`;
       }
-    }
-
-    if (generalLedger.withCOA && generalLedger.coa1 && generalLedger.coa2) {
-      if (generalLedger.coa1 === generalLedger.coa2) {
-        filename = `DATA GL ${generalLedger.coa1} PERIODE ${datePeriod}.xlsx`;
-      } else {
-        filename = `DATA GL ${generalLedger.coa1}-${generalLedger.coa2} PERIODE ${datePeriod}.xlsx`;
-      }
-    }
-
-    if (
-      generalLedger.withCompany &&
-      generalLedger.withCOA &&
-      generalLedger.company1 !== generalLedger.company2 &&
-      generalLedger.coa1 !== generalLedger.coa2
-    ) {
-      filename = `DATA GL ${generalLedger.company1}-${generalLedger.company2} & ${generalLedger.coa1}-${generalLedger.coa2} PERIODE ${datePeriod}.xlsx`;
-    }
-
-    if (
-      generalLedger.withCompany &&
-      generalLedger.company1 === generalLedger.company2 &&
-      generalLedger.withCOA &&
-      generalLedger.coa1 === generalLedger.coa2
-    ) {
-      filename = `DATA GL ${generalLedger.company1} & ${generalLedger.coa1} PERIODE ${datePeriod}.xlsx`;
-    }
-
-    if (
-      generalLedger.withCompany &&
-      generalLedger.company1 === generalLedger.company2 &&
-      generalLedger.withCOA &&
-      generalLedger.coa1 !== generalLedger.coa2
-    ) {
-      filename = `DATA GL ${generalLedger.company1} & ${generalLedger.coa1}-${generalLedger.coa2} PERIODE ${datePeriod}.xlsx`;
-    }
-
-    if (
-      generalLedger.withCompany &&
-      generalLedger.company1 !== generalLedger.company2 &&
-      generalLedger.withCOA &&
-      generalLedger.coa1 === generalLedger.coa2
-    ) {
-      filename = `DATA GL ${generalLedger.company1}-${generalLedger.company2} & ${generalLedger.coa1} PERIODE ${datePeriod}.xlsx`;
     }
 
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -194,6 +160,105 @@ function IndexGeneralLedger() {
 
     XLSX.writeFile(workbook, filename);
   };
+
+  // const downloadExcel = () => {
+  //   const startDate =
+  //     generalLedger.date[0] instanceof Date
+  //       ? generalLedger.date[0]
+  //       : new Date(generalLedger.date[0]);
+  //   const endDate =
+  //     generalLedger.date[1] instanceof Date
+  //       ? generalLedger.date[1]
+  //       : new Date(generalLedger.date[1]);
+
+  //   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+  //     message.error("Invalid date(s) provided.");
+  //     return;
+  //   }
+
+  //   const formattedStartDateGB = startDate.toLocaleDateString("en-GB", {
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "2-digit",
+  //   });
+  //   const formattedEndDateGB = endDate.toLocaleDateString("en-GB", {
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "2-digit",
+  //   });
+
+  //   const segment1DescriptionValue =
+  //     data.length > 0 ? data[0].SEGMENT1_DESCRIPTION : "";
+
+  //   let datePeriod =
+  //     startDate.getTime() === endDate.getTime()
+  //       ? formattedStartDateGB
+  //       : `${formattedStartDateGB} - ${formattedEndDateGB}`;
+
+  //   let filename = `DATA GL Gab All Cabang PERIODE ${datePeriod}.xlsx`;
+
+  //   if (
+  //     generalLedger.withCompany &&
+  //     generalLedger.company1 &&
+  //     generalLedger.company2
+  //   ) {
+  //     if (generalLedger.company1 === generalLedger.company2) {
+  //       filename = `DATA GL ${segment1DescriptionValue} PERIODE ${datePeriod}.xlsx`;
+  //     } else {
+  //       filename = `DATA GL ${generalLedger.company1}-${generalLedger.company2} PERIODE ${datePeriod}.xlsx`;
+  //     }
+  //   }
+
+  //   if (generalLedger.withCOA && generalLedger.coa1 && generalLedger.coa2) {
+  //     if (generalLedger.coa1 === generalLedger.coa2) {
+  //       filename = `DATA GL ${generalLedger.coa1} PERIODE ${datePeriod}.xlsx`;
+  //     } else {
+  //       filename = `DATA GL ${generalLedger.coa1}-${generalLedger.coa2} PERIODE ${datePeriod}.xlsx`;
+  //     }
+  //   }
+
+  //   if (
+  //     generalLedger.withCompany &&
+  //     generalLedger.withCOA &&
+  //     generalLedger.company1 !== generalLedger.company2 &&
+  //     generalLedger.coa1 !== generalLedger.coa2
+  //   ) {
+  //     filename = `DATA GL ${generalLedger.company1}-${generalLedger.company2} & ${generalLedger.coa1}-${generalLedger.coa2} PERIODE ${datePeriod}.xlsx`;
+  //   }
+
+  //   if (
+  //     generalLedger.withCompany &&
+  //     generalLedger.company1 === generalLedger.company2 &&
+  //     generalLedger.withCOA &&
+  //     generalLedger.coa1 === generalLedger.coa2
+  //   ) {
+  //     filename = `DATA GL ${generalLedger.company1} & ${generalLedger.coa1} PERIODE ${datePeriod}.xlsx`;
+  //   }
+
+  //   if (
+  //     generalLedger.withCompany &&
+  //     generalLedger.company1 === generalLedger.company2 &&
+  //     generalLedger.withCOA &&
+  //     generalLedger.coa1 !== generalLedger.coa2
+  //   ) {
+  //     filename = `DATA GL ${generalLedger.company1} & ${generalLedger.coa1}-${generalLedger.coa2} PERIODE ${datePeriod}.xlsx`;
+  //   }
+
+  //   if (
+  //     generalLedger.withCompany &&
+  //     generalLedger.company1 !== generalLedger.company2 &&
+  //     generalLedger.withCOA &&
+  //     generalLedger.coa1 === generalLedger.coa2
+  //   ) {
+  //     filename = `DATA GL ${generalLedger.company1}-${generalLedger.company2} & ${generalLedger.coa1} PERIODE ${datePeriod}.xlsx`;
+  //   }
+
+  //   const worksheet = XLSX.utils.json_to_sheet(data);
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Ledger Data");
+
+  //   XLSX.writeFile(workbook, filename);
+  // };
 
   return (
     <>
@@ -276,8 +341,7 @@ function IndexGeneralLedger() {
               <ShowCoa />
             </div>
           </div>
-          <div className="flex flex-row items-center gap-2" >
-
+          <div className="flex flex-row items-center gap-2">
             <div className="flex flex-col">
               <TextInput
                 placeholder="ID Account 1"
