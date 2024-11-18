@@ -1,5 +1,5 @@
 # Gunakan image Node versi terbaru sebagai dasar
-FROM node:18
+FROM node:18-alpine
 
 # Install dependencies untuk Oracle Instant Client
 RUN apt-get update && apt-get install -y \

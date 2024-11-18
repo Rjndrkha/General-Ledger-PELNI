@@ -17,9 +17,6 @@ const generalLedgerControllers = async (req, res) => {
   } = req.body;
 
   let connection;
-  connection = await OracleConnection();
-
-  console.log("Connection Success!");
 
   if (!startDate || !endDate) {
     return res
@@ -27,17 +24,35 @@ const generalLedgerControllers = async (req, res) => {
       .json({ error: "startDate dan endDate harus diberikan" });
   }
 
-  if (!withAdj) {
+  if (!withAdj && withAdj !== "true" && withAdj !== "false") {
     return res.status(400).json({ error: "withAdj harus diberikan" });
   }
 
-  if (withCompany === "true" && (!company1 || !company2)) {
-    return res.status(400).json({ error: "Company harus diberikan" });
+  if (withCompany === "true") {
+    if (!company1 || !company2) {
+      return res.status(400).json({ error: "Company harus diberikan" });
+    }
+    if (isNaN(company1) || isNaN(company2)) {
+      return res.status(400).json({ error: "Company harus berupa angka" });
+    }
+  } else {
+    return res.status(400).json({ error: "Undefined Flag!" });
   }
 
-  if (withCOA === "true" && (!coa1 || !coa2)) {
-    return res.status(400).json({ error: "COA harus diberikan" });
+  if (withCOA === "true") {
+    if (!coa1 || !coa2) {
+      return res.status(400).json({ error: "Account harus diberikan" });
+    }
+    if (isNaN(coa1) || isNaN(coa2)) {
+      return res.status(400).json({ error: "Account harus berupa angka" });
+    }
+  } else {
+    return res.status(400).json({ error: "Undefined Flag!" });
   }
+
+  connection = await OracleConnection();
+
+  console.log("Connection Success!");
 
   const query = `
   SELECT

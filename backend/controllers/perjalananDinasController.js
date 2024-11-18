@@ -7,9 +7,6 @@ const perjalananDinasControllers = async (req, res) => {
   const { nama } = req.body;
 
   let connection;
-  connection = await OracleConnection();
-
-  console.log("Connection Success!");
 
   if (!nama) {
     return res.status(400).json({ error: "Nama harus diberikan" });
@@ -18,6 +15,14 @@ const perjalananDinasControllers = async (req, res) => {
   if (!/^[a-zA-Z]+$/.test(nama)) {
     return res.status(400).json({ error: "Parameter Harus Alfabet" });
   }
+
+  if (nama.trim().split(/\s+/).length > 1) {
+    return res.status(400).json({ error: "Nama Berupa Satu Kata" });
+  }
+
+  connection = await OracleConnection();
+
+  console.log("Connection Success!");
 
   const upperNama = `%${nama.toUpperCase()}%`;
   const query = `
