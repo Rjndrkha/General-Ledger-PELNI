@@ -16,6 +16,7 @@ const {
   perjalananDinasControllers,
 } = require("./controllers/perjalananDinasController");
 const { authenticateToken } = require("./middleware/middleware");
+const { BLControllers } = require("./controllers/blController");
 require("dotenv").config();
 
 const app = express();
@@ -34,6 +35,12 @@ app.listen(process.env.PORT, () => {
 app.get("/ping", (req, res) => {
   res.json("Up and Running");
 });
+
+app.post(
+  "/bl",
+  // authenticateToken,
+  asyncHandler(BLControllers)
+);
 
 app.post(
   "/GeneralLedger",
