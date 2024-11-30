@@ -37,9 +37,9 @@ const BLControllers = async (req, res) => {
   //   }
   console.log("BL Controller");
 
-  connection = await OracleConnection("sdm", "bl");
+  // connection = await OracleConnection("sdm", "bl");
 
-  console.log("Connection Success!");
+  // console.log("Connection Success!");
 
   // const query = `
   // SELECT
