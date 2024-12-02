@@ -17,6 +17,13 @@ const {
 } = require("./controllers/perjalananDinasController");
 const { authenticateToken } = require("./middleware/middleware");
 const { BLControllers } = require("./controllers/blController");
+const {
+  viewImageController,
+} = require("./controllers/imageController/viewController");
+const {
+  UploadImageController,
+} = require("./controllers/imageController/uploadController");
+
 require("dotenv").config();
 
 const app = express();
@@ -41,6 +48,20 @@ app.post(
   // authenticateToken,
   asyncHandler(BLControllers)
 );
+
+app.post(
+  "/uploadImage",
+  // authenticateToken,
+  asyncHandler(UploadImageController)
+);
+
+app.post(
+  "/images/detail",
+  // authenticateToken,
+  asyncHandler(viewImageController)
+);
+
+app.use("/images/view-images", express.static("upload-images"));
 
 app.post(
   "/GeneralLedger",
