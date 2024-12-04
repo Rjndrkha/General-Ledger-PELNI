@@ -9,9 +9,16 @@ const PostgreClient = new Client({
   port: process.env.DB_PORT_POSTGRE_PPD,
 });
 
+let isConnected = false;
+
 async function initializePostgreConnection() {
+  if (isConnected) {
+    console.log("Skipping PostgreSQL re-connection");
+    return;
+  }
   try {
     await PostgreClient.connect();
+    isConnected = true;
     console.log("Connected to PostgreSQL");
   } catch (error) {
     console.error("Failed to initialize PostgreSQL connection", error.stack);

@@ -6,7 +6,8 @@ const {
 } = require("./controllers/authentificationController");
 const {
   generalLedgerControllers,
-} = require("./controllers/generalLedgerController");
+  downloadGLFile,
+} = require("./controllers/generalLedgerController/generalLedgerController");
 const {
   errorHandler,
   asyncHandler,
@@ -23,6 +24,8 @@ const {
 const {
   UploadImageController,
 } = require("./controllers/imageController/uploadController");
+const serverAdapter = require("./controllers/bullController/bullController");
+const generalLedgerDownload = require("./controllers/generalLedgerController/downloadController");
 
 require("dotenv").config();
 
@@ -42,6 +45,8 @@ app.listen(process.env.PORT, () => {
 app.get("/ping", (req, res) => {
   res.json("Up and Running");
 });
+
+app.use("/admin/bull-queues", serverAdapter.getRouter());
 
 app.post(
   "/bl",
@@ -67,6 +72,12 @@ app.post(
   "/GeneralLedger",
   authenticateToken,
   asyncHandler(generalLedgerControllers)
+);
+
+app.get(
+  "/GeneralLedger/download/:jobId",
+  authenticateToken,
+  asyncHandler(generalLedgerDownload)
 );
 
 app.post(
