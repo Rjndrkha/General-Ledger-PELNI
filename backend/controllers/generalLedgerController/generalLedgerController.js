@@ -27,6 +27,26 @@ const generalLedgerControllers = async (req, res) => {
 
   await initializePostgreConnection();
 
+  const query = `
+    SELECT COUNT ( * ) AS total_jobs 
+    FROM
+      "log_request_gl" 
+    WHERE
+      pslh_nrp = $1
+      AND status != 'Completed'
+  `;
+
+  const params = [pslh_nrp];
+
+  const datalength = await executePostgreQuery(query, params);
+
+  if (datalength.rows[0].total_jobs >= 10) {
+    return res.status(400).json({
+      error: "Maksimal Tarikan 10 Data , Tarikan Saat ini",
+      total_jobs: datalength.rows[0].total_jobs,
+    });
+  }
+
   try {
     const job = await generalLedgerQueue.add({
       startDate,
@@ -81,4 +101,42 @@ const generalLedgerControllers = async (req, res) => {
   }
 };
 
-module.exports = { generalLedgerControllers };
+const generalLedgerStatusControllers = async (req, res) => {
+  const { pslh_nrp } = req.user;
+
+  await initializePostgreConnection();
+
+  const query = `
+    SELECT
+      job_id,
+      status,
+      start_date,
+      end_date,
+      with_adjustment,
+      with_company,
+      id_company,
+      with_account,
+      id_account 
+    FROM
+      "log_request_gl" 
+    WHERE
+      pslh_nrp = $1
+    ORDER BY
+      job_id ASC 
+  `;
+
+  const params = [pslh_nrp];
+
+  try {
+    const data = await executePostgreQuery(query, params);
+
+    return res.status(200).json({
+      success: true,
+      ...data,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Gagal Data!" });
+  }
+};
+
+module.exports = { generalLedgerControllers, generalLedgerStatusControllers };

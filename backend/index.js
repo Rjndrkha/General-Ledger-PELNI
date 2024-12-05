@@ -7,6 +7,7 @@ const {
 const {
   generalLedgerControllers,
   downloadGLFile,
+  generalLedgerStatusControllers,
 } = require("./controllers/generalLedgerController/generalLedgerController");
 const {
   errorHandler,
@@ -56,7 +57,7 @@ app.post(
 
 app.post(
   "/uploadImage",
-  // authenticateToken,
+  authenticateToken,
   asyncHandler(UploadImageController)
 );
 
@@ -78,6 +79,12 @@ app.get(
   "/GeneralLedger/download/:jobId",
   authenticateToken,
   asyncHandler(generalLedgerDownload)
+);
+
+app.get(
+  "/GeneralLedger/check-status",
+  authenticateToken,
+  asyncHandler(generalLedgerStatusControllers)
 );
 
 app.post(
