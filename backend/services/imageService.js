@@ -1,17 +1,19 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const { ensureDirectoryExists, storagePath } = require("../utils/constant");
 require("dotenv").config();
 
-const storagePath = path.resolve(process.env.STORAGE_PATH_DEV);
+// const storagePath = path.resolve(process.env.STORAGE_PATH_DEV);
 
-if (!fs.existsSync(storagePath)) {
-  fs.mkdirSync(storagePath, { recursive: true });
-}
+// if (!fs.existsSync(storagePath)) {
+//   fs.mkdirSync(storagePath, { recursive: true });
+// }
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, storagePath);
+    const uploadPath = ensureDirectoryExists(storagePath, "uploads");
+    cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
     const trimmedName = file.originalname.replace(/ /g, "-");

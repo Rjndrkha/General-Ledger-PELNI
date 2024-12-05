@@ -155,8 +155,12 @@ async function checkJobStatus(jobID, data) {
 }
 
 function saveFile(data, jobID) {
-  ensureDirectoryExists();
-  const filePath = path.join(storagePath, `GL-${jobID}.json`);
+  const generalLedgerPath = ensureDirectoryExists(
+    storagePath,
+    "general-ledger"
+  );
+
+  const filePath = path.join(generalLedgerPath, `GL-${jobID}.json`);
 
   const jsonData = JSON.stringify(data, null, 2);
   fs.writeFileSync(filePath, jsonData);

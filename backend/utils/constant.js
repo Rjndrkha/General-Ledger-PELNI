@@ -10,6 +10,17 @@ function ensureDirectoryExists(directoryPath = storagePath, folderName) {
   }
 }
 
+function ensureDirectoryExists(basePath = storagePath, subFolder = "") {
+  const targetPath = path.join(basePath, subFolder);
+
+  if (!fs.existsSync(targetPath)) {
+    fs.mkdirSync(targetPath, { recursive: true });
+    console.log(`Folder baru berhasil dibuat: ${targetPath}`);
+  }
+
+  return targetPath;
+}
+
 module.exports = {
   ensureDirectoryExists,
   storagePath,
