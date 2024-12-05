@@ -12,7 +12,7 @@ const {
 const { jobStatusHandler, updateLogStatus } = require("./JobStatusHandler");
 
 const generalLedgerQueue = new Queue("general-ledger", {
-  redis: { host: "localhost", port: 6379 },
+  redis: { host: "redis", port: 6379 },
 });
 
 generalLedgerQueue.on("failed", (job, err) =>
@@ -153,7 +153,6 @@ async function checkJobStatus(jobID, data) {
     return { process: "Completed", filepath };
   }
 }
-
 
 function saveFile(data, jobID) {
   ensureDirectoryExists();
