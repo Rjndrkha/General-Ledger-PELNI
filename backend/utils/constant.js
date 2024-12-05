@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 
-const storagePath = path.resolve(process.env.STORAGE_PATH_DEV);
+const storagePath = path.resolve(process.env.STORAGE_PATH);
 
 function ensureDirectoryExists(directoryPath = storagePath, folderName) {
   if (!fs.existsSync(directoryPath)) {
