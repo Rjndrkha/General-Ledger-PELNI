@@ -12,6 +12,7 @@ import * as XLSX from "xlsx";
 import Cookies from "js-cookie";
 import { message } from "antd";
 import { DateFormatter, DateParser } from "../../utils/dateConverter";
+import TableGeneralLedger from "./table";
 
 function IndexGeneralLedger() {
   const [generalLedger, setGeneralLedger] = useState<IGeneralLedger>({
@@ -264,6 +265,9 @@ function IndexGeneralLedger() {
             width="50%"
             onClick={isExport ? downloadExcel : handleSubmit}
             loading={loading}
+          />
+          
+          <TableGeneralLedger
           />
         </div>
       </div>

@@ -3,49 +3,49 @@ import { SearchOutlined } from "@ant-design/icons";
 import type { GetRef, TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Space, Table, message } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import ButtonDefault from "../../component/button/button";
-import { IPerjadin } from "../../interface/IPerjadin";
+import { ITableGeneralLedger } from "../../interface/ITableGeneralLedger";
 import EbsClient from "../../service/ebs/OracleClient";
 import Highlighter from "react-highlight-words";
 import Cookies from "js-cookie";
 
 type InputRef = GetRef<typeof Input>;
-type DataIndex = keyof IPerjadin;
+type DataIndex = keyof ITableGeneralLedger;
 
-const TablePerjalananDinas: React.FC<{
+const TableGeneralLedger: React.FC<{
   nama: string;
   loading: boolean;
   setLoading: (loading: boolean) => void;
 }> = ({ nama, loading, setLoading }) => {
-  const [promotion, setPromotion] = useState<IPerjadin[]>([]);
+  const [promotion, setPromotion] = useState<ITableGeneralLedger[]>([]);
 
   useEffect(() => {
     getListPromotion();
   }, []);
 
   const getListPromotion = async () => {
-    setLoading(true); 
+    setLoading(true);
+
     const token = Cookies.get("token") || "";
-  
-    const { error, errorMessage, response } = await EbsClient.PostAllSPJ(
+
+    const { error, errorMessage, response } = await EbsClient.GetGeneralLedgerStatus(
       {
-        nama: nama,
+        // nama: nama,
       },
       token
     );
-  
+
     if (error) {
       message.error("Error");
       setLoading(false);
     }
-  
+
     if (response) {
       setPromotion(response.data);
-      setLoading(false); 
+      setLoading(false);
     }
   };
-  
-  const addActionButton = (data: IPerjadin[]) => {
+
+  const addActionButton = (data: ITableGeneralLedger[]) => {
     return data.map((item) => {
       return {
         ...item,
@@ -98,7 +98,7 @@ const TablePerjalananDinas: React.FC<{
 
   const getColumnSearchProps = (
     dataIndex: DataIndex
-  ): TableColumnType<IPerjadin> => ({
+  ): TableColumnType<ITableGeneralLedger> => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -186,75 +186,18 @@ const TablePerjalananDinas: React.FC<{
         text
       ),
   });
-  const columns: TableColumnsType<IPerjadin> = [
+  const columns: TableColumnsType<ITableGeneralLedger> = [
     {
-      title: "ID INVOICE",
-      dataIndex: "INVOICE_ID",
-      key: "INVOICE_ID",
-      ...getColumnSearchProps("INVOICE_ID"),
-    },
-    {
-      title: "NO TAGIHAN",
-      dataIndex: "NOMER_TAGIHAN",
-      key: "NOMER_TAGIHAN",
-      ...getColumnSearchProps("NOMER_TAGIHAN"),
-    },
-    {
-      title: "NO INVOICE",
-      dataIndex: "INVOICE_NUMBER",
-      key: "INVOICE_NUMBER",
-      ...getColumnSearchProps("INVOICE_NUMBER"),
-    },
-    {
-      title: "TANGGAL INVOICE",
-      dataIndex: "INVOICE_DATE",
-      key: "INVOICE_DATE",
-      render: (text) => {
-        return new Intl.DateTimeFormat("id-ID").format(new Date(text));
-      },
-      // ...getColumnSearchProps("INVOICE_DATE"),
+      title: "JOB_ID",
+      dataIndex: "JOB_ID",
+      key: "JOB_ID",
+      ...getColumnSearchProps("JOB_ID"),
     },
     {
       title: "STATUS",
-      dataIndex: "INV_STATUS",
-      key: "INV_STATUS",
-      ...getColumnSearchProps("INV_STATUS"),
-    },
-    {
-      title: "AMOUNT SPJ",
-      dataIndex: "INVOICE_AMOUNT",
-      key: "INVOICE_AMOUNT",
-      render: (text) => {
-        return new Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-        }).format(text);
-      },
-      // ...getColumnSearchProps("INVOICE_AMOUNT"),
-    },
-    {
-      title: "PENERIMA",
-      dataIndex: "DESCRIPTION",
-      key: "DESCRIPTION",
-      // render: (text) => {
-      //   return text.split(" - ")[1];
-      // },
-      ...getColumnSearchProps("DESCRIPTION"),
-    },
-    {
-      title: "PAYMENT STATUS",
-      key: "PAYMENT_STATUS",
-      render: (_, record) => {
-        if (record.PAYMENT_STATUS_FLAG === "Y") return "Paid";
-
-        if (
-          record.INV_STATUS === "Validated" &&
-          (!record.PAYMENT_STATUS_FLAG || record.PAYMENT_STATUS_FLAG === "N")
-        ) {
-          return "Waiting Payment";
-        }
-        return "Waiting Validated";
-      },
+      dataIndex: "STATUS",
+      key: "STATUS",
+      ...getColumnSearchProps("STATUS"),
     },
     // {
     //   align: "center",
@@ -276,4 +219,4 @@ const TablePerjalananDinas: React.FC<{
   );
 };
 
-export default TablePerjalananDinas;
+export default TableGeneralLedger;
