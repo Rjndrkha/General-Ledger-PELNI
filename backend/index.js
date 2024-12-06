@@ -76,7 +76,7 @@ app.post(
 );
 
 app.get(
-  "/GeneralLedger/download/:jobId",
+  "/GeneralLedger/download",
   authenticateToken,
   asyncHandler(generalLedgerDownload)
 );
