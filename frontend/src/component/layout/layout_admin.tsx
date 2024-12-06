@@ -3,9 +3,9 @@ import Navbar from "../navbar/navbar";
 import { Outlet, useLocation } from "react-router-dom";
 import Footer from "../footer/footer";
 import SideMenu, { getMenuItems, MenuItem } from "../menu/menu";
-import { menuItemsUser } from "../menu/listMenu";
+import { menuItemsAdmin } from "../menu/listMenu";
 
-function LayoutUser() {
+function LayoutAdmin() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [prevLocation, setPrevLocation] = useState("");
@@ -31,7 +31,7 @@ function LayoutUser() {
     }
   }, [location]);
 
-  const items: MenuItem[] = getMenuItems(menuItemsUser);
+  const items: MenuItem[] = getMenuItems(menuItemsAdmin);
 
   return (
     <>
@@ -49,7 +49,7 @@ function LayoutUser() {
             } md:translate-x-0 transition-transform duration-300 ease-in-out`}
           >
             <div className="left-0 h-full w-full">
-              <SideMenu items={items} menuItems={menuItemsUser} />
+              <SideMenu items={items} menuItems={menuItemsAdmin} />
             </div>
           </section>
 
@@ -63,7 +63,7 @@ function LayoutUser() {
   );
 }
 
-export default LayoutUser;
+export default LayoutAdmin;
 
 function SidebarLink() {
   return (

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Menu, MenuProps } from "antd";
 import { Link, useLocation } from "react-router-dom";
-import { IRoute, menuItems } from "./listMenu";
+import { IRoute } from "./listMenu";
 
-type MenuItem = Required<MenuProps>["items"][number];
+export type MenuItem = Required<MenuProps>["items"][number];
 
 const getItem = (
   label: React.ReactNode,
@@ -17,7 +17,7 @@ const getItem = (
   };
 };
 
-const getMenuItems = (routes: IRoute[] | undefined): MenuItem[] => {
+export const getMenuItems = (routes: IRoute[] | undefined): MenuItem[] => {
   if (!routes) return [];
 
   return routes.map((item) => {
@@ -30,7 +30,12 @@ const getMenuItems = (routes: IRoute[] | undefined): MenuItem[] => {
   });
 };
 
-const SideMenu: React.FC = () => {
+interface SideMenuProps {
+  items: MenuItem[];
+  menuItems: IRoute[];
+}
+
+const SideMenu: React.FC<SideMenuProps> = ({ items, menuItems }) => {
   const location = useLocation();
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [openKeys, setOpenKeys] = useState<string[]>([]);
@@ -63,11 +68,8 @@ const SideMenu: React.FC = () => {
     }
   }, [location.pathname]);
 
-  const items: MenuItem[] = getMenuItems(menuItems);
-
   return (
     <>
-      {/* <img src={ASSETS.LOGOMF} alt="logo" className="hidden md:block" /> */}
       <Menu
         style={{ backgroundColor: "none" }}
         mode="inline"

@@ -8,7 +8,7 @@ export interface IRoute {
   children?: IRoute[];
 }
 
-export const menuItems: IRoute[] = [
+export const menuItemsUser: IRoute[] = [
   {
     label: "Home",
     key: "1",
@@ -23,5 +23,13 @@ export const menuItems: IRoute[] = [
     label: "Cek Perjalanan Dinas",
     key: "3",
     link: "/cek-perjalanan-dinas",
+  },
+];
+
+export const menuItemsAdmin: IRoute[] = [
+  {
+    label: "Master Menu",
+    key: "1",
+    link: "/admin/master-menu",
   },
 ];
