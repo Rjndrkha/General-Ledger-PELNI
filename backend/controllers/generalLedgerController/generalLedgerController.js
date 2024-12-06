@@ -34,6 +34,7 @@ const generalLedgerControllers = async (req, res) => {
     WHERE
       pslh_nrp = $1
       AND status != 'Completed'
+      AND status != 'failed'
   `;
 
   const params = [pslh_nrp];

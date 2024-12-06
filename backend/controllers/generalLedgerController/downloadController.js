@@ -17,14 +17,14 @@ async function generalLedgerDownload(req, res) {
     const params = [jobId, pslh_nrp];
     const result = await executePostgreQuery(query, params);
 
-    const file_path = result.rows[0]?.file_path;
-
-    if (!result.rows || result.rows.length === 0) {
+    if (!result?.rows || result.rows.length === 0) {
       return res.status(404).json({
         success: false,
         message: `File untuk job_id ${jobId} dengan NRP ${pslh_nrp} tidak ditemukan atau belum selesai.`,
       });
     }
+
+    const file_path = result.rows[0].file_path;
 
     if (file_path) {
       if (!fs.existsSync(file_path)) {
