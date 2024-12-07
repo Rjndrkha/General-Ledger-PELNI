@@ -1,7 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CardComponent from "../../component/card/card";
+import DashboardClient from "../../service/dashboard/PortalClient";
+import Cookies from "js-cookie";
+import { message } from "antd";
+import { IMenuAccess } from "../../interface/IMenuAccess";
 
 function Dashboard() {
+  const [menu, setMenu] = React.useState<IMenuAccess[]>([]);
+  const token = Cookies.get("token") || "";
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    const { response } = await DashboardClient.GetMenuAccess({}, token);
+
+    if (response) {
+      setMenu(response.data);
+    }
+
+    if (!response) {
+      message.error(response?.message || "Failed to get data");
+    }
+  };
   return (
     <>
       <section className="flex flex-col gap-3">
@@ -11,31 +33,17 @@ function Dashboard() {
             Enterprise Application
           </h1>
         </div>
+
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <CardComponent
-            href="/penarikan-general-ledger"
-            imgAlt="test-img"
-            imgSrc="https://portal.pelni.co.id/theme/dashboard/images/covid-icon.png"
-            text="Penarikan General Ledger"
-          />
-          <CardComponent
-            href="/penarikan-general-ledger"
-            imgAlt="test-img"
-            imgSrc="https://portal.pelni.co.id/theme/dashboard/images/covid-icon.png"
-            text="Penarikan General Ledger"
-          />
-          <CardComponent
-            href="/penarikan-general-ledger"
-            imgAlt="test-img"
-            imgSrc="https://portal.pelni.co.id/theme/dashboard/images/covid-icon.png"
-            text="Penarikan General Ledger"
-          />
-          <CardComponent
-            href="/penarikan-general-ledger"
-            imgAlt="test-img"
-            imgSrc="https://portal.pelni.co.id/theme/dashboard/images/covid-icon.png"
-            text="Penarikan General Ledger"
-          />
+          {menu.map((item, index) => (
+            <CardComponent
+              key={index}
+              href={item.link}
+              imgAlt="Image-Menu"
+              imgSrc={item.image_url}
+              text={item.label}
+            />
+          ))}
         </div>
       </section>
     </>

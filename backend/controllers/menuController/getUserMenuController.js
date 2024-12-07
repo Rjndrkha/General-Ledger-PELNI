@@ -31,8 +31,8 @@ const getUserMenuController = async (req, res) => {
 
   const { rows } = await executePostgreQuery(query, params);
   const transformedData = rows.map((item) => ({
-    label: item.menu_name,
     key: String(item.menu_id),
+    label: item.menu_name,
     image_url: item.image_url,
     link: item.url,
   }));
