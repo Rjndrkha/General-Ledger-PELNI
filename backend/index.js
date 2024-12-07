@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const {
   authentificationController,
-} = require("./controllers/authentificationController");
+} = require("./controllers/authentificationController/authentificationController");
 const {
   generalLedgerControllers,
   downloadGLFile,
@@ -27,6 +27,12 @@ const {
 } = require("./controllers/imageController/uploadController");
 const serverAdapter = require("./controllers/bullController/bullController");
 const generalLedgerDownload = require("./controllers/generalLedgerController/downloadController");
+const {
+  getUserMenuController,
+} = require("./controllers/menuController/getUserMenuController");
+const {
+  addMasterMenuController,
+} = require("./controllers/menuController/addMasterMenuController");
 
 require("dotenv").config();
 
@@ -94,3 +100,15 @@ app.post(
 );
 
 app.post("/auth/login", asyncHandler(authentificationController));
+
+app.get(
+  "/auth/usermenu-access",
+  authenticateToken,
+  asyncHandler(getUserMenuController)
+);
+
+app.post(
+  "/auth/add/master-menu",
+  authenticateToken,
+  asyncHandler(addMasterMenuController)
+);

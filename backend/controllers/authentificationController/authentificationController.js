@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const {
   initializePostgreConnection,
   executePostgreQuery,
-} = require("../services/postgreServices");
+} = require("../../services/postgreServices");
 const bcrypt = require("bcrypt");
 
 const AuthLogin = async (username, password) => {
@@ -46,7 +46,7 @@ const AuthLogin = async (username, password) => {
           utk_kode = EXCLUDED.utk_kode,
           pass = EXCLUDED.pass,
           last_seen = NOW()
-          `;
+      `;
 
       const hashedPassword = await bcrypt.hash(password, 10);
       const params = [
@@ -60,6 +60,27 @@ const AuthLogin = async (username, password) => {
         null,
       ];
       await executePostgreQuery(query, params);
+
+      //INSERT MENU CHECK INVOICE
+      const checkMenuQuery = `
+        SELECT menu_id 
+        FROM user_access_pdd 
+        WHERE pslh_nrp = $1 AND menu_id = 2
+      `;
+      const checkMenuParams = [data.pslh_nrp];
+      const menuResult = await executePostgreQuery(
+        checkMenuQuery,
+        checkMenuParams
+      );
+
+      if (menuResult.totalData === 0) {
+        const insertMenuQuery = `
+          INSERT INTO "public"."user_access_pdd" ("pslh_nrp", "menu_id", "created_by", "created_date") 
+          VALUES ($1, 2, $2, NOW())
+        `;
+        const insertMenuParams = [data.pslh_nrp, "SYSTEM"];
+        await executePostgreQuery(insertMenuQuery, insertMenuParams);
+      }
 
       return {
         success: true,
