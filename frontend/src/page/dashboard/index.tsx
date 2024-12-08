@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import CardComponent from "../../component/card/card";
 import DashboardClient from "../../service/dashboard/PortalClient";
-import Cookies from "js-cookie";
 import { message } from "antd";
 import { IMenuAccess } from "../../interface/IMenuAccess";
+import Cookies from "js-cookie";
 
 function Dashboard() {
   const [menu, setMenu] = React.useState<IMenuAccess[]>([]);
@@ -18,6 +18,7 @@ function Dashboard() {
 
     if (response) {
       setMenu(response.data);
+      Cookies.set("menu", JSON.stringify(response.data), { expires: 1 });
     }
 
     if (!response) {

@@ -65,7 +65,8 @@ const AuthLogin = async (username, password) => {
       const checkMenuQuery = `
         SELECT menu_id 
         FROM user_access_pdd 
-        WHERE pslh_nrp = $1 AND menu_id = 2
+        WHERE pslh_nrp = $1
+        AND "menu_name" ILIKE'%Check Invoice Status%' 
       `;
       const checkMenuParams = [data.pslh_nrp];
       const menuResult = await executePostgreQuery(
@@ -76,7 +77,7 @@ const AuthLogin = async (username, password) => {
       if (menuResult.totalData === 0) {
         const insertMenuQuery = `
           INSERT INTO "public"."user_access_pdd" ("pslh_nrp", "menu_id", "created_by", "created_date") 
-          VALUES ($1, 2, $2, NOW())
+          VALUES ($1, 3, $2, NOW())
         `;
         const insertMenuParams = [data.pslh_nrp, "SYSTEM"];
         await executePostgreQuery(insertMenuQuery, insertMenuParams);

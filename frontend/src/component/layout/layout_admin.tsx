@@ -31,7 +31,7 @@ function LayoutAdmin() {
     }
   }, [location]);
 
-  const items: MenuItem[] = getMenuItems(menuItemsAdmin);
+  const items: MenuItem[] = getMenuItems();
 
   return (
     <>

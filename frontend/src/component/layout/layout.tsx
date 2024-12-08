@@ -20,7 +20,7 @@ function LayoutUser() {
     setTimeout(() => setProgress(100), 300);
   }, [location.pathname]);
 
-  const items = getMenuItems(menuItemsUser);
+  const items = getMenuItems();
 
   return (
     <>
