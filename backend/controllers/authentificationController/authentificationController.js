@@ -65,8 +65,7 @@ const AuthLogin = async (username, password) => {
       const checkMenuQuery = `
         SELECT menu_id 
         FROM user_access_pdd 
-        WHERE pslh_nrp = $1
-        AND "menu_name" ILIKE'%Check Invoice Status%' 
+        WHERE pslh_nrp = $1 AND menu_id = 3
       `;
       const checkMenuParams = [data.pslh_nrp];
       const menuResult = await executePostgreQuery(
