@@ -3,46 +3,39 @@ import { SearchOutlined } from "@ant-design/icons";
 import type { GetRef, TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Space, Table, message } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import { ITableGeneralLedger } from "../../interface/ITableGeneralLedger";
-import EbsClient from "../../service/ebs/OracleClient";
 import Highlighter from "react-highlight-words";
 import Cookies from "js-cookie";
+import EbsClient from "../../service/ebs/OracleClient";
+import { ITableGeneralLedger } from "../../interface/ITableGeneralLedger";
 
 type InputRef = GetRef<typeof Input>;
 type DataIndex = keyof ITableGeneralLedger;
 
-const TableGeneralLedger: React.FC<{
-  nama: string;
-  loading: boolean;
-  setLoading: (loading: boolean) => void;
-}> = ({ nama, loading, setLoading }) => {
-  const [promotion, setPromotion] = useState<ITableGeneralLedger[]>([]);
+const TableGeneralLedger: React.FC = () => {
+  const [data, setData] = useState<ITableGeneralLedger[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    getListPromotion();
+    fetchGeneralLedgerData();
   }, []);
 
-  const getListPromotion = async () => {
+  const fetchGeneralLedgerData = async () => {
     setLoading(true);
 
     const token = Cookies.get("token") || "";
-
-    const { error, errorMessage, response } = await EbsClient.GetGeneralLedgerStatus(
-      {
-        // nama: nama,
-      },
-      token
-    );
+    const { response, error } = await EbsClient.GetGeneralLedgerStatus({}, token);
 
     if (error) {
-      message.error("Error");
+      message.error("Gagal mengambil data General Ledger");
       setLoading(false);
+      return;
     }
 
     if (response) {
-      setPromotion(response.data);
-      setLoading(false);
+      setData(response.data);
     }
+
+    setLoading(false);
   };
 
   const addActionButton = (data: ITableGeneralLedger[]) => {
@@ -51,21 +44,7 @@ const TableGeneralLedger: React.FC<{
         ...item,
         Action: (
           <div className="flex justify-center gap-5">
-            {/* <ButtonDefault
-              color="#f4b63c"
-              text={"Edit"}
-              onClick={() => {
-                window.location.href = `/content/edit/${item.id_promo}`;
-              }}
-            />
-
-            <ButtonDefault
-              color="#2a9928"
-              text={"Show"}
-              onClick={() => {
-                window.location.href = `/content/show/${item.id_promo}`;
-              }}
-            /> */}
+            {/* Tombol aksi dapat ditambahkan di sini */}
           </div>
         ),
       };
@@ -92,7 +71,6 @@ const TableGeneralLedger: React.FC<{
   ) => {
     clearFilters();
     setSearchText("");
-    getListPromotion();
     confirm();
   };
 
@@ -186,36 +164,70 @@ const TableGeneralLedger: React.FC<{
         text
       ),
   });
+
   const columns: TableColumnsType<ITableGeneralLedger> = [
     {
-      title: "JOB_ID",
+      title: "Job ID",
       dataIndex: "JOB_ID",
       key: "JOB_ID",
-      ...getColumnSearchProps("JOB_ID"),
     },
     {
-      title: "STATUS",
-      dataIndex: "STATUS",
-      key: "STATUS",
-      ...getColumnSearchProps("STATUS"),
+      title: "Start Date",
+      dataIndex: "START_DATE",
+      key: "START_DATE",
     },
-    // {
-    //   align: "center",
-    //   title: "Action",
-    //   dataIndex: "Action",
-    //   key: "Action",
-    // },
+    {
+      title: "End Date",
+      dataIndex: "END_DATE",
+      key: "END_DATE",
+    },
+    {
+      title: "With Adjustment",
+      dataIndex: "WITH_ADJUSTMENT",
+      key: "WITH_ADJUSTMENT",
+      render: (boolean) => (boolean ? "Yes" : "No"),
+    },
+    {
+      title: "With Company",
+      dataIndex: "WITH_COMPANY",
+      key: "WITH_COMPANY",
+      render: (boolean) => (boolean ? "Yes" : "No"),
+    },
+    {
+      title: "Company ID",
+      dataIndex: "ID_COMPANY",
+      key: "ID_COMPANY",
+    },
+    {
+      title: "With Account",
+      dataIndex: "WITH_ACCOUNT",
+      key: "WITH_ACCOUNT",
+      render: (boolean) => (boolean ? "Yes" : "No"),
+    },
+    {
+      title: "Account ID",
+      dataIndex: "ID_ACCOUNT",
+      key: "ID_ACCOUNT",
+    },
   ];
 
   return (
-    <Table
-      loading={loading}
-      size="small"
-      columns={columns}
-      style={{ overflow: "auto", textAlign: "center" }}
-      dataSource={addActionButton(promotion)}
-      pagination={{ pageSize: 5, position: ["bottomLeft"], defaultCurrent: 1 }}
-    />
+    <div>
+      <Button
+        type="primary"
+        onClick={fetchGeneralLedgerData}
+        style={{ marginBottom: "16px" }}
+      >
+        Refresh Data
+      </Button>
+      <Table
+        columns={columns}
+        dataSource={data}
+        loading={loading}
+        pagination={{ pageSize: 5 }}
+        rowKey="JOB_ID"
+      />
+    </div>
   );
 };
 
