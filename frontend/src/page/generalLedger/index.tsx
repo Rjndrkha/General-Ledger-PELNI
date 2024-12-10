@@ -11,6 +11,7 @@ import ShowComp from "../../component/showpicture/showpicture_comp";
 import { downloadExcelFile } from "../../utils/excelUtils";
 import Cookies from "js-cookie";
 import { message } from "antd";
+import TableGeneralLedger from "./table";
 
 function IndexGeneralLedger() {
   const [generalLedger, setGeneralLedger] = useState<IGeneralLedger>({
@@ -85,10 +86,6 @@ function IndexGeneralLedger() {
       ...prevState,
       [key]: value,
     }));
-  };
-
-  const handleDownload = () => {
-    downloadExcelFile(data, generalLedger);
   };
 
   return (
@@ -199,11 +196,12 @@ function IndexGeneralLedger() {
             </div>
           </div>
           <ButtonDefault
-            text={isExport ? "Download" : "Cari"}
+            text="Cari"
             width="50%"
-            onClick={isExport ? handleDownload : handleSubmit}
+            onClick={handleSubmit}
             loading={loading}
           />
+          <TableGeneralLedger />
         </div>
       </div>
     </>

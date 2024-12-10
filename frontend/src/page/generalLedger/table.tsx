@@ -7,6 +7,8 @@ import Highlighter from "react-highlight-words";
 import Cookies from "js-cookie";
 import EbsClient from "../../service/ebs/OracleClient";
 import { ITableGeneralLedger } from "../../interface/ITableGeneralLedger";
+import ButtonDefault from "../../component/button/button";
+import { downloadExcelFile } from "../../utils/excelUtils";
 
 type InputRef = GetRef<typeof Input>;
 type DataIndex = keyof ITableGeneralLedger;
@@ -14,6 +16,9 @@ type DataIndex = keyof ITableGeneralLedger;
 const TableGeneralLedger: React.FC = () => {
   const [data, setData] = useState<ITableGeneralLedger[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
 
   useEffect(() => {
     fetchGeneralLedgerData();
@@ -23,6 +28,7 @@ const TableGeneralLedger: React.FC = () => {
     setLoading(true);
 
     const token = Cookies.get("token") || "";
+
     const { response, error } = await EbsClient.GetGeneralLedgerStatus({}, token);
 
     if (error) {
@@ -31,29 +37,14 @@ const TableGeneralLedger: React.FC = () => {
       return;
     }
 
-    if (response) {
-      setData(response.data);
+    if (response.rows){
+      setData(response.rows)
+
     }
+    console.log("Fetched data:", response);
 
     setLoading(false);
   };
-
-  const addActionButton = (data: ITableGeneralLedger[]) => {
-    return data.map((item) => {
-      return {
-        ...item,
-        Action: (
-          <div className="flex justify-center gap-5">
-            {/* Tombol aksi dapat ditambahkan di sini */}
-          </div>
-        ),
-      };
-    });
-  };
-
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
-  const searchInput = useRef<InputRef>(null);
 
   const handleSearch = (
     selectedKeys: string[],
@@ -64,6 +55,77 @@ const TableGeneralLedger: React.FC = () => {
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
   };
+
+  const handleButtonStatus = 
+  (status: string) => {
+    if (status === "Completed") {
+      return (
+        <Button 
+          type="primary"
+          onClick={handleDownload}
+          >
+          Download
+        </Button>
+      );
+    }
+  
+    if (status === "pending") {
+      return (
+        <Button type="primary" loading={true}>
+          Pending
+        </Button>
+      );
+    }
+  
+    if (status === "active") {
+      return (
+        <Button type="primary" loading={true}>
+          Active
+        </Button>
+      );
+    }
+
+    if (status === "failed") {
+      return (
+        <Button type="primary" danger>
+          Failed
+        </Button>
+      );
+    }
+  
+    return status;
+  };
+
+  const handleDownload = async (token: {}) => {
+    try {
+      const completedData = data.filter(item => item.STATUS === "Completed");
+  
+      if (completedData.length === 0) {
+        message.error("Tidak ada data dengan status 'Completed' untuk diunduh.");
+        return;
+      }
+  
+      const { response, error, errorMessage } = await EbsClient.GetGeneralLedgerDownload(
+        { job_ids: completedData.map(item => item.JOB_ID) }, 
+        token
+      );
+  
+      if (error) {
+        message.error(`Gagal Download Data ${errorMessage}`);
+        return;
+      }
+  
+      if (response && response.data) {
+        downloadExcelFile(response.data, response.generalLedger);
+      } else {
+        message.error("Data tidak tersedia");
+      }
+    } catch (err) {
+      message.error("Terjadi kesalahan saat mendownload file");
+      console.error(err);
+    }
+  };
+  
 
   const handleReset = (
     clearFilters: () => void,
@@ -167,59 +229,64 @@ const TableGeneralLedger: React.FC = () => {
 
   const columns: TableColumnsType<ITableGeneralLedger> = [
     {
-      title: "Job ID",
-      dataIndex: "JOB_ID",
-      key: "JOB_ID",
+      title: "Job Id",
+      dataIndex: "job_id",
+      key: "job_id",
     },
     {
       title: "Start Date",
-      dataIndex: "START_DATE",
-      key: "START_DATE",
+      dataIndex: "start_date",
+      key: "start_date",
     },
     {
       title: "End Date",
-      dataIndex: "END_DATE",
-      key: "END_DATE",
+      dataIndex: "end_date",
+      key: "end_date",
     },
     {
       title: "With Adjustment",
-      dataIndex: "WITH_ADJUSTMENT",
-      key: "WITH_ADJUSTMENT",
-      render: (boolean) => (boolean ? "Yes" : "No"),
+      dataIndex: "with_adjustment",
+      key: "with_adjustment",
     },
     {
       title: "With Company",
-      dataIndex: "WITH_COMPANY",
-      key: "WITH_COMPANY",
-      render: (boolean) => (boolean ? "Yes" : "No"),
+      dataIndex: "with_company",
+      key: "with_company",
     },
     {
-      title: "Company ID",
-      dataIndex: "ID_COMPANY",
-      key: "ID_COMPANY",
+      title: "Id Company",
+      dataIndex: "id_company",
+      key: "id_company",
     },
     {
       title: "With Account",
-      dataIndex: "WITH_ACCOUNT",
-      key: "WITH_ACCOUNT",
-      render: (boolean) => (boolean ? "Yes" : "No"),
+      dataIndex: "with_account",
+      key: "with_account",
     },
     {
-      title: "Account ID",
-      dataIndex: "ID_ACCOUNT",
-      key: "ID_ACCOUNT",
+      title: "Id Account",
+      dataIndex: "id_account",
+      key: "id_account",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (text) => handleButtonStatus(text), 
     },
   ];
 
   return (
-    <div>
-      <Button
-        type="primary"
-        onClick={fetchGeneralLedgerData}
-        style={{ marginBottom: "16px" }}
-      >
-        Refresh Data
-      </Button>
+    <div className="flex flex-col item-center gap-3">
+      <div className="flex item-center gap-3">
+        <label htmlFor="title" className="text-base font-semibold">
+          Tabel Riwayat Penarikan Data
+        </label>
+        <ButtonDefault
+          text="Refresh"
+          onClick={fetchGeneralLedgerData}
+        />
+      </div>
       <Table
         columns={columns}
         dataSource={data}
