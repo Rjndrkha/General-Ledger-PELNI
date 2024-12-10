@@ -33,8 +33,8 @@ export default class EbsClient {
 
   static async GetGeneralLedgerDownload(body: {}, token: {}) {
     const { response, error, errorMessage } = await Service.get(
-      `${process.env.REACT_APP_PELNI_URL}${process.env.REACT_APP_BASE_GENERAL_LEDGER_DOWNLOAD_URL}`,
-      body,
+      `${process.env.REACT_APP_PELNI_URL}${process.env.REACT_APP_BASE_GENERAL_LEDGER_DOWNLOAD_URL}/${body}`,
+      {},
       token
     );
 

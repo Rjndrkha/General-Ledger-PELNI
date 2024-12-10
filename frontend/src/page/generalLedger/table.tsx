@@ -19,6 +19,7 @@ const TableGeneralLedger: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
+  const token = Cookies.get("token");
 
   useEffect(() => {
     fetchGeneralLedgerData();
@@ -29,7 +30,10 @@ const TableGeneralLedger: React.FC = () => {
 
     const token = Cookies.get("token") || "";
 
-    const { response, error } = await EbsClient.GetGeneralLedgerStatus({}, token);
+    const { response, error } = await EbsClient.GetGeneralLedgerStatus(
+      {},
+      token
+    );
 
     if (error) {
       message.error("Gagal mengambil data General Ledger");
@@ -37,11 +41,9 @@ const TableGeneralLedger: React.FC = () => {
       return;
     }
 
-    if (response.rows){
-      setData(response.rows)
-
+    if (response.rows) {
+      setData(response.rows);
     }
-    console.log("Fetched data:", response);
 
     setLoading(false);
   };
@@ -56,76 +58,48 @@ const TableGeneralLedger: React.FC = () => {
     setSearchedColumn(dataIndex);
   };
 
-  const handleButtonStatus = 
-  (status: string) => {
-    if (status === "Completed") {
-      return (
-        <Button 
-          type="primary"
-          onClick={handleDownload}
-          >
+  const handleButtonStatus = (status: string, job_id: Number) => {
+    const statusMap: { [key: string]: JSX.Element } = {
+      Completed: (
+        <Button type="primary" onClick={() => handleDownload(job_id)}>
           Download
         </Button>
-      );
-    }
-  
-    if (status === "pending") {
-      return (
+      ),
+      pending: (
         <Button type="primary" loading={true}>
           Pending
         </Button>
-      );
-    }
-  
-    if (status === "active") {
-      return (
+      ),
+      active: (
         <Button type="primary" loading={true}>
           Active
         </Button>
-      );
-    }
-
-    if (status === "failed") {
-      return (
+      ),
+      failed: (
         <Button type="primary" danger>
           Failed
         </Button>
-      );
-    }
-  
-    return status;
+      ),
+    };
+
+    return statusMap[status] || status;
   };
 
-  const handleDownload = async (token: {}) => {
-    try {
-      const completedData = data.filter(item => item.STATUS === "Completed");
-  
-      if (completedData.length === 0) {
-        message.error("Tidak ada data dengan status 'Completed' untuk diunduh.");
-        return;
-      }
-  
-      const { response, error, errorMessage } = await EbsClient.GetGeneralLedgerDownload(
-        { job_ids: completedData.map(item => item.JOB_ID) }, 
-        token
-      );
-  
-      if (error) {
-        message.error(`Gagal Download Data ${errorMessage}`);
-        return;
-      }
-  
-      if (response && response.data) {
-        downloadExcelFile(response.data, response.generalLedger);
-      } else {
-        message.error("Data tidak tersedia");
-      }
-    } catch (err) {
-      message.error("Terjadi kesalahan saat mendownload file");
-      console.error(err);
+  const handleDownload = async (job_id: Number) => {
+    console.log(job_id, "clicked");
+    const data = await EbsClient.GetGeneralLedgerStatus(job_id, token || "");
+
+    if (data.error) {
+      message.error("Gagal mendownload data");
+      return;
+    }
+
+    if (data.response) {
+      downloadExcelFile(data.response.data, data.response.generalLedger);
+    } else {
+      message.error("Data tidak tersedia");
     }
   };
-  
 
   const handleReset = (
     clearFilters: () => void,
@@ -272,7 +246,7 @@ const TableGeneralLedger: React.FC = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (text) => handleButtonStatus(text), 
+      render: (text, record) => handleButtonStatus(text, Number(record.job_id)),
     },
   ];
 
@@ -282,10 +256,7 @@ const TableGeneralLedger: React.FC = () => {
         <label htmlFor="title" className="text-base font-semibold">
           Tabel Riwayat Penarikan Data
         </label>
-        <ButtonDefault
-          text="Refresh"
-          onClick={fetchGeneralLedgerData}
-        />
+        <ButtonDefault text="Refresh" onClick={fetchGeneralLedgerData} />
       </div>
       <Table
         columns={columns}

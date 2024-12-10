@@ -1,11 +1,11 @@
 export interface ITableGeneralLedger {
-    JOB_ID: Number;
-    STATUS: string;
-    START_DATE: string;
-    END_DATE: string;
-    WITH_ADJUSTMENT: boolean;
-    WITH_COMPANY: boolean;
-    ID_COMPANY: string;
-    WITH_ACCOUNT: boolean;
-    ID_ACCOUNT: string;
-  }
+  job_id: Number;
+  status: string;
+  start_date: string;
+  end_date: string;
+  with_adjustment: boolean;
+  with_company: boolean;
+  id_company: string;
+  with_account: boolean;
+  id_account: string;
+}
