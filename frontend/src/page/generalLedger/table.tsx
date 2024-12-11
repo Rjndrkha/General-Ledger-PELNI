@@ -210,6 +210,16 @@ const TableGeneralLedger: React.FC = () => {
       ),
   });
 
+  const formatDate = (dateString: string): string => {
+    if (!dateString) return "-";
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    return new Date(dateString).toLocaleDateString("id-ID", options);
+  };
+
   const columns: TableColumnsType<ITableGeneralLedger> = [
     {
       title: "Job Id",
@@ -220,11 +230,13 @@ const TableGeneralLedger: React.FC = () => {
       title: "Start Date",
       dataIndex: "start_date",
       key: "start_date",
+      render: (text) => formatDate(text),
     },
     {
       title: "End Date",
       dataIndex: "end_date",
       key: "end_date",
+      render: (text) => formatDate(text),
     },
     {
       title: "With Adjustment",
