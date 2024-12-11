@@ -40,7 +40,7 @@ async function generalLedgerDownload(req, res) {
 
       return res.status(200).json({
         success: true,
-        data: jsonData,
+        jsonData,
       });
     }
   } catch (error) {
