@@ -85,10 +85,10 @@ const perjalananDinasControllers = async (req, res) => {
       LEFT JOIN ( SELECT invoice_id, SUM( amount ) AS pph_amt FROM ap_invoice_distributions_all WHERE line_type_lookup_code = 'AWT' GROUP BY invoice_id ) pph ON aih.invoice_id = pph.invoice_id
       LEFT JOIN ( SELECT invoice_id, SUM( amount ) AS prepay_amt FROM ap_invoice_distributions_all WHERE line_type_lookup_code = 'PREPAY' GROUP BY invoice_id ) prepay ON aih.invoice_id = prepay.invoice_id 
     WHERE
-      aih.description LIKE '%${upperNama}%' 
+      UPPER(aih.description) LIKE '%${upperNama}%' 
       AND hou.name = 'PELNI Kantor Pusat' 
     ORDER BY
-      aih.invoice_date,
+      aih.invoice_date DESC,
       aih.invoice_num,
       pay.check_date
   `;
