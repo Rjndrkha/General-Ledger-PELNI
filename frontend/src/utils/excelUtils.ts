@@ -4,10 +4,7 @@ import { IGeneralLedger } from "../interface/IGeneralLedger";
 import { DateFormatter, DateParser } from "./dateConverter";
 import { message } from "antd";
 
-export const downloadExcelFile = (
-  data: LedgerItem[],
-  generalLedger: IGeneralLedger
-) => {
+export const downloadExcelFile = (data: LedgerItem[], generalLedger: any) => {
   const startDate = DateParser(generalLedger.date[0]);
   const endDate = DateParser(generalLedger.date[1]);
 

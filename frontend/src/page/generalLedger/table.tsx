@@ -61,7 +61,10 @@ const TableGeneralLedger: React.FC = () => {
   const handleButtonStatus = (status: string, job_id: Number) => {
     const statusMap: { [key: string]: JSX.Element } = {
       Completed: (
-        <Button type="primary" onClick={() => handleDownload(job_id)}>
+        <Button
+          type="primary"
+          onClick={async () => await handleDownload(job_id)}
+        >
           Download
         </Button>
       ),
@@ -87,7 +90,7 @@ const TableGeneralLedger: React.FC = () => {
 
   const handleDownload = async (job_id: Number) => {
     console.log(job_id, "clicked");
-    const data = await EbsClient.GetGeneralLedgerStatus(job_id, token || "");
+    const data = await EbsClient.GetGeneralLedgerDownload(job_id, token || "");
 
     if (data.error) {
       message.error("Gagal mendownload data");
@@ -95,7 +98,13 @@ const TableGeneralLedger: React.FC = () => {
     }
 
     if (data.response) {
-      downloadExcelFile(data.response.data, data.response.generalLedger);
+      //perbaiki kode disini buat export ke excel yaa :)
+      // const date = [
+      //   ...data.response.data[0].start_date,
+      //   ...data.response.data[0].end_date,
+      // ];
+      // console.log(...data.response.data[0]);
+      // downloadExcelFile(data.response.data, date);
     } else {
       message.error("Data tidak tersedia");
     }
