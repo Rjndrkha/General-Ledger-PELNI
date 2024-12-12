@@ -13,7 +13,7 @@ function Navbar({
 }: any) {
   const navigate = useNavigate();
 
-  const nama = atob(Cookies.get("nama")|| "")
+  const nama = atob(Cookies.get("nama") || "");
 
   const handleLogout = () => {
     message.success("Logout Berhasil!");
@@ -41,7 +41,7 @@ function Navbar({
 
   return (
     <header className="z-20 w-full h-16 fixed top-0 flex justify-center">
-      <div className="h-full w-full max-w-[85rem] bg-white items-center relative">
+      <div className="h-full w-full max-w-[85rem] bg-blue-950 items-center relative">
         <div className="md:hidden flex items-center w-10 h-full left-0 justify-center absolute">
           <GiHamburgerMenu
             onClick={onClickHamburger}
@@ -51,10 +51,20 @@ function Navbar({
           />
         </div>
 
+        <div className="hidden md:flex items-center w-48 h-full left-0 justify-center absolute">
+          <a href="/">
+            <img
+              src="https://portal.pelni.co.id/theme/atlant/img/pelni_no_tag_line.png"
+              alt="logo"
+              className="w-[10rem] h-[2rem]"
+            />
+          </a>
+        </div>
+
         <div className="ml-[2.5rem] md:ml-0 w-full h-full flex items-center justify-start md:justify-center relative">
           <div className="hidden md:block absolute right-5">
             <Dropdown menu={{ items }}>
-              <p className="text-base font-semibold">
+              <p className="text-base font-semibold text-white">
                 Hello, {nama}!
               </p>
             </Dropdown>
@@ -64,7 +74,7 @@ function Navbar({
 
       <LoadingBar
         color="#3b82f6"
-        height={7}
+        height={6}
         shadow={true}
         progress={progress}
         waitingTime={400}
