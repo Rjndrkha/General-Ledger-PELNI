@@ -43,8 +43,7 @@ const generalLedgerControllers = async (req, res) => {
 
   if (datalength.rows[0].total_jobs >= 10) {
     return res.status(400).json({
-      error: "Maksimal Tarikan 10 Data , Tarikan Saat ini",
-      total_jobs: datalength.rows[0].total_jobs,
+      error: `Maksimal Tarikan 10 Data , Tarikan Saat ini : ${datalength.rows[0].total_jobs}`,
     });
   }
 
