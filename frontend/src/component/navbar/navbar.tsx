@@ -1,8 +1,7 @@
 import { GiHamburgerMenu } from "react-icons/gi";
 import LoadingBar from "react-top-loading-bar";
-import { Dropdown, MenuProps } from "antd";
+import { Dropdown, MenuProps, message } from "antd";
 import ButtonDefault from "../button/button";
-import { useAuthentificationStore } from "../../store/useAuthentificationStore";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
@@ -13,11 +12,14 @@ function Navbar({
   setProgress,
 }: any) {
   const navigate = useNavigate();
-  const { logout } = useAuthentificationStore();
+
+  const nama = atob(Cookies.get("nama")|| "")
 
   const handleLogout = () => {
+    message.success("Logout Berhasil!");
     Cookies.remove("token");
     Cookies.remove("nama");
+    Cookies.remove("nrp");
 
     navigate("/login");
   };
@@ -26,8 +28,12 @@ function Navbar({
     {
       key: "1",
       label: (
-        <div className="h-fit flex">
-          <ButtonDefault text={"Logout"} width="100%" onClick={handleLogout} />
+        <div className="w-[100%]">
+          <ButtonDefault
+            text={"Logout"}
+            className="w-full h-full"
+            onClick={handleLogout}
+          />
         </div>
       ),
     },
@@ -48,15 +54,9 @@ function Navbar({
         <div className="ml-[2.5rem] md:ml-0 w-full h-full flex items-center justify-start md:justify-center relative">
           <div className="hidden md:block absolute right-5">
             <Dropdown menu={{ items }}>
-              <button
-                onClick={(e) => e.preventDefault()}
-                className="text-start"
-              >
-                <p className="text-base font-semibold">
-                  Hello, {Cookies.get("nama")}!
-                </p>
-                <p className="text-xs"> </p>
-              </button>
+              <p className="text-base font-semibold">
+                Hello, {nama}!
+              </p>
             </Dropdown>
           </div>
         </div>
