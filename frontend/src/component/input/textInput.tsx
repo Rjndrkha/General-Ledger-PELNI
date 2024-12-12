@@ -36,7 +36,7 @@ const TextInput: React.FC<TextInputProps> = ({
     }
   }, [value, isSubmit]);
 
-  const inputPlaceholder = error ? "Error" : placeholder;
+  const inputPlaceholder = error ? "Please Fill This Field" : placeholder;
 
   const inputStyle = {
     width: "100%",
@@ -72,6 +72,22 @@ const TextInput: React.FC<TextInputProps> = ({
               Please Fill This Field!
             </p>
           )}
+        </>
+      ) : type === "perjadin" ? (
+        <>
+          <Input
+            placeholder={inputPlaceholder}
+            value={value}
+            onChange={handleChange}
+            readOnly={readOnly}
+            required={required}
+            autoFocus={autoFocus}
+            autoCapitalize={autoCapitalize}
+            disabled={disabled}
+            status={error ? "error" : status === "success" ? undefined : status}
+            style={inputStyle}
+            onFocus={handleFocus}
+          />
         </>
       ) : (
         <>

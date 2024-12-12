@@ -51,11 +51,11 @@ function IndexCheckSPJ() {
           </label>
           <div className="flex items-center gap-2" style={{ width: "60%" }}>
             <TextInput
-              placeholder="Masukan Nama"
+              type={"perjadin"}
+              placeholder="Masukkan Nama"
               value={nama}
               onChange={(value) => setNama(value)}
               isSubmit={isSubmit}
-              required
             />
             <ButtonDefault
               text="Cari"
