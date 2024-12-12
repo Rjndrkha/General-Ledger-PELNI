@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { greenDark } from '@ant-design/colors';
 import { SearchOutlined } from "@ant-design/icons";
 import type { GetRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Space, Table, message } from "antd";
+import { Button, Input, Space, Table, message, Spin } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import Cookies from "js-cookie";
@@ -253,6 +252,7 @@ const TableGeneralLedger: React.FC = () => {
       dataIndex: "status",
       key: "status",
       render: (text, record) => handleButtonStatus(text, Number(record.job_id)),
+      ...getColumnSearchProps("status"),
     },
   ];
 

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { IGeneralLedger } from "../../interface/IGeneralLedger";
 import { LedgerItem } from "../../interface/LedgerItem";
 import TextInput from "../../component/input/textInput";
-import TextInputError from "../../component/input/textInputError";
 import ButtonDefault from "../../component/button/button";
 import DatePickerInput from "../../component/input/dateInput";
 import SwitchComponent from "../../component/switch/switch";
@@ -33,6 +32,7 @@ function IndexGeneralLedger() {
   const handleSubmit = async () => {
     const token = Cookies.get("token") || "";
     const validationErrors: { [key: string]: string } = {};
+
     if (generalLedger.date.length === 0) {
       validationErrors.date = "This field is required";
     }
@@ -94,14 +94,17 @@ function IndexGeneralLedger() {
     setIsExport(false);
     setGeneralLedger((prevState) => {
       const newState = { ...prevState, [key]: !prevState[key] };
+
       if (key === "withCompany" && !newState.withCompany) {
         newState.company1 = "";
         newState.company2 = "";
+        setErrors((prevErrors) => ({ ...prevErrors, company1: "", company2: "" }));
       }
 
       if (key === "withCOA" && !newState.withCOA) {
         newState.coa1 = "";
         newState.coa2 = "";
+        setErrors((prevErrors) => ({ ...prevErrors, coa1: "", coa2: "" }));
       }
 
       return newState;
@@ -111,6 +114,18 @@ function IndexGeneralLedger() {
   const handleInputChange = (key: keyof IGeneralLedger, value: any) => {
     setIsExport(false);
     setGeneralLedger((prevState) => ({ ...prevState, [key]: value }));
+
+    if (key === "company1" || key === "company2") {
+      if (value) {
+        setErrors((prevErrors) => ({ ...prevErrors, [key]: "" }));
+      }
+    }
+
+    if (key === "coa1" || key === "coa2") {
+      if (value) {
+        setErrors((prevErrors) => ({ ...prevErrors, [key]: "" }));
+      }
+    }
   };
 
   return (
@@ -155,37 +170,31 @@ function IndexGeneralLedger() {
         </div>
         <div className="flex flex-row items-center gap-2">
           <div className="flex flex-col">
-            {errors.company1 ? (
-              <TextInputError />
-            ) : (
-              <TextInput
-                placeholder="ID Company 1"
-                value={generalLedger.company1}
-                onChange={(value: string) =>
-                  /^\d*$/.test(value) &&
-                  value.length <= 4 &&
-                  handleInputChange("company1", value)
-                }
-                disabled={!generalLedger.withCompany}
-              />
-            )}
+            <TextInput
+              placeholder="ID Company 1"
+              value={generalLedger.company1}
+              onChange={(value: string) =>
+                /^\d*$/.test(value) &&
+                value.length <= 4 &&
+                handleInputChange("company1", value)
+              }
+              disabled={!generalLedger.withCompany}
+              status={errors.company1 ? "error" : undefined}
+            />
           </div>
           <p className="text-sm font-bold">Between</p>
           <div className="flex flex-col">
-            {errors.company2 ? (
-              <TextInputError />
-            ) : (
-              <TextInput
-                placeholder="ID Company 2"
-                value={generalLedger.company2}
-                onChange={(value: string) =>
-                  /^\d*$/.test(value) &&
-                  value.length <= 4 &&
-                  handleInputChange("company2", value)
-                }
-                disabled={!generalLedger.withCompany}
-              />
-            )}
+            <TextInput
+              placeholder="ID Company 2"
+              value={generalLedger.company2}
+              onChange={(value: string) =>
+                /^\d*$/.test(value) &&
+                value.length <= 4 &&
+                handleInputChange("company2", value)
+              }
+              disabled={!generalLedger.withCompany}
+              status={errors.company2 ? "error" : undefined}
+            />
           </div>
         </div>
         <div className="flex flex-row items-center gap-3">
@@ -202,37 +211,31 @@ function IndexGeneralLedger() {
         </div>
         <div className="flex flex-row items-center gap-2">
           <div className="flex flex-col">
-            {errors.coa1 ? (
-              <TextInputError />
-            ) : (
-              <TextInput
-                placeholder="ID Account 1"
-                value={generalLedger.coa1}
-                onChange={(value: string) =>
-                  /^\d*$/.test(value) &&
-                  value.length <= 4 &&
-                  handleInputChange("coa1", value)
-                }
-                disabled={!generalLedger.withCOA}
-              />
-            )}
+            <TextInput
+              placeholder="ID Account 1"
+              value={generalLedger.coa1}
+              onChange={(value: string) =>
+                /^\d*$/.test(value) &&
+                value.length <= 4 &&
+                handleInputChange("coa1", value)
+              }
+              disabled={!generalLedger.withCOA}
+              status={errors.coa1 ? "error" : undefined}
+            />
           </div>
           <p className="text-sm font-bold">Between</p>
           <div className="flex flex-col">
-            {errors.coa2 ? (
-              <TextInputError />
-            ) : (
-              <TextInput
-                placeholder="ID Account 2"
-                value={generalLedger.coa2}
-                onChange={(value: string) =>
-                  /^\d*$/.test(value) &&
-                  value.length <= 4 &&
-                  handleInputChange("coa2", value)
-                }
-                disabled={!generalLedger.withCOA}
-              />
-            )}
+            <TextInput
+              placeholder="ID Account 2"
+              value={generalLedger.coa2}
+              onChange={(value: string) =>
+                /^\d*$/.test(value) &&
+                value.length <= 4 &&
+                handleInputChange("coa2", value)
+              }
+              disabled={!generalLedger.withCOA}
+              status={errors.coa2 ? "error" : undefined}
+            />
           </div>
         </div>
         <ButtonDefault
