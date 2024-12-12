@@ -17,7 +17,11 @@ router.post(
   asyncHandler(generalLedgerControllers)
 );
 
-router.get("/download", authenticateToken, asyncHandler(generalLedgerDownload));
+router.get(
+  "/download/:jobId",
+  authenticateToken,
+  asyncHandler(generalLedgerDownload)
+);
 
 router.get(
   "/check-status",

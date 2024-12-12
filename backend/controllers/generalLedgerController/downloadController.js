@@ -5,8 +5,9 @@ const {
 const fs = require("fs");
 
 async function generalLedgerDownload(req, res) {
-  const { jobId } = req.query;
+  const { jobId } = req.params;
   const { pslh_nrp } = req.user;
+
   try {
     const connection = await initializePostgreConnection();
 
