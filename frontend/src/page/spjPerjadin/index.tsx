@@ -16,15 +16,22 @@ function IndexCheckSPJ() {
 
   const handleSearch = () => {
     setSubmit(true);
-
-    if (!nama || nama.includes(" ")) {
-      setValidate(false);
-      return message.error("Nama hanya boleh satu kata");
-    }
+    setLoading(true); 
 
     if (nama) {
-      setLoading(false)
-      return setValidate(true);
+      setValidate(true);
+      setLoading(true); 
+    }
+
+    if (nama.includes(" ")) {
+      setValidate(false);
+      setLoading(false);
+      return message.error("Nama hanya boleh satu kata!");
+    }
+
+    if (!nama) {
+      setValidate(false);
+      setLoading(false);
     }
   };
 

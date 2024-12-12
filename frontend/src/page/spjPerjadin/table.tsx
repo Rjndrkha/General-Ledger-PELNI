@@ -24,28 +24,27 @@ const TablePerjalananDinas: React.FC<{
   }, []);
 
   const getListPromotion = async () => {
-    setLoading(true);
-
+    setLoading(true); 
     const token = Cookies.get("token") || "";
-
+  
     const { error, errorMessage, response } = await EbsClient.PostAllSPJ(
       {
         nama: nama,
       },
       token
     );
-
+  
     if (error) {
       message.error("Error");
       setLoading(false);
     }
-
+  
     if (response) {
       setPromotion(response.data);
-      setLoading(false);
+      setLoading(false); 
     }
   };
-
+  
   const addActionButton = (data: IPerjadin[]) => {
     return data.map((item) => {
       return {
