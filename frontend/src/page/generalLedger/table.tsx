@@ -63,12 +63,17 @@ const TableGeneralLedger: React.FC = () => {
 
   const handleDownload = async (job_id: Number) => {
     const data = await EbsClient.GetGeneralLedgerDownload(job_id, token || "");
-
+  
     if (data.error) {
       message.error("Gagal mendownload data");
       return;
     }
-
+  
+    if (data.response && data.response.jsonData.totalData === 0 && data.response.jsonData.data.length === 0) {
+      message.error("Data tidak tersedia");
+      return;
+    }
+  
     if (data.response) {
       downloadExcelFile(data.response.jsonData.data, dataInput[0]);
     } else {
