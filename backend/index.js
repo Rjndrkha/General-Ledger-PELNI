@@ -1,22 +1,15 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const {
-  authentificationController,
-} = require("./controllers/authentificationController");
-const {
-  generalLedgerControllers,
-} = require("./controllers/generalLedgerController");
 const {
   errorHandler,
   asyncHandler,
   errorRouteHandler,
 } = require("./middleware/errorHandler");
-const {
-  perjalananDinasControllers,
-} = require("./controllers/perjalananDinasController");
-const { authenticateToken } = require("./middleware/middleware");
-require("dotenv").config();
+const { BLControllers } = require("./controllers/blController");
+const serverAdapter = require("./controllers/bullController/bullController");
+const initializeCronJobs = require("./cron-job/cronjob");
 
 const app = express();
 // Middleware untuk parsing data form application/x-www-form-urlencoded
@@ -30,21 +23,23 @@ app.listen(process.env.PORT, () => {
   console.log("Server is running on Port", process.env.PORT);
 });
 
-//Routes
 app.get("/ping", (req, res) => {
   res.json("Up and Running");
 });
 
-app.post(
-  "/GeneralLedger",
-  authenticateToken,
-  asyncHandler(generalLedgerControllers)
-);
+//Dynamic Routes
+app.use("/admin/bull-queues", serverAdapter.getRouter());
+app.use("/auth", require("./routes/authRoute"));
+app.use("/GeneralLedger", require("./routes/generalLedgerRoute"));
+app.use("/images", require("./routes/imagesRoute"));
+app.use("/invoice", require("./routes/invoiceRoute"));
 
-app.post(
-  "/getDataSPJ",
-  authenticateToken,
-  asyncHandler(perjalananDinasControllers)
-);
+// CRON JOBS
+initializeCronJobs();
 
-app.post("/auth/login", asyncHandler(authentificationController));
+//Static Routes
+app.post(
+  "/bl",
+  // authenticateToken,
+  asyncHandler(BLControllers)
+);

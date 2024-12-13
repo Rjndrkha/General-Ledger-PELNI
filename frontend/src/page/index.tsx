@@ -3,7 +3,7 @@ function Home() {
     <div className="w-full h-screen flex items-center justify-center">
       <div className="text-center mt-[-15%]">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">
-          Welcome to General Ledger Portal
+          Welcome to Portal Enterprise IT Division PELNI
         </h1>
         <p className="text-xl text-gray-600 mb-8">
           Simplifying tracking and reporting.

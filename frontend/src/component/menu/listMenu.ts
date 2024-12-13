@@ -1,14 +1,23 @@
+import Cookies from "js-cookie";
 import { ReactNode } from "react";
 
 export interface IRoute {
-  key?: string;
+  key: string;
   label: string;
   link: string;
   icon?: ReactNode;
   children?: IRoute[];
 }
 
-export const menuItems: IRoute[] = [
+export const staticMenuItems: IRoute[] = [
+  {
+    label: "Home",
+    key: "1",
+    link: "/",
+  },
+];
+
+export const menuItemsUser: IRoute[] = [
   {
     label: "Home",
     key: "1",
@@ -23,5 +32,13 @@ export const menuItems: IRoute[] = [
     label: "Cek Perjalanan Dinas",
     key: "3",
     link: "/cek-perjalanan-dinas",
+  },
+];
+
+export const menuItemsAdmin: IRoute[] = [
+  {
+    label: "Master Menu",
+    key: "1",
+    link: "/admin/master-menu",
   },
 ];

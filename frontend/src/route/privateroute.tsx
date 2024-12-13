@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { message } from "antd";
 
@@ -26,16 +26,39 @@ export const PrivateGLRoute: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const navigate = useNavigate();
-  const nrp = atob(Cookies.get("nrp")|| "")
-  const allowedUsers = "16391,012345,15713,8738,8656";
-  const split = allowedUsers.split(",");
+  const menu = Cookies.get("menu");
+  const location = useLocation();
+  const token = Cookies.get("token");
 
   useEffect(() => {
-    if (nrp && !split.includes(nrp)) {
+    if (!token) {
+      message.error("Anda harus login terlebih dahulu!");
+      navigate("/login");
+    }
+    const allowedRoutes = menu
+      ? JSON.parse(menu).map((item: any) => item.link)
+      : [];
+
+    if (
+      !allowedRoutes.includes(location.pathname) &&
+      location.pathname !== "/"
+    ) {
       message.error("Anda tidak memiliki akses ke halaman ini!");
       navigate("/");
     }
-  }, [nrp, allowedUsers]);
+  }, [token, menu, location.pathname, navigate]);
+
+  return <>{children}</>;
+};
+
+export const PrivateAdminRoute: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/admin/master-menu");
+  }, []);
 
   return <>{children}</>;
 };

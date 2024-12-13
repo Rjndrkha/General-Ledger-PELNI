@@ -3,7 +3,6 @@ import { SearchOutlined } from "@ant-design/icons";
 import type { GetRef, TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Space, Table, message } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import ButtonDefault from "../../component/button/button";
 import { IPerjadin } from "../../interface/IPerjadin";
 import EbsClient from "../../service/ebs/OracleClient";
 import Highlighter from "react-highlight-words";
@@ -18,34 +17,48 @@ const TablePerjalananDinas: React.FC<{
   setLoading: (loading: boolean) => void;
 }> = ({ nama, loading, setLoading }) => {
   const [promotion, setPromotion] = useState<IPerjadin[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [total, setTotal] = useState<number>(0);
 
   useEffect(() => {
     getListPromotion();
-  }, []);
+  }, [page, limit]);
 
   const getListPromotion = async () => {
-    setLoading(true); //set loading ke true saat mulai fetch data
+    setLoading(true);
     const token = Cookies.get("token") || "";
-  
+
     const { error, errorMessage, response } = await EbsClient.PostAllSPJ(
       {
         nama: nama,
+        page: page,
+        limit: limit,
       },
       token
     );
-  
+
     if (error) {
-      message.error("Error");
-      setLoading(false); // set loading ke false jika ada error
+      message.error(errorMessage || "Failed to get data");
+      setPromotion([]);
+      setTotal(0);
+      setLoading(false);
+      return;
     }
-  
+
     if (response) {
       setPromotion(response.data);
-      setLoading(false); // set loading ke false setelah mendapatkan data
+      setTotal(response.total || 0);
+      setLoading(false);
     }
   };
-  
-  const addActionButton = (data: IPerjadin[]) => {
+
+  const handleTableChange = (pagination: any) => {
+    if (pagination.current !== page) setPage(pagination.current);
+    if (pagination.pageSize !== limit) setLimit(pagination.pageSize);
+  };
+
+  const loadData = (data: IPerjadin[]) => {
     return data.map((item) => {
       return {
         ...item,
@@ -187,41 +200,44 @@ const TablePerjalananDinas: React.FC<{
       ),
   });
   const columns: TableColumnsType<IPerjadin> = [
+    // {
+    //   title: "ID",
+    //   dataIndex: "INVOICE_ID",
+    //   key: "INVOICE_ID",
+    //   ...getColumnSearchProps("INVOICE_ID"),
+    // },
     {
-      title: "ID INVOICE",
-      dataIndex: "INVOICE_ID",
-      key: "INVOICE_ID",
-      ...getColumnSearchProps("INVOICE_ID"),
-    },
-    {
-      title: "NO TAGIHAN",
+      title: "Nomer Tagihan",
       dataIndex: "NOMER_TAGIHAN",
       key: "NOMER_TAGIHAN",
       ...getColumnSearchProps("NOMER_TAGIHAN"),
+      align: "center",
     },
     {
-      title: "NO INVOICE",
+      title: "No Invoice",
       dataIndex: "INVOICE_NUMBER",
       key: "INVOICE_NUMBER",
       ...getColumnSearchProps("INVOICE_NUMBER"),
+      align: "center",
     },
     {
-      title: "TANGGAL INVOICE",
+      title: "Tanggal Invoice",
       dataIndex: "INVOICE_DATE",
       key: "INVOICE_DATE",
       render: (text) => {
         return new Intl.DateTimeFormat("id-ID").format(new Date(text));
       },
-      // ...getColumnSearchProps("INVOICE_DATE"),
+      align: "center",
     },
     {
-      title: "STATUS",
+      title: "Status",
       dataIndex: "INV_STATUS",
       key: "INV_STATUS",
       ...getColumnSearchProps("INV_STATUS"),
+      align: "center",
     },
     {
-      title: "AMOUNT SPJ",
+      title: "Amount",
       dataIndex: "INVOICE_AMOUNT",
       key: "INVOICE_AMOUNT",
       render: (text) => {
@@ -230,38 +246,51 @@ const TablePerjalananDinas: React.FC<{
           currency: "IDR",
         }).format(text);
       },
-      // ...getColumnSearchProps("INVOICE_AMOUNT"),
+      align: "center",
     },
     {
-      title: "PENERIMA",
+      title: "Penerima",
       dataIndex: "DESCRIPTION",
       key: "DESCRIPTION",
-      // render: (text) => {
-      //   return text.split(" - ")[1];
-      // },
       ...getColumnSearchProps("DESCRIPTION"),
+      align: "center",
     },
     {
-      title: "PAYMENT STATUS",
+      title: "Status Pembayaran",
       key: "PAYMENT_STATUS",
       render: (_, record) => {
-        if (record.PAYMENT_STATUS_FLAG === "Y") return "Paid";
+        if (record.PAYMENT_STATUS_FLAG === "Y")
+          return (
+            <>
+              <p className="bg-green-500 text-white text-sm font-medium">
+                PAID
+              </p>
+            </>
+          );
 
         if (
           record.INV_STATUS === "Validated" &&
           (!record.PAYMENT_STATUS_FLAG || record.PAYMENT_STATUS_FLAG === "N")
         ) {
-          return "Waiting Payment";
+          return (
+            <>
+              <p className="bg-yellow-500 text-white text-sm font-medium">
+                Waiting Payment
+              </p>
+            </>
+          );
         }
-        return "Waiting Validated";
+
+        return (
+          <>
+            <p className="bg-red-500 text-white text-sm font-medium">
+              Waiting Validated
+            </p>
+          </>
+        );
       },
+      align: "center",
     },
-    // {
-    //   align: "center",
-    //   title: "Action",
-    //   dataIndex: "Action",
-    //   key: "Action",
-    // },
   ];
 
   return (
@@ -269,9 +298,15 @@ const TablePerjalananDinas: React.FC<{
       loading={loading}
       size="small"
       columns={columns}
+      dataSource={loadData(promotion)}
       style={{ overflow: "auto", textAlign: "center" }}
-      dataSource={addActionButton(promotion)}
-      pagination={{ pageSize: 5, position: ["bottomLeft"], defaultCurrent: 1 }}
+      pagination={{
+        current: page,
+        pageSize: limit,
+        total: total,
+        showSizeChanger: true,
+      }}
+      onChange={handleTableChange}
     />
   );
 };
