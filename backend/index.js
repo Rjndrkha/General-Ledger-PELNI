@@ -9,6 +9,7 @@ const {
 } = require("./middleware/errorHandler");
 const { BLControllers } = require("./controllers/blController");
 const serverAdapter = require("./controllers/bullController/bullController");
+const initializeCronJobs = require("./cron-job/cronjob");
 
 const app = express();
 // Middleware untuk parsing data form application/x-www-form-urlencoded
@@ -32,6 +33,9 @@ app.use("/auth", require("./routes/authRoute"));
 app.use("/GeneralLedger", require("./routes/generalLedgerRoute"));
 app.use("/images", require("./routes/imagesRoute"));
 app.use("/invoice", require("./routes/invoiceRoute"));
+
+// CRON JOBS
+initializeCronJobs();
 
 //Static Routes
 app.post(
