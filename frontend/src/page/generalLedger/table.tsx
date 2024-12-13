@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { TableColumnsType } from "antd";
-import { Button, Table, message} from "antd";
+import { Button, Table, message } from "antd";
 import Cookies from "js-cookie";
 import EbsClient from "../../service/ebs/OracleClient";
 import { ITableGeneralLedger } from "../../interface/ITableGeneralLedger";
@@ -62,22 +62,15 @@ const TableGeneralLedger: React.FC = () => {
   };
 
   const handleDownload = async (job_id: Number) => {
-    const data = await EbsClient.GetGeneralLedgerDownload(job_id, token || "");
-  
-    if (data.error) {
-      message.error("Gagal mendownload data");
-      return;
+    const { response, error, errorMessage } =
+      await EbsClient.GetGeneralLedgerDownload(job_id, token || "");
+
+    if (response) {
+      downloadExcelFile(response.jsonData.data, dataInput[0]);
     }
-  
-    if (data.response && data.response.jsonData.totalData === 0 && data.response.jsonData.data.length === 0) {
-      message.error("Data tidak tersedia");
-      return;
-    }
-  
-    if (data.response) {
-      downloadExcelFile(data.response.jsonData.data, dataInput[0]);
-    } else {
-      message.error("Data tidak tersedia");
+
+    if (error) {
+      message.error(errorMessage);
     }
   };
 

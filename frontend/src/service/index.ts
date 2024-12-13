@@ -45,11 +45,10 @@ export class Service {
 
   static async post(url: string, body = {}, additionalHeader = {}) {
     try {
-
       const res = await axios.post(url, body, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${additionalHeader}`, 
+          Authorization: `Bearer ${additionalHeader}`,
         },
       });
 
