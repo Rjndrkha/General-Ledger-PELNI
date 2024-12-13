@@ -93,10 +93,10 @@ generalLedgerQueue.process(async (job) => {
         xla.xla_transaction_entities xte
     WHERE
         gjh.ledger_id = 2023
-        AND trunc( gjh.default_effective_date ) BETWEEN '${startDate}' AND  '${endDate}'
+        AND trunc( gjh.default_effective_date ) BETWEEN :startDate AND :endDate
         AND (
-        ('${withAdj}' = 'true')
-        OR ('${withAdj}' = 'false' AND substr(upper(gjh.period_name),1,3) NOT IN ('ADJ', 'AUD'))
+        (:withAdj = 'true')
+        OR (:withAdj = 'false' AND substr(upper(gjh.period_name),1,3) NOT IN ('ADJ', 'AUD'))
         )
         AND gjh.actual_flag = 'A'
   
@@ -104,23 +104,23 @@ generalLedgerQueue.process(async (job) => {
         AND gjh.currency_code NOT IN ( 'STAT' )
         AND gjl.je_header_id = gjh.je_header_id
         AND gcc.code_combination_id = gjl.code_combination_id
-        AND gjl.je_header_id = gir.je_header_id ( + )
-        AND gjl.je_line_num = gir.je_line_num ( + )
-        AND gir.gl_sl_link_id = xal.gl_sl_link_id ( + )
-        AND xal.ae_header_id = xah.ae_header_id ( + )
-        AND xah.entity_id = xte.entity_id ( + )
-        AND xah.application_id = xte.application_id ( + )
-        AND xah.ledger_id = xte.ledger_id ( + )
+        AND gjl.je_header_id = gir.je_header_id (+)
+        AND gjl.je_line_num = gir.je_line_num (+)
+        AND gir.gl_sl_link_id = xal.gl_sl_link_id (+)
+        AND xal.ae_header_id = xah.ae_header_id (+)
+        AND xah.entity_id = xte.entity_id (+)
+        AND xah.application_id = xte.application_id (+)
+        AND xah.ledger_id = xte.ledger_id (+)
         AND NVL( gjl.accounted_dr, 0 ) - NVL( gjl.accounted_cr, 0 ) <> 0
         AND gjh.je_category = gjc.je_category_name
   
         AND
-        (('${withCompany}' = 'false')
-        OR ('${withCompany}' = 'true' AND gcc.segment1 BETWEEN '${company1}' AND '${company2}'))
+        ((:withCompany = 'false')
+        OR (:withCompany = 'true' AND gcc.segment1 BETWEEN :company1 AND :company2))
   
         AND
-        (('${withCOA}' = 'false')
-            OR ('${withCOA}' = 'true' AND gcc.segment3 BETWEEN '${coa1}' AND '${coa2}'))
+        ((:withCOA = 'false')
+            OR (:withCOA = 'true' AND gcc.segment3 BETWEEN :coa1 AND :coa2))
     
     ORDER BY
         account,
@@ -130,7 +130,18 @@ generalLedgerQueue.process(async (job) => {
         document_number ASC
   `;
 
-  const data = await executeOracleQuery(connection, query);
+  const params = {
+    startDate,
+    endDate,
+    withAdj: withAdj ? "true" : "false",
+    withCompany: withCompany ? "true" : "false",
+    company1,
+    company2,
+    withCOA: withCOA ? "true" : "false",
+    coa1,
+    coa2,
+  };
+  const data = await executeOracleQuery(connection, query, params);
 
   if (data) {
     const jobstatus = await checkJobStatus(job_Id, data);
@@ -159,8 +170,11 @@ function saveFile(data, jobID) {
     storagePath,
     "general-ledger"
   );
-
-  const filePath = path.join(generalLedgerPath, `GL-${jobID}.json`);
+  const timestamp = new Date().toISOString().replace(/:/g, "-");
+  const filePath = path.join(
+    generalLedgerPath,
+    `GL-${jobID}-${timestamp}.json`
+  );
 
   const jsonData = JSON.stringify(data, null, 2);
   fs.writeFileSync(filePath, jsonData);

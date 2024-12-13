@@ -19,7 +19,6 @@ function Dashboard() {
         await DashboardClient.GetMenuAccess({}, token);
 
       if (response) {
-        console.log(response.data);
         setMenu(response.data);
         Cookies.set("menu", JSON.stringify(response.data), { expires: 1 });
       }

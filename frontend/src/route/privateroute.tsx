@@ -11,7 +11,6 @@ export const PrivateRoute: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     if (!token) {
-      message.error("Anda harus login terlebih dahulu!");
       navigate("/login");
     }
 

@@ -7,7 +7,6 @@ export const downloadExcelFile = (
   generalLedger: GeneralLedgerItem[],
   inputField: any
 ) => {
-  console.log(generalLedger);
   const startDate = DateParser(generalLedger[0].TRANSACTION_DATE_FROM);
   const endDate = DateParser(generalLedger[0].TRANSACTION_DATE_TO);
 
