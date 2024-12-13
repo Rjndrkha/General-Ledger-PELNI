@@ -14,15 +14,16 @@ function Dashboard() {
   }, []);
 
   const getData = async () => {
-    const { response } = await DashboardClient.GetMenuAccess({}, token);
+    const { response, error, errorMessage } =
+      await DashboardClient.GetMenuAccess({}, token);
 
     if (response) {
       setMenu(response.data);
       Cookies.set("menu", JSON.stringify(response.data), { expires: 1 });
     }
 
-    if (!response) {
-      message.error(response?.message || "Failed to get data");
+    if (error) {
+      message.error(errorMessage || "Failed to get data");
     }
   };
   return (

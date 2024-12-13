@@ -20,13 +20,11 @@ const TableGeneralLedger: React.FC = () => {
     setLoading(true);
     const token = Cookies.get("token") || "";
 
-    const { response, error } = await EbsClient.GetGeneralLedgerStatus(
-      {},
-      token
-    );
+    const { response, error, errorMessage } =
+      await EbsClient.GetGeneralLedgerStatus({}, token);
 
     if (error) {
-      message.error("Gagal mengambil data General Ledger");
+      message.error(errorMessage);
       setLoading(false);
       return;
     }
