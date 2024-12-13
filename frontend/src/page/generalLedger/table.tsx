@@ -20,25 +20,17 @@ const TableGeneralLedger: React.FC = () => {
     setLoading(true);
     const token = Cookies.get("token") || "";
 
-    const { response, error, errorMessage } =
-      await EbsClient.GetGeneralLedgerStatus({}, token);
+    const { response, error } = await EbsClient.GetGeneralLedgerStatus({}, token);
 
     if (error) {
-      message.error(errorMessage);
+      message.error("Gagal mengambil data General Ledger");
       setLoading(false);
       return;
     }
 
     if (response.rows) {
-      const sortedData = response.rows.sort((a: ITableGeneralLedger, b: ITableGeneralLedger) => 
-        new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
-      );
-      setData(sortedData);
+      setData(response.rows);
     }
-
-    // if (response.rows) {
-    //   setData(response.rows);
-    // }
 
     setLoading(false);
   };
@@ -48,7 +40,7 @@ const TableGeneralLedger: React.FC = () => {
       Completed: (
         <Button
           type="primary"
-          style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
+          style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
           onClick={async () => await handleDownload(job_id)}
         >
           Download
@@ -67,15 +59,19 @@ const TableGeneralLedger: React.FC = () => {
   };
 
   const handleDownload = async (job_id: Number) => {
-    const { response, error, errorMessage } =
-      await EbsClient.GetGeneralLedgerDownload(job_id, token || "");
+    console.log(job_id, "clicked");
+    const data = await EbsClient.GetGeneralLedgerDownload(job_id, token || "");
 
-    if (response) {
-      downloadExcelFile(response.jsonData.data, dataInput[0]);
+    if (data.error) {
+      message.error("Gagal mendownload data");
+      return;
     }
 
-    if (error) {
-      message.error(errorMessage);
+    if (data.response) {
+      console.log(dataInput, "dataInput");
+      downloadExcelFile(data.response.data.data, dataInput[0]);
+    } else {
+      message.error("Data tidak tersedia");
     }
   };
 

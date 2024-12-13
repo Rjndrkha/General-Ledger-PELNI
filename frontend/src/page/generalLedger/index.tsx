@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { IGeneralLedger } from "../../interface/IGeneralLedger";
+import { LedgerItem } from "../../interface/LedgerItem";
 import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
 import DatePickerInput from "../../component/input/dateInput";
@@ -22,7 +23,10 @@ function IndexGeneralLedger() {
     coa1: "",
     coa2: "",
   });
+
+  const [data, setData] = useState<LedgerItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isExport, setIsExport] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleSubmit = async () => {
@@ -33,9 +37,9 @@ function IndexGeneralLedger() {
       validationErrors.date = "This field is required";
     }
 
-    // if (!generalLedger.withAdj) {
-    //   validationErrors.withAdj = "This switch is required";
-    // }
+    if (!generalLedger.withAdj) {
+      validationErrors.withAdj = "This switch is required";
+    }
 
     if (generalLedger.withCompany) {
       if (!generalLedger.company1) {
@@ -74,26 +78,38 @@ function IndexGeneralLedger() {
     setLoading(false);
 
     if (response) {
-      message.success(response.message);
+      message.success('Success!');
     }
 
     if (error) {
-      message.error(error);
+      message.error("Error");
+    } else if (response) {
+      setData(response.data!);
+      setIsExport(true);
     }
+
+    // if (error) {
+    //   message.error("Error");
+    // } else if (response) {
+    //   if (!response.data || response.data.length === 0) {
+    //     message.error("Data tidak tersedia!");
+    //     setIsExport(false);
+    //   } else {
+    //     setData(response.data!);
+    //     setIsExport(true);
+    //   }
+    // }
   };
 
   const handleSwitch = (key: keyof IGeneralLedger) => {
+    setIsExport(false);
     setGeneralLedger((prevState) => {
       const newState = { ...prevState, [key]: !prevState[key] };
 
       if (key === "withCompany" && !newState.withCompany) {
         newState.company1 = "";
         newState.company2 = "";
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          company1: "",
-          company2: "",
-        }));
+        setErrors((prevErrors) => ({ ...prevErrors, company1: "", company2: "" }));
       }
 
       if (key === "withCOA" && !newState.withCOA) {
@@ -107,6 +123,7 @@ function IndexGeneralLedger() {
   };
 
   const handleInputChange = (key: keyof IGeneralLedger, value: any) => {
+    setIsExport(false);
     setGeneralLedger((prevState) => ({ ...prevState, [key]: value }));
 
     if (key === "company1" || key === "company2") {
@@ -125,13 +142,12 @@ function IndexGeneralLedger() {
   return (
     <div className="w-auto h-full flex flex-col gap-3 m-5">
       <div>
-        <h1 className="text-base font-bold text-blue-950">
+        {/* <h1 className="text-base font-bold text-blue-950">
           Penarikan General Ledger
-        </h1>
-        <h1 className="font-extrabold text-blue-950">Oracle Database</h1>
+        </h1> */}
+        <h1 className="font-extrabold text-blue-950">Penarikan General Ledger</h1>
       </div>
       <div className="flex flex-col w-auto gap-4 max-w-[30rem]">
-        
         <div className="flex flex-col">
           <label htmlFor="title" className="mb-1 text-base font-semibold">
             Masukkan Range Waktu<span className="text-red-500">*</span>
@@ -216,7 +232,7 @@ function IndexGeneralLedger() {
               value={generalLedger.coa1}
               onChange={(value: string) =>
                 /^\d*$/.test(value) &&
-                value.length <= 8 &&
+                value.length <= 4 &&
                 handleInputChange("coa1", value)
               }
               disabled={!generalLedger.withCOA}
@@ -230,7 +246,7 @@ function IndexGeneralLedger() {
               value={generalLedger.coa2}
               onChange={(value: string) =>
                 /^\d*$/.test(value) &&
-                value.length <= 8 &&
+                value.length <= 4 &&
                 handleInputChange("coa2", value)
               }
               disabled={!generalLedger.withCOA}
