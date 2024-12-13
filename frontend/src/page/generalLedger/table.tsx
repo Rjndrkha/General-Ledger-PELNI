@@ -34,7 +34,7 @@ const TableGeneralLedger: React.FC<TableGeneralLedgerProps> = ({
       Completed: (
         <Button
           type="primary"
-          style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
+          style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
           onClick={async () => await handleDownload(job_id)}
         >
           Download
@@ -53,15 +53,19 @@ const TableGeneralLedger: React.FC<TableGeneralLedgerProps> = ({
   };
 
   const handleDownload = async (job_id: Number) => {
-    const { response, error, errorMessage } =
-      await EbsClient.GetGeneralLedgerDownload(job_id, token || "");
+    console.log(job_id, "clicked");
+    const data = await EbsClient.GetGeneralLedgerDownload(job_id, token || "");
 
-    if (response) {
-      downloadExcelFile(response.jsonData.data, dataInput[0]);
+    if (data.error) {
+      message.error("Gagal mendownload data");
+      return;
     }
 
-    if (error) {
-      message.error(errorMessage);
+    if (data.response) {
+      console.log(dataInput, "dataInput");
+      downloadExcelFile(data.response.data.data, dataInput[0]);
+    } else {
+      message.error("Data tidak tersedia");
     }
   };
 
