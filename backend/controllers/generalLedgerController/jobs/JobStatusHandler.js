@@ -13,7 +13,7 @@ const jobStatusHandler = async (status, job, err = null) => {
 async function updateLogStatus(jobId, status, errorMessage = null, filepath) {
   const query = `
     UPDATE log_request_gl
-    SET status = $1, error_message = $2, completed_at = NOW() , file_path = $4
+    SET status = $1, error_message = $2, completed_at = CASE WHEN $1 = 'completed' THEN NOW() ELSE NULL END, file_path = $4
     WHERE job_id = $3
   `;
   const params = [status, errorMessage, jobId, filepath];
