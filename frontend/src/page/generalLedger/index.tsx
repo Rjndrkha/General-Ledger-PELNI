@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { IGeneralLedger } from "../../interface/IGeneralLedger";
-import { LedgerItem } from "../../interface/LedgerItem";
 import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
 import DatePickerInput from "../../component/input/dateInput";
@@ -23,10 +22,7 @@ function IndexGeneralLedger() {
     coa1: "",
     coa2: "",
   });
-
-  const [data, setData] = useState<LedgerItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isExport, setIsExport] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleSubmit = async () => {
@@ -37,9 +33,9 @@ function IndexGeneralLedger() {
       validationErrors.date = "This field is required";
     }
 
-    if (!generalLedger.withAdj) {
-      validationErrors.withAdj = "This switch is required";
-    }
+    // if (!generalLedger.withAdj) {
+    //   validationErrors.withAdj = "This switch is required";
+    // }
 
     if (generalLedger.withCompany) {
       if (!generalLedger.company1) {
@@ -78,26 +74,26 @@ function IndexGeneralLedger() {
     setLoading(false);
 
     if (response) {
-      message.success('Success!');
+      message.success(response.message);
     }
 
     if (error) {
-      message.error("Error");
-    } else if (response) {
-      setData(response.data!);
-      setIsExport(true);
+      message.error(error);
     }
   };
 
   const handleSwitch = (key: keyof IGeneralLedger) => {
-    setIsExport(false);
     setGeneralLedger((prevState) => {
       const newState = { ...prevState, [key]: !prevState[key] };
 
       if (key === "withCompany" && !newState.withCompany) {
         newState.company1 = "";
         newState.company2 = "";
-        setErrors((prevErrors) => ({ ...prevErrors, company1: "", company2: "" }));
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          company1: "",
+          company2: "",
+        }));
       }
 
       if (key === "withCOA" && !newState.withCOA) {
@@ -111,7 +107,6 @@ function IndexGeneralLedger() {
   };
 
   const handleInputChange = (key: keyof IGeneralLedger, value: any) => {
-    setIsExport(false);
     setGeneralLedger((prevState) => ({ ...prevState, [key]: value }));
 
     if (key === "company1" || key === "company2") {
@@ -221,7 +216,7 @@ function IndexGeneralLedger() {
               value={generalLedger.coa1}
               onChange={(value: string) =>
                 /^\d*$/.test(value) &&
-                value.length <= 4 &&
+                value.length <= 8 &&
                 handleInputChange("coa1", value)
               }
               disabled={!generalLedger.withCOA}
@@ -235,7 +230,7 @@ function IndexGeneralLedger() {
               value={generalLedger.coa2}
               onChange={(value: string) =>
                 /^\d*$/.test(value) &&
-                value.length <= 4 &&
+                value.length <= 8 &&
                 handleInputChange("coa2", value)
               }
               disabled={!generalLedger.withCOA}
