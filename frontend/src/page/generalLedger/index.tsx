@@ -10,6 +10,7 @@ import ShowComp from "../../component/showpicture/showpicture_comp";
 import Cookies from "js-cookie";
 import { message } from "antd";
 import TableGeneralLedger from "./table";
+import { ITableGeneralLedger } from "../../interface/ITableGeneralLedger";
 
 function IndexGeneralLedger() {
   const [generalLedger, setGeneralLedger] = useState<IGeneralLedger>({
@@ -122,6 +123,26 @@ function IndexGeneralLedger() {
     }
   };
 
+  const fetchGeneralLedgerData = async () => {
+    const token = Cookies.get("token") || "";
+    const { response, error, errorMessage } =
+      await EbsClient.GetGeneralLedgerStatus({}, token);
+
+    if (error) {
+      message.error(errorMessage);
+      return [];
+    }
+
+    if (response.rows) {
+      return response.rows.sort(
+        (a: ITableGeneralLedger, b: ITableGeneralLedger) =>
+          new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
+      );
+    }
+
+    return [];
+  };
+
   return (
     <div className="w-auto h-full flex flex-col gap-3 m-5">
       <div>
@@ -131,7 +152,6 @@ function IndexGeneralLedger() {
         <h1 className="font-extrabold text-blue-950">Oracle Database</h1>
       </div>
       <div className="flex flex-col w-auto gap-4 max-w-[30rem]">
-        
         <div className="flex flex-col">
           <label htmlFor="title" className="mb-1 text-base font-semibold">
             Masukkan Range Waktu<span className="text-red-500">*</span>
@@ -244,7 +264,7 @@ function IndexGeneralLedger() {
           onClick={handleSubmit}
           loading={loading}
         />
-        <TableGeneralLedger />
+        <TableGeneralLedger fetchData={fetchGeneralLedgerData} />
       </div>
     </div>
   );

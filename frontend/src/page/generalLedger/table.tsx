@@ -7,41 +7,27 @@ import { ITableGeneralLedger } from "../../interface/ITableGeneralLedger";
 import ButtonDefault from "../../component/button/button";
 import { downloadExcelFile } from "../../utils/excelUtils";
 
-const TableGeneralLedger: React.FC = () => {
+interface TableGeneralLedgerProps {
+  fetchData: () => Promise<any[]>;
+}
+
+const TableGeneralLedger: React.FC<TableGeneralLedgerProps> = ({
+  fetchData,
+}) => {
   const [dataInput, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const token = Cookies.get("token");
 
   useEffect(() => {
-    fetchGeneralLedgerData();
-  }, []);
-
-  const fetchGeneralLedgerData = async () => {
-    setLoading(true);
-    const token = Cookies.get("token") || "";
-
-    const { response, error, errorMessage } =
-      await EbsClient.GetGeneralLedgerStatus({}, token);
-
-    if (error) {
-      message.error(errorMessage);
+    const fetchDataWrapper = async () => {
+      setLoading(true);
+      const data = await fetchData();
+      setData(data);
       setLoading(false);
-      return;
-    }
+    };
 
-    if (response.rows) {
-      const sortedData = response.rows.sort((a: ITableGeneralLedger, b: ITableGeneralLedger) => 
-        new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
-      );
-      setData(sortedData);
-    }
-
-    // if (response.rows) {
-    //   setData(response.rows);
-    // }
-
-    setLoading(false);
-  };
+    fetchDataWrapper();
+  }, [fetchData]);
 
   const handleButtonStatus = (status: string, job_id: Number) => {
     const statusMap: { [key: string]: JSX.Element } = {
@@ -149,7 +135,7 @@ const TableGeneralLedger: React.FC = () => {
         <label htmlFor="title" className="text-base font-semibold">
           Tabel Riwayat Penarikan Data
         </label>
-        <ButtonDefault text="Refresh" onClick={fetchGeneralLedgerData} />
+        <ButtonDefault text="Refresh" onClick={fetchData} />
       </div>
       <Table
         columns={columns}
