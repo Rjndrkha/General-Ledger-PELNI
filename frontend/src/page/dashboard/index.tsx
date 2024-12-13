@@ -14,16 +14,18 @@ function Dashboard() {
   }, []);
 
   const getData = async () => {
-    const { response, error, errorMessage } =
-      await DashboardClient.GetMenuAccess({}, token);
+    if (token) {
+      const { response, error, errorMessage } =
+        await DashboardClient.GetMenuAccess({}, token);
 
-    if (response) {
-      setMenu(response.data);
-      Cookies.set("menu", JSON.stringify(response.data), { expires: 1 });
-    }
+      if (response) {
+        setMenu(response.data);
+        Cookies.set("menu", JSON.stringify(response.data), { expires: 1 });
+      }
 
-    if (error) {
-      message.error(errorMessage || "Failed to get data");
+      if (error) {
+        message.error(errorMessage || "Failed to get data");
+      }
     }
   };
   return (
