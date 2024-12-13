@@ -77,17 +77,30 @@ function IndexGeneralLedger() {
 
     setLoading(false);
 
+    if (response) {
+      message.success('Success!');
+    }
+
     if (error) {
       message.error("Error");
     } else if (response) {
-      if (!response.data || response.data.length === 0) {
-        message.error("Data tidak tersedia!");
-        setIsExport(false);
-      } else {
-        setData(response.data!);
-        setIsExport(true);
-      }
+      setData(response.data!);
+      setIsExport(true);
     }
+
+    
+    
+    // if (error) {
+    //   message.error("Error");
+    // } else if (response) {
+    //   if (!response.data || response.data.length === 0) {
+    //     message.error("Data tidak tersedia!");
+    //     setIsExport(false);
+    //   } else {
+    //     setData(response.data!);
+    //     setIsExport(true);
+    //   }
+    // }
   };
 
   const handleSwitch = (key: keyof IGeneralLedger) => {
