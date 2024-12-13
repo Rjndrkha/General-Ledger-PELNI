@@ -1,12 +1,10 @@
 import * as XLSX from "xlsx";
-import { LedgerItem } from "../interface/LedgerItem";
-import { IGeneralLedger } from "../interface/IGeneralLedger";
 import { DateFormatter, DateParser } from "./dateConverter";
 import { message } from "antd";
-import { ITableGeneralLedger } from "../interface/ITableGeneralLedger";
+import { GeneralLedgerItem } from "../interface/IGeneralLedger";
 
 export const downloadExcelFile = (
-  generalLedger: LedgerItem[],
+  generalLedger: GeneralLedgerItem[],
   inputField: any
 ) => {
   console.log(generalLedger);
@@ -32,7 +30,6 @@ export const downloadExcelFile = (
   let filename = `DATA GL Gab All Cabang PERIODE ${datePeriod}.xlsx`;
 
   const { with_company, id_company, with_account, id_account } = inputField;
-  console.log(id_company, "id_company");
 
   let company1 = id_company.split("-")[0];
   let company2 = id_company.split("-")[1];

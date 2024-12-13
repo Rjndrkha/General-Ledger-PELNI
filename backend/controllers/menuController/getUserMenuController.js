@@ -6,41 +6,61 @@ const {
 const getUserMenuController = async (req, res) => {
   const { pslh_nrp } = req.user;
 
-  initializePostgreConnection();
-  const query = `
-    SELECT 
-        a.pslh_nrp,
-        a.menu_id,
-        b.menu_name,
-        b.url,
-        b.image_url 
-    FROM
-        "user_access_pdd" a 
-    JOIN master_menu b ON a.menu_id = b."id" 
-    WHERE
-        a.pslh_nrp = $1
-    ORDER BY a.menu_id ASC
-    `;
-  const params = [pslh_nrp];
-
   if (!pslh_nrp) {
     return res.status(400).json({
+      success: false,
       message: "NRP is required.",
     });
   }
 
-  const { rows } = await executePostgreQuery(query, params);
-  const transformedData = rows.map((item) => ({
-    key: String(item.menu_id),
-    label: item.menu_name,
-    image_url: item.image_url,
-    link: item.url,
-  }));
+  initializePostgreConnection();
 
-  const data = res.status(200).json({
-    success: true,
-    data: transformedData,
-  });
+  try {
+    const userMenuQuery = `
+      SELECT a.menu_id
+      FROM "user_access_pdd" a 
+      WHERE a.pslh_nrp = $1
+    `;
+    const userMenuParams = [pslh_nrp];
+    const userMenuResult = await executePostgreQuery(
+      userMenuQuery,
+      userMenuParams
+    );
+
+    const userMenuIds = userMenuResult.rows.map((row) => row.menu_id);
+
+    const allMenuQuery = `
+      SELECT 
+        id AS key,
+        menu_name AS label,
+        url AS link,
+        image_url
+      FROM master_menu
+      ORDER BY id ASC
+    `;
+    const allMenuResult = await executePostgreQuery(allMenuQuery);
+
+    let transformedData = allMenuResult.rows.map((item) => ({
+      key: String(item.key),
+      label: item.label,
+      image_url: item.image_url,
+      link: userMenuIds.includes(item.key) ? item.link : "#",
+      active: userMenuIds.includes(item.key),
+    }));
+
+    transformedData = transformedData.sort((a, b) => b.active - a.active);
+
+    return res.status(200).json({
+      success: true,
+      data: transformedData,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Terjadi kesalahan pada server.",
+      error: error.message,
+    });
+  }
 };
 
 module.exports = { getUserMenuController };

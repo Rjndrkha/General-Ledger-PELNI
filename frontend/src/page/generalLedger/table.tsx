@@ -3,9 +3,9 @@ import type { TableColumnsType } from "antd";
 import { Button, Table, message } from "antd";
 import Cookies from "js-cookie";
 import EbsClient from "../../service/ebs/OracleClient";
-import { ITableGeneralLedger } from "../../interface/ITableGeneralLedger";
 import ButtonDefault from "../../component/button/button";
 import { downloadExcelFile } from "../../utils/excelUtils";
+import { ITableGeneralLedger } from "../../interface/IGeneralLedger";
 
 interface TableGeneralLedgerProps {
   fetchData: () => Promise<any[]>;
@@ -34,7 +34,7 @@ const TableGeneralLedger: React.FC<TableGeneralLedgerProps> = ({
       Completed: (
         <Button
           type="primary"
-          style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+          style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
           onClick={async () => await handleDownload(job_id)}
         >
           Download
@@ -53,19 +53,16 @@ const TableGeneralLedger: React.FC<TableGeneralLedgerProps> = ({
   };
 
   const handleDownload = async (job_id: Number) => {
-    console.log(job_id, "clicked");
-    const data = await EbsClient.GetGeneralLedgerDownload(job_id, token || "");
+    const { error, errorMessage, response } =
+      await EbsClient.GetGeneralLedgerDownload(job_id, token || "");
 
-    if (data.error) {
-      message.error("Gagal mendownload data");
+    if (error) {
+      message.error(errorMessage || "Failed to download data");
       return;
     }
 
-    if (data.response) {
-      console.log(dataInput, "dataInput");
-      downloadExcelFile(data.response.data.data, dataInput[0]);
-    } else {
-      message.error("Data tidak tersedia");
+    if (response) {
+      downloadExcelFile(response.jsonData.data, dataInput[0]);
     }
   };
 
@@ -81,54 +78,63 @@ const TableGeneralLedger: React.FC<TableGeneralLedgerProps> = ({
 
   const columns: TableColumnsType<ITableGeneralLedger> = [
     {
-      title: "Job Id",
+      title: "ID",
       dataIndex: "job_id",
       key: "job_id",
+      align: "center",
     },
     {
       title: "Start Date",
       dataIndex: "start_date",
       key: "start_date",
+      align: "center",
       render: (text) => formatDate(text),
     },
     {
       title: "End Date",
       dataIndex: "end_date",
       key: "end_date",
+      align: "center",
       render: (text) => formatDate(text),
     },
     {
       title: "With Adjustment",
       dataIndex: "with_adjustment",
       key: "with_adjustment",
+      align: "center",
       render: (text) => (text === "true" ? "Yes" : "No"),
     },
     {
       title: "With Company",
       dataIndex: "with_company",
       key: "with_company",
+      align: "center",
       render: (text) => (text === "true" ? "Yes" : "No"),
     },
     {
       title: "Id Company",
       dataIndex: "id_company",
       key: "id_company",
+      align: "center",
     },
     {
       title: "With Account",
       dataIndex: "with_account",
       key: "with_account",
+      align: "center",
       render: (text) => (text === "true" ? "Yes" : "No"),
     },
     {
       title: "Id Account",
       dataIndex: "id_account",
       key: "id_account",
+      align: "center",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
       render: (text, record) => handleButtonStatus(text, Number(record.job_id)),
     },
   ];
@@ -136,10 +142,17 @@ const TableGeneralLedger: React.FC<TableGeneralLedgerProps> = ({
   return (
     <div className="flex flex-col item-center gap-3">
       <div className="flex item-center gap-3">
-        <label htmlFor="title" className="text-base font-semibold">
+        <label htmlFor="title" className="text-sm md:text-base font-semibold">
           Tabel Riwayat Penarikan Data
         </label>
-        <ButtonDefault text="Refresh" onClick={fetchData} />
+        {/* <ButtonDefault
+          text="Refresh"
+          onClick={async () => {
+            setLoading(true);
+            await fetchData();
+            setLoading(false);
+          }}
+        /> */}
       </div>
       <Table
         columns={columns}

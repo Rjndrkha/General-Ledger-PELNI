@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { IGeneralLedger } from "../../interface/IGeneralLedger";
-import { LedgerItem } from "../../interface/LedgerItem";
+import {
+  IGeneralLedger,
+  ITableGeneralLedger,
+} from "../../interface/IGeneralLedger";
 import TextInput from "../../component/input/textInput";
 import ButtonDefault from "../../component/button/button";
 import DatePickerInput from "../../component/input/dateInput";
@@ -11,7 +13,6 @@ import ShowComp from "../../component/showpicture/showpicture_comp";
 import Cookies from "js-cookie";
 import { message } from "antd";
 import TableGeneralLedger from "./table";
-import { ITableGeneralLedger } from "../../interface/ITableGeneralLedger";
 
 function IndexGeneralLedger() {
   const [generalLedger, setGeneralLedger] = useState<IGeneralLedger>({
@@ -25,9 +26,7 @@ function IndexGeneralLedger() {
     coa2: "",
   });
 
-  const [data, setData] = useState<LedgerItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isExport, setIsExport] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleSubmit = async () => {
@@ -67,7 +66,7 @@ function IndexGeneralLedger() {
     }
 
     setLoading(true);
-    const { error, response } = await EbsClient.PostGeneralLedger(
+    const { error, response, errorMessage } = await EbsClient.PostGeneralLedger(
       {
         startDate: generalLedger.date[0],
         endDate: generalLedger.date[1],
@@ -79,38 +78,26 @@ function IndexGeneralLedger() {
     setLoading(false);
 
     if (response) {
-      message.success('Success!');
+      message.success(response.message);
     }
 
     if (error) {
-      message.error("Error");
-    } else if (response) {
-      setData(response.data!);
-      setIsExport(true);
+      message.error(errorMessage);
     }
-
-    // if (error) {
-    //   message.error("Error");
-    // } else if (response) {
-    //   if (!response.data || response.data.length === 0) {
-    //     message.error("Data tidak tersedia!");
-    //     setIsExport(false);
-    //   } else {
-    //     setData(response.data!);
-    //     setIsExport(true);
-    //   }
-    // }
   };
 
   const handleSwitch = (key: keyof IGeneralLedger) => {
-    setIsExport(false);
     setGeneralLedger((prevState) => {
       const newState = { ...prevState, [key]: !prevState[key] };
 
       if (key === "withCompany" && !newState.withCompany) {
         newState.company1 = "";
         newState.company2 = "";
-        setErrors((prevErrors) => ({ ...prevErrors, company1: "", company2: "" }));
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          company1: "",
+          company2: "",
+        }));
       }
 
       if (key === "withCOA" && !newState.withCOA) {
@@ -124,7 +111,6 @@ function IndexGeneralLedger() {
   };
 
   const handleInputChange = (key: keyof IGeneralLedger, value: any) => {
-    setIsExport(false);
     setGeneralLedger((prevState) => ({ ...prevState, [key]: value }));
 
     if (key === "company1" || key === "company2") {
@@ -161,16 +147,19 @@ function IndexGeneralLedger() {
   };
 
   return (
-    <div className="w-auto h-full flex flex-col gap-3 m-5">
+    <div className="w-auto h-full flex flex-col gap-5 m-5">
       <div>
-        {/* <h1 className="text-base font-bold text-blue-950">
+        <h1 className="text-base font-bold text-blue-950">
           Penarikan General Ledger
-        </h1> */}
-        <h1 className="font-extrabold text-blue-950">Penarikan General Ledger</h1>
+        </h1>
+        <h1 className="font-extrabold text-blue-950">EBS Application</h1>
       </div>
       <div className="flex flex-col w-auto gap-4 max-w-[30rem]">
         <div className="flex flex-col">
-          <label htmlFor="title" className="mb-1 text-base font-semibold">
+          <label
+            htmlFor="title"
+            className="mb-1 text-sm md:text-base font-semibold"
+          >
             Masukkan Range Waktu<span className="text-red-500">*</span>
           </label>
           <DatePickerInput
@@ -182,7 +171,7 @@ function IndexGeneralLedger() {
           )}
         </div>
         <div className="flex flex-row items-center gap-3">
-          <label htmlFor="title" className="text-base font-semibold">
+          <label htmlFor="title" className="text-sm md:text-base font-semibold">
             Dengan Adjustment?<span className="text-red-500">*</span>
           </label>
           <SwitchComponent
@@ -194,16 +183,14 @@ function IndexGeneralLedger() {
           )}
         </div>
         <div className="flex flex-row items-center gap-3">
-          <label htmlFor="title" className="text-base font-semibold">
+          <label htmlFor="title" className="text-sm md:text-base font-semibold">
             Dengan Company?
           </label>
           <SwitchComponent
             checked={generalLedger.withCompany}
             onChange={() => handleSwitch("withCompany")}
           />
-          <div className="text-center">
-            <ShowComp />
-          </div>
+          <ShowComp />
         </div>
         <div className="flex flex-row items-center gap-2">
           <div className="flex flex-col">
@@ -219,7 +206,7 @@ function IndexGeneralLedger() {
               status={errors.company1 ? "error" : undefined}
             />
           </div>
-          <p className="text-sm font-bold">Between</p>
+          <p className="text-sm md:text-base font-bold">Between</p>
           <div className="flex flex-col">
             <TextInput
               placeholder="ID Company 2"
@@ -235,16 +222,14 @@ function IndexGeneralLedger() {
           </div>
         </div>
         <div className="flex flex-row items-center gap-3">
-          <label htmlFor="title" className="text-base font-semibold">
+          <label htmlFor="title" className="text-sm md:text-base font-semibold">
             Dengan Account?
           </label>
           <SwitchComponent
             checked={generalLedger.withCOA}
             onChange={() => handleSwitch("withCOA")}
           />
-          <div className="text-center">
-            <ShowCoa />
-          </div>
+          <ShowCoa />
         </div>
         <div className="flex flex-row items-center gap-2">
           <div className="flex flex-col">
@@ -260,7 +245,7 @@ function IndexGeneralLedger() {
               status={errors.coa1 ? "error" : undefined}
             />
           </div>
-          <p className="text-sm font-bold">Between</p>
+          <p className="text-sm md:text-base font-bold">Between</p>
           <div className="flex flex-col">
             <TextInput
               placeholder="ID Account 2"
@@ -275,12 +260,16 @@ function IndexGeneralLedger() {
             />
           </div>
         </div>
-        <ButtonDefault
-          text="Cari"
-          width="50%"
-          onClick={handleSubmit}
-          loading={loading}
-        />
+        <div className=" mb-5">
+          <ButtonDefault
+            text="Cari"
+            width="50%"
+            onClick={handleSubmit}
+            loading={loading}
+          />
+        </div>
+      </div>
+      <div className="w-full overflow-x-auto">
         <TableGeneralLedger fetchData={fetchGeneralLedgerData} />
       </div>
     </div>

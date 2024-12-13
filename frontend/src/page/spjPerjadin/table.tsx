@@ -186,40 +186,44 @@ const TablePerjalananDinas: React.FC<{
       ),
   });
   const columns: TableColumnsType<IPerjadin> = [
+    // {
+    //   title: "ID",
+    //   dataIndex: "INVOICE_ID",
+    //   key: "INVOICE_ID",
+    //   ...getColumnSearchProps("INVOICE_ID"),
+    // },
     {
-      title: "ID INVOICE",
-      dataIndex: "INVOICE_ID",
-      key: "INVOICE_ID",
-      ...getColumnSearchProps("INVOICE_ID"),
-    },
-    {
-      title: "NO TAGIHAN",
+      title: "Nomer Tagihan",
       dataIndex: "NOMER_TAGIHAN",
       key: "NOMER_TAGIHAN",
       ...getColumnSearchProps("NOMER_TAGIHAN"),
+      align: "center",
     },
     {
-      title: "NO INVOICE",
+      title: "No Invoice",
       dataIndex: "INVOICE_NUMBER",
       key: "INVOICE_NUMBER",
       ...getColumnSearchProps("INVOICE_NUMBER"),
+      align: "center",
     },
     {
-      title: "TANGGAL INVOICE",
+      title: "Tanggal Invoice",
       dataIndex: "INVOICE_DATE",
       key: "INVOICE_DATE",
       render: (text) => {
         return new Intl.DateTimeFormat("id-ID").format(new Date(text));
       },
+      align: "center",
     },
     {
-      title: "STATUS",
+      title: "Status",
       dataIndex: "INV_STATUS",
       key: "INV_STATUS",
       ...getColumnSearchProps("INV_STATUS"),
+      align: "center",
     },
     {
-      title: "AMOUNT SPJ",
+      title: "Amount",
       dataIndex: "INVOICE_AMOUNT",
       key: "INVOICE_AMOUNT",
       render: (text) => {
@@ -228,27 +232,50 @@ const TablePerjalananDinas: React.FC<{
           currency: "IDR",
         }).format(text);
       },
+      align: "center",
     },
     {
-      title: "PENERIMA",
+      title: "Penerima",
       dataIndex: "DESCRIPTION",
       key: "DESCRIPTION",
       ...getColumnSearchProps("DESCRIPTION"),
+      align: "center",
     },
     {
-      title: "PAYMENT STATUS",
+      title: "Status Pembayaran",
       key: "PAYMENT_STATUS",
       render: (_, record) => {
-        if (record.PAYMENT_STATUS_FLAG === "Y") return "Paid";
+        if (record.PAYMENT_STATUS_FLAG === "Y")
+          return (
+            <>
+              <p className="bg-green-500 text-white text-sm font-medium">
+                PAID
+              </p>
+            </>
+          );
 
         if (
           record.INV_STATUS === "Validated" &&
           (!record.PAYMENT_STATUS_FLAG || record.PAYMENT_STATUS_FLAG === "N")
         ) {
-          return "Waiting Payment";
+          return (
+            <>
+              <p className="bg-yellow-500 text-white text-sm font-medium">
+                Waiting Payment
+              </p>
+            </>
+          );
         }
-        return "Waiting Validated";
+
+        return (
+          <>
+            <p className="bg-red-500 text-white text-sm font-medium">
+              Waiting Validated
+            </p>
+          </>
+        );
       },
+      align: "center",
     },
   ];
 
