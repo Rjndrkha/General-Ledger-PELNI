@@ -32,8 +32,15 @@ const TableGeneralLedger: React.FC = () => {
     }
 
     if (response.rows) {
-      setData(response.rows);
+      const sortedData = response.rows.sort((a: ITableGeneralLedger, b: ITableGeneralLedger) => 
+        new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
+      );
+      setData(sortedData);
     }
+
+    // if (response.rows) {
+    //   setData(response.rows);
+    // }
 
     setLoading(false);
   };
@@ -113,11 +120,13 @@ const TableGeneralLedger: React.FC = () => {
       title: "With Adjustment",
       dataIndex: "with_adjustment",
       key: "with_adjustment",
+      render: (text) => (text === "true" ? "Yes" : "No"),
     },
     {
       title: "With Company",
       dataIndex: "with_company",
       key: "with_company",
+      render: (text) => (text === "true" ? "Yes" : "No"),
     },
     {
       title: "Id Company",
@@ -128,6 +137,7 @@ const TableGeneralLedger: React.FC = () => {
       title: "With Account",
       dataIndex: "with_account",
       key: "with_account",
+      render: (text) => (text === "true" ? "Yes" : "No"),
     },
     {
       title: "Id Account",

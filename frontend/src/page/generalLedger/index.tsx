@@ -129,8 +129,14 @@ function IndexGeneralLedger() {
 
   return (
     <div className="w-auto h-full flex flex-col gap-3 m-5">
-      <h1>Penarikan Data General Ledger</h1>
+      <div>
+        <h1 className="text-base font-bold text-blue-950">
+          Penarikan General Ledger
+        </h1>
+        <h1 className="font-extrabold text-blue-950">Oracle Database</h1>
+      </div>
       <div className="flex flex-col w-auto gap-4 max-w-[30rem]">
+        
         <div className="flex flex-col">
           <label htmlFor="title" className="mb-1 text-base font-semibold">
             Masukkan Range Waktu<span className="text-red-500">*</span>
