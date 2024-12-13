@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { greenDark } from '@ant-design/colors';
+import { greenDark } from "@ant-design/colors";
 import { SearchOutlined } from "@ant-design/icons";
 import type { GetRef, TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Space, Table, message } from "antd";
@@ -30,7 +30,10 @@ const TableGeneralLedger: React.FC = () => {
     setLoading(true);
     const token = Cookies.get("token") || "";
 
-    const { response, error } = await EbsClient.GetGeneralLedgerStatus({}, token);
+    const { response, error } = await EbsClient.GetGeneralLedgerStatus(
+      {},
+      token
+    );
 
     if (error) {
       message.error("Gagal mengambil data General Ledger");
@@ -60,7 +63,7 @@ const TableGeneralLedger: React.FC = () => {
       Completed: (
         <Button
           type="primary"
-          style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+          style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
           onClick={async () => await handleDownload(job_id)}
         >
           Download
@@ -79,7 +82,6 @@ const TableGeneralLedger: React.FC = () => {
   };
 
   const handleDownload = async (job_id: Number) => {
-    console.log(job_id, "clicked");
     const data = await EbsClient.GetGeneralLedgerDownload(job_id, token || "");
 
     if (data.error) {
@@ -88,8 +90,7 @@ const TableGeneralLedger: React.FC = () => {
     }
 
     if (data.response) {
-      console.log(dataInput, "dataInput");
-      downloadExcelFile(data.response.data.data, dataInput[0]);
+      downloadExcelFile(data.response.jsonData.data, dataInput[0]);
     } else {
       message.error("Data tidak tersedia");
     }

@@ -3,7 +3,6 @@ import { SearchOutlined } from "@ant-design/icons";
 import type { GetRef, TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Space, Table, message } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import ButtonDefault from "../../component/button/button";
 import { IPerjadin } from "../../interface/IPerjadin";
 import EbsClient from "../../service/ebs/OracleClient";
 import Highlighter from "react-highlight-words";
@@ -36,7 +35,7 @@ const TablePerjalananDinas: React.FC<{
     );
 
     if (error) {
-      message.error("Error");
+      message.error(errorMessage || "Failed to get data");
       setLoading(false);
     }
 
@@ -46,7 +45,7 @@ const TablePerjalananDinas: React.FC<{
     }
   };
 
-  const addActionButton = (data: IPerjadin[]) => {
+  const loadData = (data: IPerjadin[]) => {
     return data.map((item) => {
       return {
         ...item,
@@ -213,7 +212,6 @@ const TablePerjalananDinas: React.FC<{
       render: (text) => {
         return new Intl.DateTimeFormat("id-ID").format(new Date(text));
       },
-      // ...getColumnSearchProps("INVOICE_DATE"),
     },
     {
       title: "STATUS",
@@ -231,15 +229,11 @@ const TablePerjalananDinas: React.FC<{
           currency: "IDR",
         }).format(text);
       },
-      // ...getColumnSearchProps("INVOICE_AMOUNT"),
     },
     {
       title: "PENERIMA",
       dataIndex: "DESCRIPTION",
       key: "DESCRIPTION",
-      // render: (text) => {
-      //   return text.split(" - ")[1];
-      // },
       ...getColumnSearchProps("DESCRIPTION"),
     },
     {
@@ -257,12 +251,6 @@ const TablePerjalananDinas: React.FC<{
         return "Waiting Validated";
       },
     },
-    // {
-    //   align: "center",
-    //   title: "Action",
-    //   dataIndex: "Action",
-    //   key: "Action",
-    // },
   ];
 
   return (
@@ -270,8 +258,8 @@ const TablePerjalananDinas: React.FC<{
       loading={loading}
       size="small"
       columns={columns}
+      dataSource={loadData(promotion)}
       style={{ overflow: "auto", textAlign: "center" }}
-      dataSource={addActionButton(promotion)}
       pagination={{ pageSize: 5, position: ["bottomLeft"], defaultCurrent: 1 }}
     />
   );

@@ -12,30 +12,38 @@ function IndexCheckSPJ() {
 
   useEffect(() => {
     setValidate(false);
-  }, [nama,validate]);
+  }, [nama, validate]);
 
   const handleSearch = () => {
     setSubmit(true);
+    setLoading(true);
 
     if (!nama || nama.includes(" ")) {
       setValidate(false);
+      setLoading(false);
       return message.error("Nama hanya boleh satu kata");
     }
 
     if (nama) {
-      setLoading(false)
+      setLoading(false);
       return setValidate(true);
     }
   };
 
   return (
     <div className="w-auto h-full flex flex-col gap-3 m-5">
-      <h1>Cek Status SPJ Perjalanan Dinas</h1>
+      <div>
+        <h1 className="text-base font-bold text-blue-950">
+          Check Invoice Status
+        </h1>
+        <h1 className="font-extrabold text-blue-950">EBS Application</h1>
+      </div>
 
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleSearch();
+          setLoading(true);
         }}
       >
         <div className="flex flex-col gap-2 max-w-[50rem]">
