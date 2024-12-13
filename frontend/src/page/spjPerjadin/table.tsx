@@ -17,10 +17,13 @@ const TablePerjalananDinas: React.FC<{
   setLoading: (loading: boolean) => void;
 }> = ({ nama, loading, setLoading }) => {
   const [promotion, setPromotion] = useState<IPerjadin[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [total, setTotal] = useState<number>(0);
 
   useEffect(() => {
     getListPromotion();
-  }, []);
+  }, [page, limit]);
 
   const getListPromotion = async () => {
     setLoading(true);
@@ -29,19 +32,30 @@ const TablePerjalananDinas: React.FC<{
     const { error, errorMessage, response } = await EbsClient.PostAllSPJ(
       {
         nama: nama,
+        page: page,
+        limit: limit,
       },
       token
     );
 
     if (error) {
       message.error(errorMessage || "Failed to get data");
+      setPromotion([]);
+      setTotal(0);
       setLoading(false);
+      return;
     }
 
     if (response) {
       setPromotion(response.data);
+      setTotal(response.total || 0);
       setLoading(false);
     }
+  };
+
+  const handleTableChange = (pagination: any) => {
+    if (pagination.current !== page) setPage(pagination.current);
+    if (pagination.pageSize !== limit) setLimit(pagination.pageSize);
   };
 
   const loadData = (data: IPerjadin[]) => {
@@ -286,7 +300,13 @@ const TablePerjalananDinas: React.FC<{
       columns={columns}
       dataSource={loadData(promotion)}
       style={{ overflow: "auto", textAlign: "center" }}
-      pagination={{ pageSize: 5, position: ["bottomLeft"], defaultCurrent: 1 }}
+      pagination={{
+        current: page,
+        pageSize: limit,
+        total: total,
+        showSizeChanger: true,
+      }}
+      onChange={handleTableChange}
     />
   );
 };

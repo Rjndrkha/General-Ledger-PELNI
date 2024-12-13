@@ -15,16 +15,19 @@ async function OracleConnection() {
   return await oracledb.getConnection(config);
 }
 
-async function executeOracleQuery(connection, query) {
-  const result = await connection.execute(query);
+async function executeOracleQuery(connection, query, params) {
+  const result = await connection.execute(query, params, {
+    outFormat: oracledb.OUT_FORMAT_OBJECT,
+  });
   return {
     totalData: result.rows.length,
-    data: result.rows.map((row) =>
-      row.reduce((acc, cur, i) => {
-        acc[result.metaData[i].name] = cur;
-        return acc;
-      }, {})
-    ),
+    // data: result.rows.map((row) =>
+    //   row.reduce((acc, cur, i) => {
+    //     acc[result.metaData[i].name] = cur;
+    //     return acc;
+    //   }, {})
+    // ),
+    data: result.rows,
   };
 }
 

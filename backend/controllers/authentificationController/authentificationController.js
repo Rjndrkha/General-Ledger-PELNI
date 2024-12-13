@@ -64,7 +64,7 @@ const AuthLogin = async (username, password) => {
       //INSERT MENU CHECK INVOICE
       const checkMenuQuery = `
         SELECT menu_id 
-        FROM user_access_pdd 
+        FROM user_access_ppd 
         WHERE pslh_nrp = $1 AND menu_id = 3
       `;
       const checkMenuParams = [data.pslh_nrp];
@@ -75,7 +75,7 @@ const AuthLogin = async (username, password) => {
 
       if (menuResult.totalData === 0) {
         const insertMenuQuery = `
-          INSERT INTO "public"."user_access_pdd" ("pslh_nrp", "menu_id", "created_by", "created_date") 
+          INSERT INTO "public"."user_access_ppd" ("pslh_nrp", "menu_id", "created_by", "created_date") 
           VALUES ($1, 3, $2, NOW())
         `;
         const insertMenuParams = [data.pslh_nrp, "SYSTEM"];

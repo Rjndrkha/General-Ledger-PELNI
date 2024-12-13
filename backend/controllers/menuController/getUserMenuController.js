@@ -18,7 +18,7 @@ const getUserMenuController = async (req, res) => {
   try {
     const userMenuQuery = `
       SELECT a.menu_id
-      FROM "user_access_pdd" a 
+      FROM "user_access_ppd" a 
       WHERE a.pslh_nrp = $1
     `;
     const userMenuParams = [pslh_nrp];
