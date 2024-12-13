@@ -24,7 +24,6 @@ const TablePerjalananDinas: React.FC<{
 
   const getListPromotion = async () => {
     setLoading(true);
-
     const token = Cookies.get("token") || "";
 
     const { error, errorMessage, response } = await EbsClient.PostAllSPJ(
