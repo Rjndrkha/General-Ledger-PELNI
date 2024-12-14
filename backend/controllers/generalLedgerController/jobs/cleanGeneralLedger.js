@@ -9,7 +9,7 @@ async function cleanOldFiles() {
   const daysLimit = 10;
 
   try {
-    const connection = await initializePostgreConnection();
+    await initializePostgreConnection();
 
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() - daysLimit);

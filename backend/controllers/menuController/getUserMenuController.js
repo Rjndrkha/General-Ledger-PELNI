@@ -13,7 +13,7 @@ const getUserMenuController = async (req, res) => {
     });
   }
 
-  initializePostgreConnection();
+  await initializePostgreConnection();
 
   try {
     const userMenuQuery = `

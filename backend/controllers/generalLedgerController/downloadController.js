@@ -9,7 +9,7 @@ async function generalLedgerDownload(req, res) {
   const { pslh_nrp } = req.user;
 
   try {
-    const connection = await initializePostgreConnection();
+    await initializePostgreConnection();
 
     const query = `
       SELECT file_path
