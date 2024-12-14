@@ -174,7 +174,10 @@ function saveFile(data, jobID) {
   );
 
   const timestamp = new Date().toISOString().replace(/:/g, "-");
-  const filePath = path.join(generalLedgerPath, `GL-${jobID}.json`);
+  const filePath = path.join(
+    generalLedgerPath,
+    `GL-${jobID}-${timestamp}.json`
+  );
 
   const jsonData = JSON.stringify(data, null, 2);
   fs.writeFileSync(filePath, jsonData);
