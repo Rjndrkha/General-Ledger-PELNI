@@ -1,5 +1,7 @@
 const cleanOldFiles = require("../controllers/generalLedgerController/jobs/cleanGeneralLedger");
 const cron = require("node-cron");
+const cluster = require("cluster");
+const os = require("os");
 
 function initializeCronJobs() {
   // Jadwalkan pembersihan setiap hari pada jam 2 pagi
@@ -11,5 +13,6 @@ function initializeCronJobs() {
 
   console.log("Cron jobs telah dijadwalkan.");
 }
-
+// if (cluster.isWorker && cluster.worker.id === 1) {
+// }
 module.exports = initializeCronJobs;

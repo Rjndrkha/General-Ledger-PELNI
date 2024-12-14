@@ -15,13 +15,15 @@ const generalLedgerQueue = new Queue("general-ledger", {
   redis: { host: "redis", port: 6379 },
 });
 
+let maxProcess = 5;
+
 generalLedgerQueue.on("failed", (job, err) =>
   jobStatusHandler("failed", job, err)
 );
 generalLedgerQueue.on("waiting", (job) => jobStatusHandler("waiting", job));
 generalLedgerQueue.on("active", (job) => jobStatusHandler("active", job));
 
-generalLedgerQueue.process(async (job) => {
+generalLedgerQueue.process(maxProcess, async (job) => {
   const {
     startDate,
     endDate,
@@ -37,7 +39,6 @@ generalLedgerQueue.process(async (job) => {
   const job_Id = job.id;
 
   let connection = await OracleConnection();
-
   const query = `
     SELECT
     TO_CHAR( gjh.default_effective_date, 'DD-MON-RRRR' ) transaction_date_from,
@@ -141,6 +142,7 @@ generalLedgerQueue.process(async (job) => {
     coa1,
     coa2,
   };
+
   const data = await executeOracleQuery(connection, query, params);
 
   if (data) {
@@ -170,6 +172,7 @@ function saveFile(data, jobID) {
     storagePath,
     "general-ledger"
   );
+
   const timestamp = new Date().toISOString().replace(/:/g, "-");
   const filePath = path.join(
     generalLedgerPath,
@@ -179,7 +182,6 @@ function saveFile(data, jobID) {
   const jsonData = JSON.stringify(data, null, 2);
   fs.writeFileSync(filePath, jsonData);
 
-  console.log(`File JSON berhasil disimpan di ${filePath}`);
   return filePath;
 }
 

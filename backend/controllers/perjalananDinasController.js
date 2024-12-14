@@ -22,7 +22,6 @@ const perjalananDinasControllers = async (req, res) => {
 
   try {
     connection = await OracleConnection();
-    console.log("Connection Success!");
 
     const offset = (page - 1) * limit;
     const upperNama = `%${nama.toUpperCase()}%`;
@@ -120,7 +119,6 @@ const perjalananDinasControllers = async (req, res) => {
       data: json.data,
     });
   } catch (error) {
-    console.error("Error:", error.message);
     res.status(500).json({ error: "Terjadi kesalahan pada server." });
   } finally {
     if (connection) {

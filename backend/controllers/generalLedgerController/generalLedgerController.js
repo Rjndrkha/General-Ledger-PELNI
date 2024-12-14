@@ -104,6 +104,10 @@ const generalLedgerControllers = async (req, res) => {
 const generalLedgerStatusControllers = async (req, res) => {
   const { pslh_nrp } = req.user;
 
+  if (!pslh_nrp) {
+    return res.status(400).json({ error: "NRP harus diberikan" });
+  }
+
   await initializePostgreConnection();
 
   const query = `
@@ -116,7 +120,8 @@ const generalLedgerStatusControllers = async (req, res) => {
       with_company,
       id_company,
       with_account,
-      id_account 
+      id_account,
+      completed_at
     FROM
       "log_request_gl" 
     WHERE
