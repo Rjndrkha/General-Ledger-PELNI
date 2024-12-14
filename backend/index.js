@@ -48,19 +48,21 @@ const startApp = () => {
   );
 };
 
+startApp();
+
 // Cluster setup
-if (cluster.isMaster) {
-  const numWorkers = os.cpus().length;
-  console.log(`Running in ${numWorkers} workers...`);
+// if (cluster.isMaster) {
+//   const numWorkers = os.cpus().length;
+//   console.log(`Running in ${numWorkers} workers...`);
 
-  for (let i = 0; i < numWorkers; i++) {
-    cluster.fork();
-  }
+//   for (let i = 0; i < numWorkers; i++) {
+//     cluster.fork();
+//   }
 
-  cluster.on("exit", (worker, code, signal) => {
-    console.log(`Worker ${worker.process.pid} died. Forking a new worker...`);
-    cluster.fork();
-  });
-} else {
-  startApp();
-}
+//   cluster.on("exit", (worker, code, signal) => {
+//     console.log(`Worker ${worker.process.pid} died. Forking a new worker...`);
+//     cluster.fork();
+//   });
+// } else {
+//   startApp();
+// }

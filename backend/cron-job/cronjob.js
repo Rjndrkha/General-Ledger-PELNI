@@ -5,14 +5,14 @@ const os = require("os");
 
 function initializeCronJobs() {
   // Jadwalkan pembersihan setiap hari pada jam 2 pagi
-  if (cluster.isWorker && cluster.worker.id === 1) {
-    cron.schedule("0 2 * * *", async () => {
-      console.log("Memulai pembersihan file lama...");
-      await cleanOldFiles();
-      console.log("Pembersihan selesai.");
-    });
+  cron.schedule("0 2 * * *", async () => {
+    console.log("Memulai pembersihan file lama...");
+    await cleanOldFiles();
+    console.log("Pembersihan selesai.");
+  });
 
-    console.log("Cron jobs telah dijadwalkan.");
-  }
+  console.log("Cron jobs telah dijadwalkan.");
 }
+// if (cluster.isWorker && cluster.worker.id === 1) {
+// }
 module.exports = initializeCronJobs;

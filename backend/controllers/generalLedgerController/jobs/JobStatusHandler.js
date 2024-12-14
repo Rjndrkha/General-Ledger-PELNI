@@ -11,17 +11,12 @@ const jobStatusHandler = async (status, job, err = null) => {
 };
 
 async function updateLogStatus(jobId, status, errorMessage = null, filepath) {
-  let completed_date = null;
-
-  if (status === "Completed") {
-    completed_date = new Date().toISOString();
-  }
   const query = `
     UPDATE log_request_gl
-    SET status = $1, error_message = $2, completed_at = $3 , file_path = $4
-    WHERE job_id = $5
+    SET status = $1, error_message = $2, completed_at = NOW() , file_path = $4
+    WHERE job_id = $3
   `;
-  const params = [status, errorMessage, completed_date, filepath, jobId];
+  const params = [status, errorMessage, jobId, filepath];
   await executePostgreQuery(query, params);
 }
 
