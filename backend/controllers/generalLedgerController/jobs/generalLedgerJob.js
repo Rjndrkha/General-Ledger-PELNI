@@ -12,7 +12,7 @@ const {
 const { jobStatusHandler, updateLogStatus } = require("./JobStatusHandler");
 
 const generalLedgerQueue = new Queue("general-ledger", {
-  redis: { host: "redis", port: 6379 }
+  redis: { host: "localhost", port: 6379 },
 });
 
 let maxProcess = 5;
@@ -39,7 +39,6 @@ generalLedgerQueue.process(maxProcess, async (job) => {
   const job_Id = job.id;
 
   let connection = await OracleConnection();
-
   const query = `
     SELECT
     TO_CHAR( gjh.default_effective_date, 'DD-MON-RRRR' ) transaction_date_from,
@@ -143,8 +142,9 @@ generalLedgerQueue.process(maxProcess, async (job) => {
     coa1,
     coa2,
   };
+  console.log(params);
   const data = await executeOracleQuery(connection, query, params);
-
+  console.log(data);
   if (data) {
     const jobstatus = await checkJobStatus(job_Id, data);
     return jobstatus;
