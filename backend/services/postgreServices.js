@@ -41,7 +41,6 @@ async function executePostgreQuery(query, params) {
       message: "Data fetched successfully",
     };
   } catch (error) {
-    console.error(error.message);
     throw new Error(error.message);
   }
 }

@@ -142,9 +142,9 @@ generalLedgerQueue.process(maxProcess, async (job) => {
     coa1,
     coa2,
   };
-  console.log(params);
+
   const data = await executeOracleQuery(connection, query, params);
-  console.log(data);
+
   if (data) {
     const jobstatus = await checkJobStatus(job_Id, data);
     return jobstatus;
@@ -172,16 +172,13 @@ function saveFile(data, jobID) {
     storagePath,
     "general-ledger"
   );
+
   const timestamp = new Date().toISOString().replace(/:/g, "-");
-  const filePath = path.join(
-    generalLedgerPath,
-    `GL-${jobID}-${timestamp}.json`
-  );
+  const filePath = path.join(generalLedgerPath, `GL-${jobID}.json`);
 
   const jsonData = JSON.stringify(data, null, 2);
   fs.writeFileSync(filePath, jsonData);
 
-  console.log(`File JSON berhasil disimpan di ${filePath}`);
   return filePath;
 }
 
