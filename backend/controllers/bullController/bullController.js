@@ -4,7 +4,7 @@ const { createBullBoard } = require("@bull-board/api");
 const generalLedgerQueue = require("../generalLedgerController/jobs/generalLedgerJob");
 
 const serverAdapter = new ExpressAdapter();
-serverAdapter.setBasePath("/admin/bull-queues");
+serverAdapter.setBasePath("/api/admin/bull-queues");
 
 createBullBoard({
   queues: [new BullAdapter(generalLedgerQueue)],
