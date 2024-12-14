@@ -13,7 +13,7 @@ const { jobStatusHandler, updateLogStatus } = require("./JobStatusHandler");
 
 const generalLedgerQueue = new Queue("general-ledger", {
   redis: { host: "redis", port: 6379 },
-  settings: { maxStalledCount: 3 },
+  settings: { maxStalledCount: 1 },
 });
 
 let maxProcess = 4;
