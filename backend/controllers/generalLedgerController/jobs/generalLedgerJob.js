@@ -13,7 +13,10 @@ const { jobStatusHandler, updateLogStatus } = require("./JobStatusHandler");
 
 const generalLedgerQueue = new Queue("general-ledger", {
   redis: { host: "redis", port: 6379 },
+  settings: { maxStalledCount: 3 },
 });
+
+let maxProcess = 4;
 
 generalLedgerQueue.on("failed", (job, err) =>
   jobStatusHandler("failed", job, err)
@@ -21,7 +24,7 @@ generalLedgerQueue.on("failed", (job, err) =>
 generalLedgerQueue.on("waiting", (job) => jobStatusHandler("waiting", job));
 generalLedgerQueue.on("active", (job) => jobStatusHandler("active", job));
 
-generalLedgerQueue.process(async (job) => {
+generalLedgerQueue.process(maxProcess, async (job) => {
   const {
     startDate,
     endDate,
