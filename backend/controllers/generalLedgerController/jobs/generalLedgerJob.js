@@ -12,11 +12,10 @@ const {
 const { jobStatusHandler, updateLogStatus } = require("./JobStatusHandler");
 
 const generalLedgerQueue = new Queue("general-ledger", {
-  redis: { host: "redis", port: 6379 },
-  settings: { maxStalledCount: 3 },
+  redis: { host: "redis", port: 6379 }
 });
 
-let maxProcess = 4;
+let maxProcess = 5;
 
 generalLedgerQueue.on("failed", (job, err) =>
   jobStatusHandler("failed", job, err)
