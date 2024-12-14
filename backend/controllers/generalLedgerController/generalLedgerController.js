@@ -120,7 +120,8 @@ const generalLedgerStatusControllers = async (req, res) => {
       with_company,
       id_company,
       with_account,
-      id_account 
+      id_account,
+      completed_at
     FROM
       "log_request_gl" 
     WHERE
