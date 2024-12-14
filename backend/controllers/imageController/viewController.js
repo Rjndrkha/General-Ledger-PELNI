@@ -10,7 +10,7 @@ const viewImageController = async (req, res) => {
     return res.status(400).json({ error: "Parameter 'imageId' is required." });
   }
 
-  initializePostgreConnection();
+  await initializePostgreConnection();
   const query = `
         SELECT * FROM "public"."images_uploaded"
         WHERE id = $1;

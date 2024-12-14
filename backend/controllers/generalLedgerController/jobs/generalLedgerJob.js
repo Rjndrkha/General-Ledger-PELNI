@@ -37,9 +37,10 @@ generalLedgerQueue.process(maxProcess, async (job) => {
   } = job.data;
 
   const job_Id = job.id;
-
-  let connection = await OracleConnection();
-  const query = `
+  let connection;
+  try {
+    connection = await OracleConnection();
+    const query = `
     SELECT
     TO_CHAR( gjh.default_effective_date, 'DD-MON-RRRR' ) transaction_date_from,
     TO_CHAR( gjh.default_effective_date, 'DD-MON-RRRR' ) transaction_date_to,
@@ -131,23 +132,30 @@ generalLedgerQueue.process(maxProcess, async (job) => {
         document_number ASC
   `;
 
-  const params = {
-    startDate,
-    endDate,
-    withAdj: withAdj ? "true" : "false",
-    withCompany: withCompany ? "true" : "false",
-    company1,
-    company2,
-    withCOA: withCOA ? "true" : "false",
-    coa1,
-    coa2,
-  };
+    const params = {
+      startDate,
+      endDate,
+      withAdj: withAdj ? "true" : "false",
+      withCompany: withCompany ? "true" : "false",
+      company1,
+      company2,
+      withCOA: withCOA ? "true" : "false",
+      coa1,
+      coa2,
+    };
 
-  const data = await executeOracleQuery(connection, query, params);
+    const data = await executeOracleQuery(connection, query, params);
 
-  if (data) {
-    const jobstatus = await checkJobStatus(job_Id, data);
-    return jobstatus;
+    if (data) {
+      const jobstatus = await checkJobStatus(job_Id, data);
+      return jobstatus;
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Terjadi kesalahan pada server." });
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 });
 

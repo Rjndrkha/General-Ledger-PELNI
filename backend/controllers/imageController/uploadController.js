@@ -21,7 +21,7 @@ const UploadImageController = (req, res, next) => {
         .json({ error: "Parameter 'pslh_nrp' is required." });
     }
 
-    initializePostgreConnection();
+    await initializePostgreConnection();
     const fileUrl = `${req.protocol}://${req.get("host")}/images/view-images/${
       req.file.filename
     }`;

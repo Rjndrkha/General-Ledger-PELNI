@@ -10,8 +10,6 @@ const {
 const { BLControllers } = require("./controllers/blController");
 const serverAdapter = require("./controllers/bullController/bullController");
 const initializeCronJobs = require("./cron-job/cronjob");
-const cluster = require("cluster");
-const os = require("os");
 
 const startApp = () => {
   const app = express();
@@ -47,22 +45,4 @@ const startApp = () => {
     asyncHandler(BLControllers)
   );
 };
-
-startApp();
-
-// Cluster setup
-// if (cluster.isMaster) {
-//   const numWorkers = os.cpus().length;
-//   console.log(`Running in ${numWorkers} workers...`);
-
-//   for (let i = 0; i < numWorkers; i++) {
-//     cluster.fork();
-//   }
-
-//   cluster.on("exit", (worker, code, signal) => {
-//     console.log(`Worker ${worker.process.pid} died. Forking a new worker...`);
-//     cluster.fork();
-//   });
-// } else {
-//   startApp();
-// }
+module.exports = startApp;

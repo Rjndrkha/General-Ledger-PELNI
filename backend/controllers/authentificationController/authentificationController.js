@@ -33,7 +33,7 @@ const AuthLogin = async (username, password) => {
         expiresIn: "1d",
       });
 
-      initializePostgreConnection();
+      await initializePostgreConnection();
       const query = `
       INSERT INTO ppd_users (pslh_nrp, pslh_nama, username, jab_ket, jab_kode, utk_ket, utk_kode, pass, last_seen)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())

@@ -28,7 +28,7 @@ const addMasterMenuController = async (req, res) => {
     });
   }
 
-  initializePostgreConnection();
+  await initializePostgreConnection();
   const query = `
       INSERT INTO "public"."master_menu" ( "menu_name", "url", "image_url", "created_by", "created_date", "deleted_date" )
       VALUES ( $1, $2, $3, $4, NOW(), NULL )
