@@ -14,7 +14,7 @@ async function updateLogStatus(jobId, status, errorMessage = null, filepath) {
   let completed_date = null;
 
   if (status === "Completed") {
-    return (completed_date = new Date().toISOString());
+    completed_date = new Date().toISOString();
   }
   const query = `
     UPDATE log_request_gl
