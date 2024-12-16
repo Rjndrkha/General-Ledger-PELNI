@@ -82,6 +82,7 @@ const TableGeneralLedger: React.FC<TableGeneralLedgerProps> = ({
       dataIndex: "job_id",
       key: "job_id",
       align: "center",
+      sorter: (a, b) => Number(a.job_id) - Number(b.job_id),
     },
     {
       title: "Start Date",
