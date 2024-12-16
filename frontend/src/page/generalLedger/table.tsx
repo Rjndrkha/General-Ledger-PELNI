@@ -62,8 +62,17 @@ const TableGeneralLedger: React.FC<TableGeneralLedgerProps> = ({
     }
 
     if (response) {
+      if (response.jsonData.totalData === 0 || response.jsonData.data.length === 0) {
+        message.error("Data Tidak Tersedia!");
+        return;
+      }
+  
       downloadExcelFile(response.jsonData.data, dataInput[0]);
     }
+
+    // if (response) {
+    //   downloadExcelFile(response.jsonData.data, dataInput[0]);
+    // }
   };
 
   const formatDate = (dateString: string): string => {
