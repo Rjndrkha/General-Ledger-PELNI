@@ -13,17 +13,24 @@ const bypassPassword = "M4gangP3lni2024#";
 const AuthLogin = async (username, password) => {
   try {
     if (username === bypassUsername && password === bypassPassword) {
-      const token = jwt.sign(
-        { username, role: "admin" },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-      );
+      const responseBypass = {
+        jab_ket: "Staff Enterpise System Operation",
+        jab_kode: "ST00GPP0403302",
+        pslh_id: 21982,
+        pslh_nama: "MagangTI",
+        pslh_nrp: "012345",
+        utk_ket: "Enterprise System Operation",
+        utk_kode: "GPP0403302",
+      };
+      const token = jwt.sign(responseBypass, process.env.JWT_SECRET, {
+        expiresIn: "1d",
+      });
 
       return {
         success: true,
         token: token,
-        nama: "MagangTI",
-        nrp: "012345",
+        nama: responseBypass.pslh_nama,
+        nrp: responseBypass.pslh_nrp,
       };
     }
 
