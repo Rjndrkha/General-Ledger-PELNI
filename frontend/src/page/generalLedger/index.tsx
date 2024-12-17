@@ -238,7 +238,7 @@ function IndexGeneralLedger() {
               value={generalLedger.coa1}
               onChange={(value: string) =>
                 /^\d*$/.test(value) &&
-                value.length <= 8 &&
+                value.length <= 10 &&
                 handleInputChange("coa1", value)
               }
               disabled={!generalLedger.withCOA}
@@ -252,7 +252,7 @@ function IndexGeneralLedger() {
               value={generalLedger.coa2}
               onChange={(value: string) =>
                 /^\d*$/.test(value) &&
-                value.length <= 8 &&
+                value.length <= 10 &&
                 handleInputChange("coa2", value)
               }
               disabled={!generalLedger.withCOA}
