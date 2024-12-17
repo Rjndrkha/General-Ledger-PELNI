@@ -63,7 +63,7 @@ const TableGeneralLedger: React.FC<TableGeneralLedgerProps> = ({
 
     if (response) {
       if (response.jsonData.totalData === 0 || response.jsonData.data.length === 0) {
-        message.error("Data Tidak Tersedia!");
+        message.error("Jumlah Data 0, Data Tidak Tersedia!");
         return;
       }
   
